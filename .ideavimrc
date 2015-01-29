@@ -68,7 +68,6 @@ nnoremap ti :action GotoImplementation<CR>
 "noremap N :action FindPrevious<CR>
 
 noremap va ggVG
-"
 " native back/forward is less buggy
 noremap <C-o> :action Back<CR>
 noremap <C-i> :action Forward<CR>
