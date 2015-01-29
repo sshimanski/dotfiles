@@ -187,7 +187,7 @@ map <C-l> <C-W>l
 map <C-h> <C-W>h
 map <C-S-h> :bprevious<CR>
 map <C-S-l> :bnext<CR>
-map <C-a> ggVG
+map va ggVG
 nnoremap <Leader>v <C-w>v<C-w>w
 nnoremap <Leader>h <C-w>s<C-w>w
 
