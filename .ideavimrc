@@ -6,6 +6,9 @@ set showcmd
 set hlsearch
 set novisualbell
 
+nnoremap ,ev :e ~/.ideavimrc<CR>
+nnoremap ,sv :source ~/.ideavimrc<CR>
+
 map ,y "+y
 map ,p "*p
 noremap Y y$
@@ -23,48 +26,52 @@ vnoremap > >gv
 
 noremap ]m :action MethodDown<CR>zz
 noremap [m :action MethodUp<CR>zz
+
 noremap <S-A-j> :action MoveStatementDown<CR>
 noremap <S-A-k> :action MoveStatementUp<CR>
 noremap <C-S-o> :action OverrideMethods<CR>
 noremap <C-S-i> :action ImplementMethods<CR>
-
-nnoremap ,ev :e ~/.ideavimrc<CR>
-nnoremap ,sv :source ~/.ideavimrc<CR>
+noremap <C-S-h> gT
+noremap <C-S-l> gt
 
 nnoremap ,nd :action NewDir<CR>
 nnoremap ,nc :action NewClass<CR>
 
+" nerd commenter?
 "nnoremap ,cl :action CommentByLineComment<CR>
 "nnoremap ,cb :action CommentByBlockComment<CR>
 
 " emulate unite.vim
-noremap <Space>b :action TabList<CR>
+"noremap <Space>b :action TabList<CR>
 noremap <Space>m :action RecentFiles<CR>
-noremap <Space>i :action GotoImplementation<CR>
 noremap <Space>c :action GotoClass<CR>
 noremap <Space>f :action GotoFile<CR>
 noremap <Space>g :action FindInPath<CR>
+" unite outline
 noremap <Space>o :action FileStructurePopup<CR>
 noremap <Space>u :action FindUsages<CR>
-"noremap / :action Find<CR>
-"noremap n :action FindNext<CR>
-"noremap N :action FindPrevious<CR>
 
-" Goto
-nnoremap gs :action GotoSuperMethod<CR>
-nnoremap gt :action GotoTest<CR>
-nnoremap gc :action GotoTypeDeclaration<CR>
-nnoremap gu :action ShowUsages<CR>
+" Goto. Mnemonic: 'to'
+nnoremap ts :action GotoSuperMethod<CR>
+nnoremap tt :action GotoTest<CR>
+nnoremap td :action GotoTypeDeclaration<CR>
+nnoremap tu :action ShowUsages<CR>
+nnoremap ti :action GotoImplementation<CR>
 
+" Experemental
 "noremap <C-j> <C-W>j
 "noremap <C-k> <C-W>k
 "noremap <C-l> <C-W>l
 "noremap <C-h> <C-W>h
+"noremap / :action Find<CR>
+"noremap n :action FindNext<CR>
+"noremap N :action FindPrevious<CR>
 
-noremap <C-S-h> gT
-noremap <C-S-l> gt
 noremap va ggVG
-noremap <C-o> <C-o>zz
+"
+" native back/forward is less buggy
+noremap <C-o> :action Back<CR>
+noremap <C-i> :action Forward<CR>
 
 noremap ,b :action ToggleLineBreakpoint<CR>
 noremap ,r :action RenameElement<CR>
