@@ -14,18 +14,18 @@ map ,p "*p
 noremap Y y$
 nnoremap ' `
 nnoremap ` '
+nnoremap n nzz
+nnoremap N Nzz
+nnoremap va ggVG
 
 inoremap jj <Esc> 
 inoremap kk <Esc>
 
-nnoremap n nzz
-nnoremap N Nzz
-
 vnoremap < <gv
 vnoremap > >gv
 
-noremap ]m :action MethodDown<CR>zz
-noremap [m :action MethodUp<CR>zz
+noremap <A-j> :action MethodDown<CR>
+noremap <A-k> :action MethodUp<CR>
 
 noremap <S-A-j> :action MoveStatementDown<CR>
 noremap <S-A-k> :action MoveStatementUp<CR>
@@ -33,6 +33,10 @@ noremap <C-S-o> :action OverrideMethods<CR>
 noremap <C-S-i> :action ImplementMethods<CR>
 noremap <C-S-h> gT
 noremap <C-S-l> gt
+" Identifier Highlighter Reloaded plugin mapping
+" Wait till original Identifier Highlighter plugin will be fixed
+noremap <C-S-j> :action NextIdentifierReloaded<CR>zz
+noremap <C-S-k> :action PreviousIdentifierReloaded<CR>zz
 
 nnoremap ,nd :action NewDir<CR>
 nnoremap ,nc :action NewClass<CR>
@@ -41,42 +45,64 @@ nnoremap ,nc :action NewClass<CR>
 "nnoremap ,cl :action CommentByLineComment<CR>
 "nnoremap ,cb :action CommentByBlockComment<CR>
 
-" emulate unite.vim
-"noremap <Space>b :action TabList<CR>
+" unite.vim (lists)
+noremap <Space>b :action Switcher<CR>
 noremap <Space>m :action RecentFiles<CR>
 noremap <Space>c :action GotoClass<CR>
+noremap <Space>C :action GoToClass<CR>
 noremap <Space>f :action GotoFile<CR>
 noremap <Space>g :action FindInPath<CR>
 " unite outline
 noremap <Space>o :action FileStructurePopup<CR>
 noremap <Space>u :action FindUsages<CR>
 
-" Goto. Mnemonic: 'to'
+noremap <Space>h :action TypeHierarchy<CR>
+
+" Do I really need this?
+nmap gm :action ToggleBookmark<CR>
+nmap gM :action ShowBookmarks<CR>
+nmap gn :action GotoNextBookmark<CR>
+nmap gp :action GotoPreviousBookmark<CR>
+
+" Goto actions. Mnemonic: 'to'
+nnoremap td :action GotoTypeDeclaration<CR>
+nnoremap ti :action GotoImplementation<CR>
 nnoremap ts :action GotoSuperMethod<CR>
 nnoremap tt :action GotoTest<CR>
-nnoremap td :action GotoTypeDeclaration<CR>
 nnoremap tu :action ShowUsages<CR>
-nnoremap ti :action GotoImplementation<CR>
+
+" Introduce actions. Mnemonic 'introduce'
+nmap ic :action IntroduceConstant<CR>
+nmap if :action IntroduceField<CR>
+nmap ip :action IntroduceParameter<CR>
+nmap iv :action IntroduceVariable<CR>
+
+cnoremap <C-h> <BS>
 
 " Experemental
 "noremap <C-j> <C-W>j
 "noremap <C-k> <C-W>k
 "noremap <C-l> <C-W>l
 "noremap <C-h> <C-W>h
+
+" Additional <ESC> required
 "noremap / :action Find<CR>
 "noremap n :action FindNext<CR>
 "noremap N :action FindPrevious<CR>
 
-noremap va ggVG
 " native back/forward is less buggy
 noremap <C-o> :action Back<CR>
 noremap <C-i> :action Forward<CR>
 
+" Wait for mapleader
 noremap ,b :action ToggleLineBreakpoint<CR>
-noremap ,r :action RenameElement<CR>
-nnoremap ,c :action CheckinProject<CR>
-noremap ,v <C-w>v
+noremap ,c :action CheckinProject<CR>
+noremap ,e :action ExtractMethod<CR>
 noremap ,h <C-w>s
+noremap ,i :action Inline<CR>
 noremap ,k :q<CR>
-noremap ,nh :nohlsearch<CR>
+noremap ,m :action Move<CR>
+noremap ,r :action RenameElement<CR>
+noremap ,v <C-w>v
 noremap ,, :action HideAllWindows<CR>
+noremap <ESC><ESC> :nohlsearch<CR>

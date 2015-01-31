@@ -108,7 +108,7 @@ nnoremap <Leader>y "+y
 nnoremap <Leader>p "*p<<
 nnoremap <Leader>P :set invpaste<CR>
 nnoremap <Leader>qq :qa!<CR>
-map <Leader>nh :nohlsearch<CR>
+map <ESC><ESC> :nohlsearch<CR>
 
 " Make the Y behavior similar to D & C
 nnoremap Y y$
