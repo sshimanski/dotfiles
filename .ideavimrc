@@ -1,10 +1,9 @@
-set ignorecase
-set smartcase
-set incsearch
-set showmode
-set showcmd
 set hlsearch
-set novisualbell
+set ignorecase
+set incsearch
+set showcmd
+set showmode
+set smartcase
 
 nnoremap ,ev :e ~/.ideavimrc<CR>
 nnoremap ,sv :source ~/.ideavimrc<CR>
@@ -25,6 +24,8 @@ inoremap kk <Esc>
 vnoremap < <gv
 vnoremap > >gv
 
+cnoremap <C-h> <BS>
+
 noremap <A-j> :action MethodDown<CR>
 noremap <A-k> :action MethodUp<CR>
 
@@ -44,6 +45,7 @@ nnoremap ,nc :action NewClass<CR>
 
 " nerd commenter?
 "nnoremap ,cl :action CommentByLineComment<CR>
+" not working with selection
 "nnoremap ,cb :action CommentByBlockComment<CR>
 
 " unite.vim (lists)
@@ -56,23 +58,20 @@ noremap <Space>g :action FindInPath<CR>
 noremap <Space>o :action FileStructurePopup<CR>
 noremap <Space>u :action FindUsages<CR>
 
-noremap <Space>h :action TypeHierarchy<CR>
-
 " Do I really need this?
 nmap gm :action ToggleBookmark<CR>
 nmap gM :action ShowBookmarks<CR>
 nmap gn :action GotoNextBookmark<CR>
 nmap gp :action GotoPreviousBookmark<CR>
 
-" Goto actions. Mnemonic: 'to'
+" Mnemonic: 'to'
 nnoremap td :action GotoTypeDeclaration<CR>
 nnoremap ti :action GotoImplementation<CR>
 nnoremap ts :action GotoSuperMethod<CR>
 nnoremap tt :action GotoTest<CR>
 nnoremap tu :action ShowUsages<CR>
-nnoremap te :action GoToTargetEx<CR>
 
-" Introduce actions. Mnemonic 'introduce'
+" Mnemonic 'introduce'/'insert'
 nmap ic :action IntroduceConstant<CR>
 nmap if :action IntroduceField<CR>
 nmap ip :action IntroduceParameter<CR>
@@ -80,8 +79,6 @@ nmap iv :action IntroduceVariable<CR>
 nmap ig :action GenerateGetter<CR>
 nmap is :action GenerateSetter<CR>
 nmap ia :action GenerateGetterAndSetter<CR>
-
-cnoremap <C-h> <BS>
 
 " Experemental
 "noremap <C-j> <C-W>j
@@ -98,10 +95,14 @@ cnoremap <C-h> <BS>
 noremap <C-o> :action Back<CR>
 noremap <C-i> :action Forward<CR>
 
+" Mnemonic 'extract'
+" not working with selection
+noremap em :action ExtractMethod<CR>
+noremap ec :action ExtractClass<CR>
+
 " Wait for mapleader
 noremap ,b :action ToggleLineBreakpoint<CR>
 noremap ,c :action CheckinProject<CR>
-noremap ,e :action ExtractMethod<CR>
 noremap ,h <C-w>s
 noremap ,i :action Inline<CR>
 noremap ,k :q<CR>
