@@ -17,6 +17,7 @@ nnoremap ` '
 nnoremap n nzz
 nnoremap N Nzz
 nnoremap va ggVG
+nnoremap U :action Vcs.RollbackChangedLines<CR>
 
 inoremap jj <Esc> 
 inoremap kk <Esc>
@@ -49,7 +50,6 @@ nnoremap ,nc :action NewClass<CR>
 noremap <Space>b :action Switcher<CR>
 noremap <Space>m :action RecentFiles<CR>
 noremap <Space>c :action GotoClass<CR>
-noremap <Space>C :action GoToClass<CR>
 noremap <Space>f :action GotoFile<CR>
 noremap <Space>g :action FindInPath<CR>
 " unite outline
@@ -70,12 +70,16 @@ nnoremap ti :action GotoImplementation<CR>
 nnoremap ts :action GotoSuperMethod<CR>
 nnoremap tt :action GotoTest<CR>
 nnoremap tu :action ShowUsages<CR>
+nnoremap te :action GoToTargetEx<CR>
 
 " Introduce actions. Mnemonic 'introduce'
 nmap ic :action IntroduceConstant<CR>
 nmap if :action IntroduceField<CR>
 nmap ip :action IntroduceParameter<CR>
 nmap iv :action IntroduceVariable<CR>
+nmap ig :action GenerateGetter<CR>
+nmap is :action GenerateSetter<CR>
+nmap ia :action GenerateGetterAndSetter<CR>
 
 cnoremap <C-h> <BS>
 
