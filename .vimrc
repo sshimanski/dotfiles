@@ -49,6 +49,8 @@ Plugin 'Shougo/javacomplete'
 Plugin 'phildawes/racer'
 Plugin 'Yggdroot/indentLine'
 
+Plugin 'jplaut/vim-arduino-ino'
+
 " All of your Plugins must be added before the following line
 call vundle#end() " required
 " }}}
@@ -92,7 +94,7 @@ set smartcase
 set ignorecase
 " }}}
 
-nmap <silent><Leader>w :update<CR><BAR>:echo "Saved..."<CR>
+nmap <Leader>w :update<CR>
 
 if has('persistent_undo')
     set undodir=~/.vim/undo,~/tmp,/tmp
@@ -108,12 +110,16 @@ nnoremap <Leader>y "+y
 nnoremap <Leader>p "*p<<
 nnoremap <Leader>P :set invpaste<CR>
 nnoremap <Leader>qq :qa!<CR>
-map <ESC><ESC> :nohlsearch<CR>
+nnoremap <Leader>/ :nohlsearch<CR>
 
 " Make the Y behavior similar to D & C
 nnoremap Y y$
 nnoremap ' `
 nnoremap ` '
+
+nnoremap zj m`o<Esc>``
+nnoremap zk m`O<Esc>``
+nnoremap gu gUiw`]
 
 " Manage .vimrc file {{{
 nnoremap <Leader>ev :e $MYVIMRC<cr>
@@ -122,6 +128,9 @@ nnoremap <Leader>sv :source $MYVIMRC<cr>
 
 let g:snips_author="Shimanski Sergei"
 let g:snips_email="shimanski.sergei@gmail.com"
+
+au BufRead,BufNewFile *.pde set filetype=arduino
+au BufRead,BufNewFile *.ino set filetype=arduino
 
 " Haskell config {{{
 augroup haskell

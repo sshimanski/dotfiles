@@ -15,10 +15,12 @@ nnoremap ' `
 nnoremap ` '
 nnoremap n nzz
 nnoremap N Nzz
-nnoremap va ggVG
+nnoremap vv ggVG
 nnoremap U :action Vcs.RollbackChangedLines<CR>
+nnoremap zj m'o<Esc>`'
+nnoremap zk m'O<Esc>`'
 
-inoremap jj <Esc> 
+inoremap jj <Esc>
 inoremap kk <Esc>
 
 vnoremap < <gv
@@ -37,11 +39,8 @@ noremap <C-S-h> gT
 noremap <C-S-l> gt
 " Identifier Highlighter Reloaded plugin mapping
 " Wait till original Identifier Highlighter plugin will be fixed
-noremap <C-S-j> :action NextIdentifierReloaded<CR>zz
-noremap <C-S-k> :action PreviousIdentifierReloaded<CR>zz
-
-nnoremap ,nd :action NewDir<CR>
-nnoremap ,nc :action NewClass<CR>
+noremap <C-S-j> :action NextIdentifierReloaded<CR>
+noremap <C-S-k> :action PreviousIdentifierReloaded<CR>
 
 " nerd commenter?
 "nnoremap ,cl :action CommentByLineComment<CR>
@@ -71,16 +70,6 @@ nnoremap ts :action GotoSuperMethod<CR>
 nnoremap tt :action GotoTest<CR>
 nnoremap tu :action ShowUsages<CR>
 
-" Mnemonic 'introduce'/'insert'
-nmap ic :action IntroduceConstant<CR>
-nmap if :action IntroduceField<CR>
-nmap ip :action IntroduceParameter<CR>
-nmap iv :action IntroduceVariable<CR>
-nmap ig :action GenerateGetter<CR>
-nmap is :action GenerateSetter<CR>
-nmap ia :action GenerateGetterAndSetter<CR>
-
-" Experemental
 "noremap <C-j> <C-W>j
 "noremap <C-k> <C-W>k
 "noremap <C-l> <C-W>l
@@ -91,18 +80,35 @@ nmap ia :action GenerateGetterAndSetter<CR>
 "noremap n :action FindNext<CR>
 "noremap N :action FindPrevious<CR>
 
-" native back/forward is less buggy
+" native back/forward is less buggy, <C-t> still useful
 noremap <C-o> :action Back<CR>
 noremap <C-i> :action Forward<CR>
 
 " Mnemonic 'extract'
 " not working with selection
-noremap em :action ExtractMethod<CR>
-noremap ec :action ExtractClass<CR>
+noremap ,em :action ExtractMethod<CR>
+noremap ,ec :action ExtractClass<CR>
 
 " Wait for mapleader
+
+nnoremap ,nd :action NewDir<CR>
+nnoremap ,nc :action NewClass<CR>
+
+" Mnemonic 'generate'
+noremap ,gc :action IntroduceConstant<CR>
+noremap ,gf :action IntroduceField<CR>
+noremap ,gp :action IntroduceParameter<CR>
+noremap ,gv :action IntroduceVariable<CR>
+noremap ,gg :action GenerateGetter<CR>
+noremap ,gs :action GenerateSetter<CR>
+noremap ,ga :action GenerateGetterAndSetter<CR>
+
+" Mnemonic 'vcs'
+noremap ,vc :action CheckinProject<CR>
+noremap ,vu :action Vcs.UpdateProject<CR>
+
+" Common
 noremap ,b :action ToggleLineBreakpoint<CR>
-noremap ,c :action CheckinProject<CR>
 noremap ,h <C-w>s
 noremap ,i :action Inline<CR>
 noremap ,k :q<CR>
