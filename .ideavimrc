@@ -1,3 +1,4 @@
+set laststatus=2
 set hlsearch
 set ignorecase
 set incsearch
@@ -9,7 +10,8 @@ nnoremap ,ev :e ~/.ideavimrc<CR>
 nnoremap ,sv :source ~/.ideavimrc<CR>
 
 map ,y "+y
-map ,p "*p
+map ,p "*p==
+map gU gUiw
 noremap Y y$
 nnoremap ' `
 nnoremap ` '
@@ -17,11 +19,11 @@ nnoremap n nzz
 nnoremap N Nzz
 nnoremap vv ggVG
 nnoremap U :action Vcs.RollbackChangedLines<CR>
-nnoremap zj m'o<Esc>`'
-nnoremap zk m'O<Esc>`'
 
-inoremap jj <Esc>
-inoremap kk <Esc>
+nmap zj m'o<Esc>`'
+nmap zk m'O<Esc>`'
+nmap zi :action EditorIncreaseFontSize<CR>
+nmap zo :action EditorDecreaseFontSize<CR>
 
 vnoremap < <gv
 vnoremap > >gv
@@ -42,10 +44,7 @@ noremap <C-S-l> gt
 noremap <C-S-j> :action NextIdentifierReloaded<CR>
 noremap <C-S-k> :action PreviousIdentifierReloaded<CR>
 
-" nerd commenter?
-"nnoremap ,cl :action CommentByLineComment<CR>
-" not working with selection
-"nnoremap ,cb :action CommentByBlockComment<CR>
+nmap gcc :action CommentByLineComment<CR>
 
 " unite.vim (lists)
 noremap <Space>b :action Switcher<CR>
@@ -63,12 +62,16 @@ nmap gM :action ShowBookmarks<CR>
 nmap gn :action GotoNextBookmark<CR>
 nmap gp :action GotoPreviousBookmark<CR>
 
+noremap gh :action HideAllWindows<CR>
+
 " Mnemonic: 'to'
 nnoremap td :action GotoTypeDeclaration<CR>
 nnoremap ti :action GotoImplementation<CR>
 nnoremap ts :action GotoSuperMethod<CR>
 nnoremap tt :action GotoTest<CR>
 nnoremap tu :action ShowUsages<CR>
+nnoremap te :action GotoNextError<CR>
+nnoremap tc gg<Bar>/ class<CR>:nohlsearch<CR>zz
 
 "noremap <C-j> <C-W>j
 "noremap <C-k> <C-W>k
@@ -76,23 +79,24 @@ nnoremap tu :action ShowUsages<CR>
 "noremap <C-h> <C-W>h
 
 " Additional <ESC> required
-"noremap / :action Find<CR>
-"noremap n :action FindNext<CR>
-"noremap N :action FindPrevious<CR>
+" noremap / :action Find<CR>
+" noremap n :action FindNext<CR>
+" noremap N :action FindPrevious<CR>
 
 " native back/forward is less buggy, <C-t> still useful
 noremap <C-o> :action Back<CR>
 noremap <C-i> :action Forward<CR>
 
 " Mnemonic 'extract'
-" not working with selection
-noremap ,em :action ExtractMethod<CR>
+nnoremap ,em :action ExtractMethod<CR>
+vnoremap ,em :action ExtractMethod<CR>
 noremap ,ec :action ExtractClass<CR>
-
-" Wait for mapleader
 
 nnoremap ,nd :action NewDir<CR>
 nnoremap ,nc :action NewClass<CR>
+
+nnoremap ,q' ciw''<Esc>P
+nnoremap ,q" ciw""<Esc>P
 
 " Mnemonic 'generate'
 noremap ,gc :action IntroduceConstant<CR>
@@ -103,11 +107,14 @@ noremap ,gg :action GenerateGetter<CR>
 noremap ,gs :action GenerateSetter<CR>
 noremap ,ga :action GenerateGetterAndSetter<CR>
 
-" Mnemonic 'vcs'
-noremap ,vc :action CheckinProject<CR>
-noremap ,vu :action Vcs.UpdateProject<CR>
+" EasyMotion (AceJump plugin)
+nmap ,, :action AceJumpAction<cr>
+nmap RR :action Refactorings.QuickListPopupAction<CR>
 
 " Common
+noremap ,a :action Annotate<CR>
+noremap ,c :action CheckinProject<CR>
+noremap ,u :action Vcs.UpdateProject<CR>
 noremap ,b :action ToggleLineBreakpoint<CR>
 noremap ,h <C-w>s
 noremap ,i :action Inline<CR>
@@ -115,5 +122,4 @@ noremap ,k :q<CR>
 noremap ,m :action Move<CR>
 noremap ,r :action RenameElement<CR>
 noremap ,v <C-w>v
-noremap ,, :action HideAllWindows<CR>
-noremap <ESC><ESC> :nohlsearch<CR>
+noremap ,/ :nohlsearch<CR>

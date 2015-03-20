@@ -19,16 +19,14 @@ Plugin 'Shougo/neocomplete.vim'
 " status line
 Plugin 'bling/vim-airline'
 " snippets stuff
-Plugin 'SirVer/ultisnips'
+"Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
 " python autocomplete
 Plugin 'davidhalter/jedi-vim'
 " Tagbar (require ctags)
 " Plugin 'majutsushi/tagbar'
-" surround plugin
-Plugin 'tpope/vim-surround'
 " comment plugin
-Plugin 'scrooloose/nerdcommenter'
+"Plugin 'scrooloose/nerdcommenter'
 " easy motion
 Plugin 'Lokaltog/vim-easymotion'
 " auto pairs - [], {}, '' etc.
@@ -43,11 +41,14 @@ Plugin 'Shougo/neomru.vim'
 Plugin 'osyo-manga/unite-quickfix'
 " GIT plugin
 Plugin 'tpope/vim-fugitive'
-Plugin 'wting/rust.vim'
 Plugin 'Shougo/javacomplete'
-" rust completion (rust version conflict)
+" Rust
+Plugin 'rust-lang/rust.vim'
 Plugin 'phildawes/racer'
 Plugin 'Yggdroot/indentLine'
+Plugin 'tpope/vim-repeat'
+Plugin 'tpope/vim-commentary'
+Plugin 'tpope/vim-surround'
 
 Plugin 'jplaut/vim-arduino-ino'
 
@@ -55,7 +56,7 @@ Plugin 'jplaut/vim-arduino-ino'
 call vundle#end() " required
 " }}}
 
-filetype plugin indent on
+"filetype plugin indent on
 filetype on
 
 set autoread
@@ -94,8 +95,6 @@ set smartcase
 set ignorecase
 " }}}
 
-nmap <Leader>w :update<CR>
-
 if has('persistent_undo')
     set undodir=~/.vim/undo,~/tmp,/tmp
     set undofile
@@ -107,7 +106,7 @@ let mapleader=","
 let maplocalleader="\\"
 
 nnoremap <Leader>y "+y
-nnoremap <Leader>p "*p<<
+nnoremap <Leader>p "*p==
 nnoremap <Leader>P :set invpaste<CR>
 nnoremap <Leader>qq :qa!<CR>
 nnoremap <Leader>/ :nohlsearch<CR>
@@ -168,20 +167,30 @@ let g:neomru#file_mru_path = $HOME.'/.vim/tmp/neomru/file'
 let g:neomru#directory_mru_path = $HOME.'/.vim/tmp/neomru/directory'
 
 " Airline plugin config {{{
+
+if !exists('g:airline_symbols')
+    let g:airline_symbols = {}
+endif
+
+" old vim-powerline symbols
+let g:airline_left_sep = '⮀'
+let g:airline_left_alt_sep = '⮁'
+let g:airline_right_sep = '⮂'
+let g:airline_right_alt_sep = '⮃'
+let g:airline_symbols.branch = '⭠'
+let g:airline_symbols.readonly = '⭤'
+let g:airline_symbols.linenr = '⭡'
+
 let g:airline_theme='powerlineish'
-let g:airline_enable_branch = 1
-let g:airline_enable_syntastic = 1
-let g:airline_detect_whitespace = 1
+let g:airline#extensions#syntastic#enabled = 1
+let g:airline#extensions#branch#enabled = 1
+let g:airline#extensions#whitespace#enabled = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#fnamemod = ':t'
-let g:airline#extensions#hunks#non_zero_only = 1
 " }}}
 
 let g:syntastic_error_symbol = '✗'
 let g:syntastic_warning_symbol = '⚠'
-
-inoremap jj <ESC>
-inoremap kk <ESC>
 
 vmap <tab> >gv
 vmap <s-tab> <gv
@@ -272,6 +281,7 @@ call unite#filters#sorter_default#use(['sorter_rank'])
 autocmd MyAutoCmd FileType unite call s:unite_my_settings()
 
 function! s:unite_my_settings()
+    nmap <buffer> <ESC> <Plug>(unite_exit)
     imap <buffer>  jj        <Plug>(unite_insert_leave)
     imap <buffer>  <Tab>     <Plug>(unite_complete)
     nnoremap <silent><buffer><expr>p unite#do_action('persist_open')
@@ -279,15 +289,18 @@ endfunction
 
 let g:unite_data_directory = $HOME.'/.vim/tmp/unite'
 let g:unite_winheight = 10
-let g:unite_candidate_icon="▷"
+let g:unite_candidate_icon="▸ "
 let g:unite_source_history_yank_enable = 1
 
 " Default configuration.
 let default_context = {
-      \'prompt':'▷',
+      \'prompt':'▸ ',
       \ 'vertical' : 0,
       \ }
 call unite#custom#profile('default', 'context', default_context)
+
+nnoremap <silent>gm :<C-u>UniteBookmarkAdd<CR>
+nnoremap <silent>gM :<C-u>Unite -silent -buffer-name=bookmarked bookmark<CR>
 
 noremap [unite] <Nop>
 map     <Space> [unite]
@@ -296,11 +309,12 @@ nnoremap <silent>[unite]gg :exe 'silent Ggrep -i '.input("Pattern: ")<Bar> Unite
 nnoremap <silent>[unite]gl :exe 'silent Glog'<BAR> Unite -toggle quickfix<CR>
 nnoremap <silent>[unite]gf :<C-u>UniteWithProjectDir -silent -toggle file_rec/git<CR>
 
-nnoremap <silent>[unite]b :<C-u>Unite -buffer-name=buffers -silent buffer<CR>
+nnoremap <silent>[unite]b :<C-u>Unite -buffer-name=buffers/bookmarks -silent buffer<CR>
 nnoremap <silent>[unite]f :<C-u>UniteWithProjectDir -silent -buffer-name=files file_rec/async:!<cr>
 nnoremap <silent>[unite]F :<C-u>UniteWithBufferDir -silent -buffer-name=currdir file<CR>
+nnoremap <silent>[unite]c :<C-u>UniteWithProjectDir -silent -buffer-name=classes -ignorecase -input=**.java file_rec/async:!<CR>
 nnoremap <silent>[unite]m :<C-u>Unite -silent -buffer-name=mru file_mru<CR>
-nnoremap <silent>[unite]l :<C-u>Unite -silent -no-split -auto-preview line<CR>
+nnoremap <silent>[unite]l :<C-u>Unite -silent -no-split -auto-preview -start-insert line<CR>
 nnoremap <silent>[unite]g :<C-u>Unite -silent -buffer-name=grep -no-quit grep<CR>
 nnoremap <silent>[unite]w :<C-u>UniteWithCursorWord -silent -no-quit grep<CR>
 nnoremap <silent>[unite]y :<C-u>Unite -silent -no-quit history/yank<CR>
