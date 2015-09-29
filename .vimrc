@@ -3,6 +3,8 @@ filetype off
 
 " Vundle Plugins {{{
 
+" No NerdTree, as ranger is used
+
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
@@ -11,6 +13,7 @@ call vundle#begin()
 Plugin 'gmarik/Vundle.vim'
 " my preffered colorscheme
 Plugin 'michalbachowski/vim-wombat256mod'
+Plugin 'w0ng/vim-hybrid'
 " golang for vim
 Plugin 'fatih/vim-go'
 " keyword completion system by maintaining a cache of keywords in the current buffer 
@@ -19,14 +22,14 @@ Plugin 'Shougo/neocomplete.vim'
 " status line
 Plugin 'bling/vim-airline'
 " snippets stuff
-"Plugin 'SirVer/ultisnips'
+Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
-" python autocomplete
+" python autocomplete + rename + goto definition
 Plugin 'davidhalter/jedi-vim'
 " Tagbar (require ctags)
 " Plugin 'majutsushi/tagbar'
 " comment plugin
-"Plugin 'scrooloose/nerdcommenter'
+Plugin 'scrooloose/nerdcommenter'
 " easy motion
 Plugin 'Lokaltog/vim-easymotion'
 " auto pairs - [], {}, '' etc.
@@ -41,15 +44,20 @@ Plugin 'Shougo/neomru.vim'
 Plugin 'osyo-manga/unite-quickfix'
 " GIT plugin
 Plugin 'tpope/vim-fugitive'
-Plugin 'Shougo/javacomplete'
 " Rust
 Plugin 'rust-lang/rust.vim'
 Plugin 'phildawes/racer'
+" Diff
+Plugin 'Shougo/javacomplete'
 Plugin 'Yggdroot/indentLine'
 Plugin 'tpope/vim-repeat'
 Plugin 'tpope/vim-commentary'
 Plugin 'tpope/vim-surround'
-
+" settings togglin + fast navigation (tabs, filse)
+Plugin 'tpope/vim-unimpaired'
+" Check syntax on :w ([l, [L for error traversing)
+Plugin 'scrooloose/syntastic'
+Plugin 'vim-scripts/Hardy'
 Plugin 'jplaut/vim-arduino-ino'
 
 " All of your Plugins must be added before the following line
@@ -89,6 +97,7 @@ colorscheme wombat256mod
 
 " VIM Search {{{
 set incsearch
+" show the matching part of the pair for [] {} and ()
 set showmatch
 set hlsearch
 set smartcase
@@ -109,7 +118,6 @@ nnoremap <Leader>y "+y
 nnoremap <Leader>p "*p==
 nnoremap <Leader>P :set invpaste<CR>
 nnoremap <Leader>qq :qa!<CR>
-nnoremap <Leader>/ :nohlsearch<CR>
 
 " Make the Y behavior similar to D & C
 nnoremap Y y$
@@ -143,11 +151,23 @@ augroup END
 augroup python
     autocmd!
     autocmd FileType python setlocal omnifunc=jedi#completions
-augroup EDN
+    autocmd FileType python setlocal et sta sw=4 sts=4
+    autocmd FileType python setlocal foldmethod=indent smartindent nocindent
+    autocmd FileType python nnoremap <buffer> <F9> :exec '!python' shellescape(@%, 1)<cr>
+augroup END
 " }}}
 
-let g:jedi#completions_enabled = 0 
-let g:jedi#auto_vim_configuration = 0
+let g:jedi#auto_initialization = 1
+let g:jedi#popup_on_dot = 1
+let g:jedi#popup_select_first = 1
+let g:jedi#goto_assignments_command = "<leader>g"
+let g:jedi#goto_definitions_command = "<leader>d"
+let g:jedi#documentation_command = "K"
+let g:jedi#usages_command = "<leader>n"
+let g:jedi#completions_command = "<C-Space>"
+let g:jedi#rename_command = "<leader>r"
+" 1 - in popup, 2 in command line
+let g:jedi#show_call_signatures = "2"
 
 if !exists('g:neocomplete#force_omni_input_patterns')
     let g:neocomplete#force_omni_input_patterns = {}
@@ -189,8 +209,21 @@ let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#fnamemod = ':t'
 " }}}
 
-let g:syntastic_error_symbol = '✗'
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+" pip install flake8
+let g:syntastic_python_checkers = ['flake8']
+
+let g:syntastic_error_symbol  = '⚡'
 let g:syntastic_warning_symbol = '⚠'
+let g:syntastic_style_error_symbol  = 'SE'
+let g:syntastic_style_warning_symbol = 'SW'
 
 vmap <tab> >gv
 vmap <s-tab> <gv
@@ -205,7 +238,7 @@ map <C-l> <C-W>l
 map <C-h> <C-W>h
 map <C-S-h> :bprevious<CR>
 map <C-S-l> :bnext<CR>
-map va ggVG
+map vv ggVG
 nnoremap <Leader>v <C-w>v<C-w>w
 nnoremap <Leader>h <C-w>s<C-w>w
 
@@ -377,15 +410,6 @@ inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
 inoremap <expr><C-y>  neocomplete#close_popup()
 inoremap <expr><C-e>  neocomplete#cancel_popup()
 
-nnoremap <up> <nop>
-nnoremap <down> <nop>
-nnoremap <left> <nop>
-nnoremap <right> <nop>
-inoremap <up> <nop>
-inoremap <down> <nop>
-inoremap <left> <nop>
-inoremap <right> <nop>
-
 inoremap <expr><C-space> neocomplete#start_manual_complete()
 imap <C-@> <C-Space>
 
@@ -396,3 +420,5 @@ augroup filetype_vim
     autocmd FileType vim set foldmethod=marker
 augroup END
 " }}}
+
+nmap <leader><leader> <Plug>(easymotion-s)

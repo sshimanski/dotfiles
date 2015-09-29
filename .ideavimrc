@@ -6,11 +6,19 @@ set showcmd
 set showmode
 set smartcase
 
-nnoremap ,ev :e ~/.ideavimrc<CR>
-nnoremap ,sv :source ~/.ideavimrc<CR>
+let mapleader=","
 
-map ,y "+y
-map ,p "*p==
+nnoremap [<Space> O<ESC>j 0 w
+nnoremap ]<Space> o<ESC>k 0 w
+
+nnoremap <Space> <nop>
+nnoremap <leader>ev :e ~/.ideavimrc<CR>
+nnoremap <leader>sv :source ~/.ideavimrc<CR>
+
+map <leader>y "+y
+map <leader>p "*p==
+map <leader>P a<space><esc>p
+
 map gU gUiw
 noremap Y y$
 nnoremap ' `
@@ -20,10 +28,8 @@ nnoremap N Nzz
 nnoremap vv ggVG
 nnoremap U :action Vcs.RollbackChangedLines<CR>
 
-nmap zj m'o<Esc>`'
-nmap zk m'O<Esc>`'
-nmap zi :action EditorIncreaseFontSize<CR>
-nmap zo :action EditorDecreaseFontSize<CR>
+nmap z+ :action EditorIncreaseFontSize<CR>
+nmap z- :action EditorDecreaseFontSize<CR>
 
 vnoremap < <gv
 vnoremap > >gv
@@ -32,11 +38,15 @@ cnoremap <C-h> <BS>
 
 noremap <A-j> :action MethodDown<CR>
 noremap <A-k> :action MethodUp<CR>
+noremap ]m :action MethodDown<CR>
+noremap [m :action MethodUp<CR>
+noremap ]l :action GotoNextError<CR>:action ShowErrorDescription<CR>
+noremap [l :action GotoPreviousError<CR>:action ShowErrorDescription<CR>
 
 noremap <S-A-j> :action MoveStatementDown<CR>
 noremap <S-A-k> :action MoveStatementUp<CR>
-noremap <C-S-o> :action OverrideMethods<CR>
-noremap <C-S-i> :action ImplementMethods<CR>
+xnoremap <C-S-o> :action OverrideMethods<CR>
+xnoremap <C-S-i> :action ImplementMethods<CR>
 noremap <C-S-h> gT
 noremap <C-S-l> gt
 " Identifier Highlighter Reloaded plugin mapping
@@ -55,6 +65,7 @@ noremap <Space>g :action FindInPath<CR>
 " unite outline
 noremap <Space>o :action FileStructurePopup<CR>
 noremap <Space>u :action FindUsages<CR>
+noremap <Space>w :action SelectIn<CR>
 
 " Do I really need this?
 nmap gm :action ToggleBookmark<CR>
@@ -71,7 +82,7 @@ nnoremap ts :action GotoSuperMethod<CR>
 nnoremap tt :action GotoTest<CR>
 nnoremap tu :action ShowUsages<CR>
 nnoremap te :action GotoNextError<CR>
-nnoremap tc gg<Bar>/ class<CR>:nohlsearch<CR>zz
+nnoremap tc gg<Bar>:action MethodDown<CR>
 
 "noremap <C-j> <C-W>j
 "noremap <C-k> <C-W>k
@@ -83,43 +94,44 @@ nnoremap tc gg<Bar>/ class<CR>:nohlsearch<CR>zz
 " noremap n :action FindNext<CR>
 " noremap N :action FindPrevious<CR>
 
-" native back/forward is less buggy, <C-t> still useful
+" native back/forward is less buggy<leader> <C-t> still useful
 noremap <C-o> :action Back<CR>
 noremap <C-i> :action Forward<CR>
 
 " Mnemonic 'extract'
-nnoremap ,em :action ExtractMethod<CR>
-vnoremap ,em :action ExtractMethod<CR>
-noremap ,ec :action ExtractClass<CR>
+nnoremap <leader>em :action ExtractMethod<CR>
+vnoremap <leader>em :action ExtractMethod<CR>
+noremap <leader>ec :action ExtractClass<CR>
 
-nnoremap ,nd :action NewDir<CR>
-nnoremap ,nc :action NewClass<CR>
+nnoremap <leader>nd :action NewDir<CR>
+nnoremap <leader>nc :action NewClass<CR>
 
-nnoremap ,q' ciw''<Esc>P
-nnoremap ,q" ciw""<Esc>P
+nnoremap <leader>q' ciw''<Esc>P
+nnoremap <leader>q" ciw""<Esc>P
 
 " Mnemonic 'generate'
-noremap ,gc :action IntroduceConstant<CR>
-noremap ,gf :action IntroduceField<CR>
-noremap ,gp :action IntroduceParameter<CR>
-noremap ,gv :action IntroduceVariable<CR>
-noremap ,gg :action GenerateGetter<CR>
-noremap ,gs :action GenerateSetter<CR>
-noremap ,ga :action GenerateGetterAndSetter<CR>
+noremap <leader>gc :action IntroduceConstant<CR>
+noremap <leader>gf :action IntroduceField<CR>
+noremap <leader>gp :action IntroduceParameter<CR>
+noremap <leader>gv :action IntroduceVariable<CR>
+noremap <leader>gg :action GenerateGetter<CR>
+noremap <leader>gs :action GenerateSetter<CR>
+noremap <leader>ga :action GenerateGetterAndSetter<CR>
 
 " EasyMotion (AceJump plugin)
-nmap ,, :action AceJumpAction<cr>
+nmap <leader><leader> :action AceJumpAction<cr>
 nmap RR :action Refactorings.QuickListPopupAction<CR>
 
 " Common
-noremap ,a :action Annotate<CR>
-noremap ,c :action CheckinProject<CR>
-noremap ,u :action Vcs.UpdateProject<CR>
-noremap ,b :action ToggleLineBreakpoint<CR>
-noremap ,h <C-w>s
-noremap ,i :action Inline<CR>
-noremap ,k :q<CR>
-noremap ,m :action Move<CR>
-noremap ,r :action RenameElement<CR>
-noremap ,v <C-w>v
-noremap ,/ :nohlsearch<CR>
+noremap <leader>a :action Annotate<CR>
+noremap <leader>c :action CheckinProject<CR>
+noremap <leader>u :action Vcs.UpdateProject<CR>
+noremap <leader>b :action ToggleLineBreakpoint<CR>
+noremap <leader>h <C-w>s
+" Fold variable, method
+noremap <leader>i :action Inline<CR>
+noremap <leader>k :q<CR>
+noremap <leader>m :action Move<CR>
+noremap <leader>r :action RenameElement<CR>
+noremap <leader>v <C-w>v
+noremap <leader>/ :nohlsearch<CR>
