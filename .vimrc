@@ -53,7 +53,7 @@ Plugin 'Yggdroot/indentLine'
 Plugin 'tpope/vim-repeat'
 Plugin 'tpope/vim-commentary'
 Plugin 'tpope/vim-surround'
-" settings togglin + fast navigation (tabs, filse)
+" settings toggling + fast navigation (tabs, filse)
 Plugin 'tpope/vim-unimpaired'
 " Check syntax on :w ([l, [L for error traversing)
 Plugin 'scrooloose/syntastic'
@@ -65,11 +65,11 @@ call vundle#end() " required
 " }}}
 
 "filetype plugin indent on
+"
 filetype on
 
 set autoread
 set cursorline
-"set cursorcolumn
 set encoding=utf-8  " Necessary to show Unicode glyphs                   
 set expandtab
 set hidden
@@ -110,7 +110,7 @@ if has('persistent_undo')
 endif
 
 syntax on
-"
+
 let mapleader=","
 let maplocalleader="\\"
 
@@ -155,7 +155,6 @@ augroup python
     autocmd FileType python setlocal foldmethod=indent smartindent nocindent
     autocmd FileType python nnoremap <buffer> <F9> :exec '!python' shellescape(@%, 1)<cr>
 augroup END
-" }}}
 
 let g:jedi#auto_initialization = 1
 let g:jedi#popup_on_dot = 1
@@ -168,6 +167,8 @@ let g:jedi#completions_command = "<C-Space>"
 let g:jedi#rename_command = "<leader>r"
 " 1 - in popup, 2 in command line
 let g:jedi#show_call_signatures = "2"
+
+" }}}
 
 if !exists('g:neocomplete#force_omni_input_patterns')
     let g:neocomplete#force_omni_input_patterns = {}
@@ -209,13 +210,14 @@ let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#fnamemod = ':t'
 " }}}
 
+" Syntastic configuration {{{
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
 
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_open = 0
 let g:syntastic_check_on_wq = 0
 " pip install flake8
 let g:syntastic_python_checkers = ['flake8']
@@ -224,6 +226,7 @@ let g:syntastic_error_symbol  = '⚡'
 let g:syntastic_warning_symbol = '⚠'
 let g:syntastic_style_error_symbol  = 'SE'
 let g:syntastic_style_warning_symbol = 'SW'
+" }}}
 
 vmap <tab> >gv
 vmap <s-tab> <gv
@@ -259,9 +262,7 @@ let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 let g:go_highlight_functions = 1
 let g:go_highlight_methods = 1
 let g:go_highlight_structs = 1
-" }}}
 
-" Golang config {{{
 augroup golang
     autocmd!
     autocmd FileType go nnoremap <Leader>s <Plug>(go-implements)
@@ -284,10 +285,9 @@ augroup END
 " Rust autocmplete
 let g:racer_cmd = "/home/sshimansky/work/apps/rust/racer/bin/racer"
 let $RUST_SRC_PATH="/home/sshimansky/work/apps/rust/rust-nightly-i686-unknown-linux-gnu"
-
 " }}}
 
-" ranger file manager
+" ranger file manager {{{
 fun! RangerChooser()
     exec "silent !ranger --choosefile=/tmp/chosenfile " . expand("%:p:h")
     if filereadable('/tmp/chosenfile')
@@ -297,6 +297,7 @@ fun! RangerChooser()
     redraw!
 endfun
 map <Leader>x :call RangerChooser()<CR>
+" }}}
 
 augroup MyAutoCmd
     autocmd!
@@ -391,7 +392,6 @@ let g:java_highlight_all=1
 let g:java_highlight_debug=1
 let g:java_allow_cpp_keywords=1
 let g:java_space_errors=1
-
 
 " Plugin key-mappings.
 inoremap <expr><C-g>     neocomplete#undo_completion()

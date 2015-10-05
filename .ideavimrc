@@ -36,12 +36,18 @@ vnoremap > >gv
 
 cnoremap <C-h> <BS>
 
-noremap <A-j> :action MethodDown<CR>
-noremap <A-k> :action MethodUp<CR>
+" unimpaired legacy
 noremap ]m :action MethodDown<CR>
 noremap [m :action MethodUp<CR>
 noremap ]l :action GotoNextError<CR>:action ShowErrorDescription<CR>
 noremap [l :action GotoPreviousError<CR>:action ShowErrorDescription<CR>
+noremap [b gT
+noremap ]b gt
+" camelcase words: ] - forward, [ - back
+noremap [w [b
+noremap ]w [w
+noremap [c :action VcsShowPrevChangeMarker<CR>
+noremap ]c :action VcsShowNextChangeMarker<CR>
 
 noremap <S-A-j> :action MoveStatementDown<CR>
 noremap <S-A-k> :action MoveStatementUp<CR>
