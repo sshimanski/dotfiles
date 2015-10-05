@@ -1,0 +1,33 @@
+set localconfig
+set configpath = '~/.cvimrc'
+
+set cncpcompletion
+set autohidecursor
+let completionengines = ["google", "amazon", "imdb", "dogpile"]
+let highlight = "#ffff00"
+map <C-o> goBack
+map <C-i> goForward
+map ]b nextTab
+map [b previousTab
+map <Space>b :buffer<Space>
+map gM :bookmarks<Space>
+map gS :viewsource&<CR>
+
+map <C-n> nextCompletionResult
+imap <C-n> nextCompletionResult
+
+let mapleader = ","
+map <leader>ev :settings<CR>
+map <leader><leader> f
+map <leader>k x
+
+site '*://*.inoreader.com/*' {
+      unmap j
+      unmap k
+}
+
+let qmark m = ["http://www.radiotunes.com/hit70s"]
+let qmark h = ["https://github.com/1995eaton/chromium-vim"]
+let qmark e = ["https://translate.google.com/translate?sl=en&hl=ru"]
+let qmark r = ["https://translate.google.com/translate?sl=ru&hl=en"]
+let qmark b = ["http://www.bcse.by/ru/currencymarket/rates/0"]
