@@ -1,5 +1,5 @@
-set localconfig
 set configpath = '~/.cvimrc'
+let localconfig
 
 set cncpcompletion
 set autohidecursor
@@ -26,7 +26,7 @@ site '*://*.inoreader.com/*' {
       unmap k
 }
 
-let qmark m = ["http://www.radiotunes.com/hit70s"]
+let qmark m = ["http://tunein.com/radio/247-A-STATE-OF-TRANCE---ARMIN-VAN-BUUREN-s142421/#"]
 let qmark h = ["https://github.com/1995eaton/chromium-vim"]
 let qmark e = ["https://translate.google.com/translate?sl=en&hl=ru"]
 let qmark r = ["https://translate.google.com/translate?sl=ru&hl=en"]
