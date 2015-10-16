@@ -16,7 +16,6 @@ map <leader>y "+y
 map <leader>p "*p==
 map <leader>P a<space><esc>p
 
-map gU gUiw
 noremap Y y$
 nnoremap ' `
 nnoremap ` '
@@ -31,8 +30,6 @@ nmap z- :action EditorDecreaseFontSize<CR>
 vnoremap < <gv
 vnoremap > >gv
 
-cnoremap <C-h> <BS>
-
 " unimpaired legacy
 noremap ]m :action MethodDown<CR>
 noremap [m :action MethodUp<CR>
@@ -40,7 +37,7 @@ noremap ]l :action GotoNextError<CR>:action ShowErrorDescription<CR>
 noremap [l :action GotoPreviousError<CR>:action ShowErrorDescription<CR>
 noremap [b gT
 noremap ]b gt
-" camelcase words: ] - forward, [ - back
+" camelcase words: ] - forward, [ - backward
 noremap [w [b
 noremap ]w [w
 noremap [c :action VcsShowPrevChangeMarker<CR>
