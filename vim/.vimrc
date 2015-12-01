@@ -4,7 +4,7 @@ filetype off
 " Vundle Plugins {{{
 
 " No NerdTree, as ranger is used
-
+ 
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
@@ -12,8 +12,8 @@ call vundle#begin()
 " let Vundle manage Vundle, required
 Plugin 'gmarik/Vundle.vim'
 " my preffered colorscheme
-Plugin 'michalbachowski/vim-wombat256mod'
-Plugin 'w0ng/vim-hybrid'
+Plugin 'sheerun/vim-wombat-scheme'
+"Plugin 'dsolstad/vim-wombat256i/'
 " golang for vim
 Plugin 'fatih/vim-go'
 " keyword completion system by maintaining a cache of keywords in the current buffer 
@@ -92,7 +92,7 @@ set wildmenu
 " VIM Colors {{{
 set t_Co=256
 set background=dark
-colorscheme wombat256mod
+colorscheme wombat
 " }}}
 
 " VIM Search {{{
@@ -135,6 +135,7 @@ nnoremap <Leader>sv :source $MYVIMRC<cr>
 
 let g:snips_author="Shimanski Sergei"
 let g:snips_email="shimanski.sergei@gmail.com"
+let g:snips_github="https://github.com/sshimanski"
 
 au BufRead,BufNewFile *.pde set filetype=arduino
 au BufRead,BufNewFile *.ino set filetype=arduino
@@ -152,7 +153,7 @@ augroup python
     autocmd!
     autocmd FileType python setlocal omnifunc=jedi#completions
     autocmd FileType python setlocal et sta sw=4 sts=4
-    autocmd FileType python setlocal foldmethod=indent smartindent nocindent
+    autocmd FileType python setlocal foldmethod=syntax smartindent nocindent
     autocmd FileType python nnoremap <buffer> <F9> :exec '!python' shellescape(@%, 1)<cr>
 augroup END
 
@@ -167,7 +168,6 @@ let g:jedi#completions_command = "<C-Space>"
 let g:jedi#rename_command = "<leader>r"
 " 1 - in popup, 2 in command line
 let g:jedi#show_call_signatures = "2"
-
 " }}}
 
 if !exists('g:neocomplete#force_omni_input_patterns')
@@ -193,14 +193,25 @@ if !exists('g:airline_symbols')
     let g:airline_symbols = {}
 endif
 
+ " unicode symbols
+let g:airline_left_sep = '»'
+let g:airline_left_sep = '▶'
+let g:airline_right_sep = '«'
+let g:airline_right_sep = '◀'
+let g:airline_symbols.linenr = '␊'
+let g:airline_symbols.linenr = '␤'
+let g:airline_symbols.branch = '⎇'
+let g:airline_symbols.paste = 'ρ'
+let g:airline_symbols.paste = 'Þ'
+let g:airline_symbols.whitespace = 'Ξ'
 " old vim-powerline symbols
-let g:airline_left_sep = '⮀'
-let g:airline_left_alt_sep = '⮁'
-let g:airline_right_sep = '⮂'
-let g:airline_right_alt_sep = '⮃'
-let g:airline_symbols.branch = '⭠'
-let g:airline_symbols.readonly = '⭤'
-let g:airline_symbols.linenr = '⭡'
+"let g:airline_left_sep = '⮀'
+"let g:airline_left_alt_sep = '⮁'
+"let g:airline_right_sep = '⮂'
+"let g:airline_right_alt_sep = '⮃'
+"let g:airline_symbols.branch = '⭠'
+"let g:airline_symbols.readonly = '⭤'
+"let g:airline_symbols.linenr = '⭡'
 
 let g:airline_theme='powerlineish'
 let g:airline#extensions#syntastic#enabled = 1
@@ -239,8 +250,10 @@ map <C-j> <C-W>j
 map <C-k> <C-W>k
 map <C-l> <C-W>l
 map <C-h> <C-W>h
+" ]b, [b
 map <C-S-h> :bprevious<CR>
 map <C-S-l> :bnext<CR>
+
 map vv ggVG
 nnoremap <Leader>v <C-w>v<C-w>w
 nnoremap <Leader>h <C-w>s<C-w>w
@@ -257,6 +270,7 @@ let g:auto_save = 1  " enable AutoSave on Vim startup
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+let g:UltiSnipsSnippetsDir=$HOME."/.vim/UltiSnips"
 
 " vim-go plugin config {{{
 let g:go_highlight_functions = 1
@@ -283,8 +297,8 @@ augroup rustlang
 augroup END
 
 " Rust autocmplete
-let g:racer_cmd = "/home/sshimansky/work/apps/rust/racer/bin/racer"
-let $RUST_SRC_PATH="/home/sshimansky/work/apps/rust/rust-nightly-i686-unknown-linux-gnu"
+let g:racer_cmd = $HOME."/work/apps/rust/racer/bin/racer"
+let $RUST_SRC_PATH=$HOME."/work/apps/rust/rust-nightly-i686-unknown-linux-gnu"
 " }}}
 
 " ranger file manager {{{
@@ -343,7 +357,7 @@ nnoremap <silent>[unite]gg :exe 'silent Ggrep -i '.input("Pattern: ")<Bar> Unite
 nnoremap <silent>[unite]gl :exe 'silent Glog'<BAR> Unite -toggle quickfix<CR>
 nnoremap <silent>[unite]gf :<C-u>UniteWithProjectDir -silent -toggle file_rec/git<CR>
 
-nnoremap <silent>[unite]b :<C-u>Unite -buffer-name=buffers/bookmarks -silent buffer<CR>
+nnoremap <silent>[unite]b :<C-u>Unite -buffer-name=buffers/bookmarks -silent -start-insert buffer<CR>
 nnoremap <silent>[unite]f :<C-u>UniteWithProjectDir -silent -buffer-name=files file_rec/async:!<cr>
 nnoremap <silent>[unite]F :<C-u>UniteWithBufferDir -silent -buffer-name=currdir file<CR>
 nnoremap <silent>[unite]c :<C-u>UniteWithProjectDir -silent -buffer-name=classes -ignorecase -input=**.java file_rec/async:!<CR>
@@ -352,7 +366,7 @@ nnoremap <silent>[unite]l :<C-u>Unite -silent -no-split -auto-preview -start-ins
 nnoremap <silent>[unite]g :<C-u>Unite -silent -buffer-name=grep -no-quit grep<CR>
 nnoremap <silent>[unite]w :<C-u>UniteWithCursorWord -silent -no-quit grep<CR>
 nnoremap <silent>[unite]y :<C-u>Unite -silent -no-quit history/yank<CR>
-nnoremap <silent>[unite]o :<C-u>Unite -toggle -silent -vertical -buffer-name=outline -winwidth=40 -direction=botright outline<CR>
+nnoremap <silent>[unite]o :<C-u>Unite -toggle -silent -vertical -start-insert -buffer-name=outline -winwidth=40 -direction=botright outline<CR>
 nnoremap <silent>[unite]r :<C-u>UniteResume<CR>
 nnoremap <silent>[unite]q :<C-u>Unite -toggle quickfix<CR>
 
