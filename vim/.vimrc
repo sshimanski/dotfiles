@@ -128,6 +128,7 @@ nnoremap zj m`o<Esc>``
 nnoremap zk m`O<Esc>``
 nnoremap gu gUiw`]
 
+nnoremap <Leader>eU :UltiSnipsEdit<cr>
 " Manage .vimrc file {{{
 nnoremap <Leader>ev :e $MYVIMRC<cr>
 nnoremap <Leader>sv :source $MYVIMRC<cr>

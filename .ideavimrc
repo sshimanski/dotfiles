@@ -61,14 +61,16 @@ nmap gcc :action CommentByLineComment<CR>
 vmap gcc :action CommentByBlockComment<CR>
 
 " unite.vim (lists)
-noremap <Space>b :action Switcher<CR>
-noremap <Space>m :action RecentFiles<CR>
+" noremap <Space>b :action Switcher<CR>
+noremap <Space>b :action RecentFiles<CR>
 noremap <Space>c :action GotoClass<CR>
 noremap <Space>f :action GotoFile<CR>
 noremap <Space>g :action FindInPath<CR>
 noremap <Space>s :action GotoSymbol<CR>
+
 " unite outline
-nnoremap <Space>o :action FileStructurePopup<CR>
+" works with patched plugin see: https://youtrack.jetbrains.com/issue/VIM-796
+nnoremap <Space>o :action FileStructurePopup<CR>:action FileStructurePopup<CR>
 noremap <Space>u :action FindUsages<CR>
 noremap <Space>w :action SelectIn<CR>
 
