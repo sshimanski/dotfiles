@@ -1,73 +1,58 @@
-﻿set nocompatible
-filetype off
+﻿" Plugins {{{
 
-" Vundle Plugins {{{
-
-" No NerdTree, as ranger is used
- 
 " set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
+call plug#begin('~/.vim/bundle')
 
-" let Vundle manage Vundle, required
-Plugin 'gmarik/Vundle.vim'
 " my preffered colorscheme
-Plugin 'sheerun/vim-wombat-scheme'
-"Plugin 'dsolstad/vim-wombat256i/'
+Plug 'sheerun/vim-wombat-scheme'
 " golang for vim
-Plugin 'fatih/vim-go'
+Plug 'fatih/vim-go', { 'for': 'go' }
 " keyword completion system by maintaining a cache of keywords in the current buffer 
-" require 'vim-nox' system package
-Plugin 'Shougo/neocomplete.vim'
+Plug 'Shougo/neocomplete.vim'
 " status line
-Plugin 'bling/vim-airline'
+Plug 'bling/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 " snippets stuff
-Plugin 'SirVer/ultisnips'
-Plugin 'honza/vim-snippets'
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
 " python autocomplete + rename + goto definition
-Plugin 'davidhalter/jedi-vim'
-" Tagbar (require ctags)
-" Plugin 'majutsushi/tagbar'
+Plug 'davidhalter/jedi-vim', { 'for': 'python' }
 " comment plugin
-Plugin 'scrooloose/nerdcommenter'
+Plug 'scrooloose/nerdcommenter'
 " easy motion
-Plugin 'Lokaltog/vim-easymotion'
+Plug 'Lokaltog/vim-easymotion'
 " auto pairs - [], {}, '' etc.
-Plugin 'jiangmiao/auto-pairs'
+Plug 'jiangmiao/auto-pairs'
 " unite all
-Plugin 'Shougo/vimproc.vim'
-Plugin 'Shougo/unite.vim'
-" Require ctags
-Plugin 'Shougo/unite-outline'
-Plugin 'Shougo/unite-help'
-Plugin 'Shougo/neomru.vim'
-Plugin 'osyo-manga/unite-quickfix'
+Plug 'Shougo/vimproc.vim', { 'do': 'make'  }
+Plug 'Shougo/unite.vim'
+" Require exuberant-ctags
+Plug 'Shougo/unite-outline'
+Plug 'Shougo/unite-help'
+Plug 'Shougo/neomru.vim'
+Plug 'osyo-manga/unite-quickfix'
 " GIT plugin
-Plugin 'tpope/vim-fugitive'
+Plug 'tpope/vim-fugitive'
 " Rust
-Plugin 'rust-lang/rust.vim'
-Plugin 'phildawes/racer'
+Plug 'rust-lang/rust.vim', { 'for': 'rust' }
+Plug 'phildawes/racer', { 'for': 'rust' }
 " Diff
-Plugin 'Shougo/javacomplete'
-Plugin 'Yggdroot/indentLine'
-Plugin 'tpope/vim-repeat'
-Plugin 'tpope/vim-commentary'
-Plugin 'tpope/vim-surround'
-" settings toggling + fast navigation (tabs, filse)
-Plugin 'tpope/vim-unimpaired'
+Plug 'Shougo/javacomplete', { 'for': 'java' }
+Plug 'Yggdroot/indentLine'
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-surround'
+" settings toggling + fast navigation (tabs, files)
+Plug 'tpope/vim-unimpaired'
 " Check syntax on :w ([l, [L for error traversing)
-Plugin 'scrooloose/syntastic'
-Plugin 'vim-scripts/Hardy'
-Plugin 'jplaut/vim-arduino-ino'
+Plug 'scrooloose/syntastic'
+" Arduino 
+Plug 'vim-scripts/Hardy', { 'for': 'arduino' }
 
-" All of your Plugins must be added before the following line
-call vundle#end() " required
+call plug#end() " required
 " }}}
 
-"filetype plugin indent on
-"
-filetype on
-
+set nocompatible
 set autoread
 set cursorline
 set encoding=utf-8  " Necessary to show Unicode glyphs                   
@@ -119,10 +104,19 @@ nnoremap <Leader>p "*p==
 nnoremap <Leader>P :set invpaste<CR>
 nnoremap <Leader>qq :qa!<CR>
 
+" fugitive
+nnoremap <Leader>gs :Gstatus<CR>
+nnoremap <Leader>gb :Gblame<CR>
+nnoremap <Leader>gd :Gvdiff<CR>
+nnoremap <Leader>gl :Glog<CR>
+
 " Make the Y behavior similar to D & C
 nnoremap Y y$
 nnoremap ' `
 nnoremap ` '
+
+nnoremap n nzz
+nnoremap N Nzz
 
 nnoremap zj m`o<Esc>``
 nnoremap zk m`O<Esc>``
@@ -205,14 +199,6 @@ let g:airline_symbols.branch = '⎇'
 let g:airline_symbols.paste = 'ρ'
 let g:airline_symbols.paste = 'Þ'
 let g:airline_symbols.whitespace = 'Ξ'
-" old vim-powerline symbols
-"let g:airline_left_sep = '⮀'
-"let g:airline_left_alt_sep = '⮁'
-"let g:airline_right_sep = '⮂'
-"let g:airline_right_alt_sep = '⮃'
-"let g:airline_symbols.branch = '⭠'
-"let g:airline_symbols.readonly = '⭤'
-"let g:airline_symbols.linenr = '⭡'
 
 let g:airline_theme='powerlineish'
 let g:airline#extensions#syntastic#enabled = 1
@@ -230,7 +216,7 @@ set statusline+=%*
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 0
-let g:syntastic_check_on_wq = 1
+let g:syntastic_check_on_wq = 0
 " pip install flake8
 let g:syntastic_python_checkers = ['flake8']
 
@@ -359,7 +345,7 @@ nnoremap <silent>[unite]gl :exe 'silent Glog'<BAR> Unite -toggle quickfix<CR>
 nnoremap <silent>[unite]gf :<C-u>UniteWithProjectDir -silent -toggle file_rec/git<CR>
 
 nnoremap <silent>[unite]b :<C-u>Unite -buffer-name=buffers/bookmarks -silent -start-insert buffer<CR>
-nnoremap <silent>[unite]f :<C-u>UniteWithProjectDir -silent -buffer-name=files file_rec/async:!<cr>
+nnoremap <silent>[unite]f :<C-u>UniteWithProjectDir -silent -start-insert -buffer-name=files file_rec/async:!<cr>
 nnoremap <silent>[unite]F :<C-u>UniteWithBufferDir -silent -buffer-name=currdir file<CR>
 nnoremap <silent>[unite]c :<C-u>UniteWithProjectDir -silent -buffer-name=classes -ignorecase -input=**.java file_rec/async:!<CR>
 nnoremap <silent>[unite]m :<C-u>Unite -silent -buffer-name=mru file_mru<CR>
