@@ -13,12 +13,9 @@ Plug 'Shougo/neocomplete.vim'
 Plug 'bling/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 " snippets stuff
-Plug 'SirVer/ultisnips'
-Plug 'honza/vim-snippets'
+Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
 " python autocomplete + rename + goto definition
 Plug 'davidhalter/jedi-vim', { 'for': 'python' }
-" comment plugin
-Plug 'scrooloose/nerdcommenter'
 " easy motion
 Plug 'Lokaltog/vim-easymotion'
 " auto pairs - [], {}, '' etc.
@@ -38,13 +35,13 @@ Plug 'rust-lang/rust.vim', { 'for': 'rust' }
 Plug 'phildawes/racer', { 'for': 'rust' }
 " Diff
 Plug 'Shougo/javacomplete', { 'for': 'java' }
-Plug 'Yggdroot/indentLine'
+Plug 'Yggdroot/indentLine', { 'on': 'IndentLinesEnable' }
 Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-commentary', { 'on': '<Plug>Commentary' }
 Plug 'tpope/vim-surround'
 " settings toggling + fast navigation (tabs, files)
 Plug 'tpope/vim-unimpaired'
-" Check syntax on :w ([l, [L for error traversing)
+" Lint. Check syntax on :w ([l, [L for error traversing)
 Plug 'scrooloose/syntastic'
 " Arduino 
 Plug 'vim-scripts/Hardy', { 'for': 'arduino' }
@@ -132,8 +129,9 @@ let g:snips_author="Shimanski Sergei"
 let g:snips_email="shimanski.sergei@gmail.com"
 let g:snips_github="https://github.com/sshimanski"
 
-au BufRead,BufNewFile *.pde set filetype=arduino
-au BufRead,BufNewFile *.ino set filetype=arduino
+" vim-commentary
+map  gc  <Plug>Commentary
+nmap gcc <Plug>CommentaryLine
 
 " Haskell config {{{
 augroup haskell
