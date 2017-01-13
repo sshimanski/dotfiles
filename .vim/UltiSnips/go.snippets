@@ -1,0 +1,7 @@
+# sort interface
+snippet sort
+func (a ${1:type}) Len() int           { return len(a) }
+func (a $1) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a $1) Less(i, j int) bool { return a[i].${2:compare} < a[j].$2 }
+endsnippet
+

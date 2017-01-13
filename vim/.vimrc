@@ -5,6 +5,9 @@ call plug#begin('~/.vim/bundle')
 
 " my preffered colorscheme
 Plug 'sheerun/vim-wombat-scheme'
+Plug 'w0ng/vim-hybrid'
+" tagbar
+Plug 'majutsushi/tagbar'
 " golang for vim
 Plug 'fatih/vim-go', { 'for': 'go' }
 " keyword completion system by maintaining a cache of keywords in the current buffer 
@@ -32,9 +35,11 @@ Plug 'osyo-manga/unite-quickfix'
 Plug 'tpope/vim-fugitive'
 " Rust
 Plug 'rust-lang/rust.vim', { 'for': 'rust' }
-Plug 'phildawes/racer', { 'for': 'rust' }
+Plug 'racer-rust/vim-racer', { 'for': 'rust' }
+Plug 'timonv/vim-cargo', { 'for': 'rust' }
+Plug 'rhysd/rust-doc.vim',  { 'for' : 'rust' }
 " Diff
-Plug 'Shougo/javacomplete', { 'for': 'java' }
+" Plug 'Shougo/vim-javacomplete2', { 'for': 'java' }
 Plug 'Yggdroot/indentLine', { 'on': 'IndentLinesEnable' }
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-commentary', { 'on': '<Plug>Commentary' }
@@ -119,7 +124,6 @@ nnoremap zj m`o<Esc>``
 nnoremap zk m`O<Esc>``
 nnoremap gu gUiw`]
 
-nnoremap <Leader>eU :UltiSnipsEdit<cr>
 " Manage .vimrc file {{{
 nnoremap <Leader>ev :e $MYVIMRC<cr>
 nnoremap <Leader>sv :source $MYVIMRC<cr>
@@ -168,6 +172,7 @@ if !exists('g:neocomplete#force_omni_input_patterns')
 endif
 let g:neocomplete#force_omni_input_patterns.python = '\%([^. \t]\.\|^\s*@\|^\s*from\s.\+import \|^\s*from \|^\s*import \)\w*'
 
+let g:neocomplete#enable_auto_select = 1
 let g:neocomplete#enable_at_startup = 1
 let g:neocomplete#enable_smart_case = 1
 let g:neocomplete#enable_refresh_always = 1
@@ -175,11 +180,12 @@ let g:neocomplete#max_list = 30
 let g:neocomplete#min_keyword_length = 2
 let g:neocomplete#sources#syntax#min_keyword_length = 2
 let g:neocomplete#data_directory = $HOME.'/.vim/tmp/neocomplete'
-let g:neocomplete#enable_auto_select = 0
+" let g:neocomplete#enable_auto_select = 0
 
 let g:neomru#file_mru_path = $HOME.'/.vim/tmp/neomru/file'
 let g:neomru#directory_mru_path = $HOME.'/.vim/tmp/neomru/directory'
 
+let g:JavaComplete_BaseDir = $HOME.'/.vim/tmp/java'
 " Airline plugin config {{{
 
 if !exists('g:airline_symbols')
@@ -198,7 +204,7 @@ let g:airline_symbols.paste = 'ρ'
 let g:airline_symbols.paste = 'Þ'
 let g:airline_symbols.whitespace = 'Ξ'
 
-let g:airline_theme='powerlineish'
+let g:airline_theme='wombat'
 let g:airline#extensions#syntastic#enabled = 1
 let g:airline#extensions#branch#enabled = 1
 let g:airline#extensions#whitespace#enabled = 1
@@ -207,6 +213,8 @@ let g:airline#extensions#tabline#fnamemod = ':t'
 " }}}
 
 " Syntastic configuration {{{
+noremap <leader>c :SyntasticCheck<CR>
+
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
@@ -235,13 +243,8 @@ map <C-j> <C-W>j
 map <C-k> <C-W>k
 map <C-l> <C-W>l
 map <C-h> <C-W>h
-" ]b, [b
-map <C-S-h> :bprevious<CR>
-map <C-S-l> :bnext<CR>
 
 map vv ggVG
-nnoremap <Leader>v <C-w>v<C-w>w
-nnoremap <Leader>h <C-w>s<C-w>w
 
 " Fast window/buffer kill
 nnoremap <Leader>K <C-w>c           " window
@@ -252,25 +255,31 @@ cab Wq wq
 
 let g:auto_save = 1  " enable AutoSave on Vim startup
 
+" UltiSnips confg {{{
+nnoremap <Leader>eU :UltiSnipsEdit<CR>
+
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 let g:UltiSnipsSnippetsDir=$HOME."/.vim/UltiSnips"
+let g:UltiSnipsEditSplit="horizontal"
+" }}}
 
-" vim-go plugin config {{{
+" Go config {{{
 let g:go_highlight_functions = 1
 let g:go_highlight_methods = 1
 let g:go_highlight_structs = 1
 
 augroup golang
     autocmd!
-    autocmd FileType go nnoremap <Leader>s <Plug>(go-implements)
-    autocmd FileType go nnoremap <Leader>i <Plug>(go-info)
-    autocmd FileType go nnoremap <Leader>r <Plug>(go-run)
-    autocmd FileType go nnoremap <Leader>b <Plug>(go-build)
-    autocmd FileType go nnoremap <Leader>t <Plug>(go-test)
-    autocmd FileType go nnoremap <Leader>c <Plug>(go-coverage)
-    autocmd FileType go nnoremap <Leader>e <Plug>(go-rename)
+    autocmd FileType go nnoremap <Leader>s :GoImplmenets<CR>
+    autocmd FileType go nnoremap <Leader>I :GoInfo<CR>
+    autocmd FileType go nnoremap <buffer> <leader>i :exe 'GoImport ' . expand('<cword>')<CR>
+    autocmd FileType go nnoremap <Leader>r :GoRun<CR>
+    autocmd FileType go nnoremap <Leader>b :GoBuild<CR>
+    autocmd FileType go nnoremap <Leader>t :GoTest<CR>
+    autocmd FileType go nnoremap <Leader>c :GoCoverageToggle<CR>
+    autocmd FileType go nnoremap <Leader>e :GoRename<CR>
     autocmd FileType go nnoremap <Leader>f :GoFmt<CR>
 augroup END
 " }}}
@@ -278,15 +287,21 @@ augroup END
 " Rust config {{{
 augroup rustlang
     autocmd!
+    autocmd BufRead,BufNewFile *.rs compiler cargo
     autocmd FileType rust nnoremap <Leader>r :RustRun<CR>
+    autocmd FileType rust nnoremap <Leader>f :RustFmt<CR>
+    autocmd FileType rust nnoremap <Leader>t :CargoTest<CR>
+    autocmd FileType rust nnoremap <Leader>e :CargoRun<CR>
+    autocmd FileType rust nnoremap <Leader>c :CargoBuild<CR>
+    autocmd FileType rust nnoremap <silent>[unite]k :<C-u>Unite -silent -start-insert rust/doc<CR>
+    autocmd FileType rust nnoremap <silent>[unite]K :<C-u>Unite -silent -start-insert rust/doc:modules<CR>
 augroup END
 
 " Rust autocmplete
-let g:racer_cmd = $HOME."/work/apps/rust/racer/bin/racer"
-let $RUST_SRC_PATH=$HOME."/work/apps/rust/rust-nightly-i686-unknown-linux-gnu"
+let g:racer_cmd = 'racer'
 " }}}
 
-" ranger file manager {{{
+" Ranger file manager {{{
 fun! RangerChooser()
     exec "silent !ranger --choosefile=/tmp/chosenfile " . expand("%:p:h")
     if filereadable('/tmp/chosenfile')
@@ -315,6 +330,7 @@ autocmd MyAutoCmd FileType unite call s:unite_my_settings()
 
 function! s:unite_my_settings()
     nmap <buffer> <ESC> <Plug>(unite_exit)
+    nmap <buffer> <C-r> <Plug>(unite_redraw)
     imap <buffer>  jj        <Plug>(unite_insert_leave)
     imap <buffer>  <Tab>     <Plug>(unite_complete)
     nnoremap <silent><buffer><expr>p unite#do_action('persist_open')
@@ -338,28 +354,38 @@ nnoremap <silent>gM :<C-u>Unite -silent -buffer-name=bookmarked bookmark<CR>
 noremap [unite] <Nop>
 map     <Space> [unite]
 " Git
-nnoremap <silent>[unite]gg :exe 'silent Ggrep -i '.input("Pattern: ")<Bar> Unite -toggle quickfix<CR>
+" nnoremap <silent>[unite]gg :exe 'silent Ggrep -i '.input("Pattern: ")<Bar> Unite -toggle quickfix<CR>
 nnoremap <silent>[unite]gl :exe 'silent Glog'<BAR> Unite -toggle quickfix<CR>
-nnoremap <silent>[unite]gf :<C-u>UniteWithProjectDir -silent -toggle file_rec/git<CR>
+nnoremap <silent>[unite]gf :<C-u>UniteWithProjectDir -start-insert -silent -toggle file_rec/git<CR>
 
 nnoremap <silent>[unite]b :<C-u>Unite -buffer-name=buffers/bookmarks -silent -start-insert buffer<CR>
 nnoremap <silent>[unite]f :<C-u>UniteWithProjectDir -silent -start-insert -buffer-name=files file_rec/async:!<cr>
-nnoremap <silent>[unite]F :<C-u>UniteWithBufferDir -silent -buffer-name=currdir file<CR>
-nnoremap <silent>[unite]c :<C-u>UniteWithProjectDir -silent -buffer-name=classes -ignorecase -input=**.java file_rec/async:!<CR>
-nnoremap <silent>[unite]m :<C-u>Unite -silent -buffer-name=mru file_mru<CR>
+nnoremap <silent>[unite]F :<C-u>UniteWithBufferDir -silent -buffer-name=bufferdir file<CR>
+nnoremap <silent>[unite]r :<C-u>Unite -silent -buffer-name=mru file_mru -start-insert<CR>
 nnoremap <silent>[unite]l :<C-u>Unite -silent -no-split -auto-preview -start-insert line<CR>
-nnoremap <silent>[unite]g :<C-u>Unite -silent -buffer-name=grep -no-quit grep<CR>
+" grep word in current working directory
+nnoremap <silent>[unite]g :<C-u>UniteWithProjectDir -silent -buffer-name=grep -no-quit grep<CR>
+" grep word under the cursor in current working directory
 nnoremap <silent>[unite]w :<C-u>UniteWithCursorWord -silent -no-quit grep<CR>
+nnoremap <silent>[unite]u :<C-u>UniteWithCursorWord -silent -no-quit grep<CR>
 nnoremap <silent>[unite]y :<C-u>Unite -silent -no-quit history/yank<CR>
-nnoremap <silent>[unite]o :<C-u>Unite -toggle -silent -vertical -start-insert -buffer-name=outline -winwidth=40 -direction=botright outline<CR>
-nnoremap <silent>[unite]r :<C-u>UniteResume<CR>
+" nnoremap <silent>[unite]m :<C-u>Unite -toggle -silent -vertical -start-insert -buffer-name=outline -winwidth=50 -direction=botright outline<CR>
+nnoremap <silent>[unite]m :<C-u>Unite -toggle -silent -start-insert -buffer-name=outline outline<CR>
+nnoremap <silent>[unite]R :<C-u>UniteResume<CR>
 nnoremap <silent>[unite]q :<C-u>Unite -toggle quickfix<CR>
+" grep in vim help
+nnoremap <silent>[unite]h :<C-u>Unite -start-insert -buffer-name=help help<CR>
+
+" Ignore wildignore
+call unite#custom#source('file_rec', 'ignore_globs', split(&wildignore, ','))
+call unite#custom#source('file_rec/async', 'ignore_globs', split(&wildignore, ','))
 
 if executable("ag")
-    " the silver search
+    " the silver search                    
     let g:unite_source_grep_command = 'ag'
-    let g:unite_source_grep_default_opts = '--nogroup --nocolor --column'
-    let g:unite_source_grep_recursive_opt = ''
+    let g:unite_source_grep_default_opts = '--nogroup --nocolor --column --follow --smart-case --nocolor'
+
+    let g:unite_source_rec_async_command = ['ag', '--follow', '--nocolor', '--nogroup', '--hidden', '-g', '']
 endif
 
 " TODO init menu
@@ -385,13 +411,15 @@ let g:indentLine_char = '┊'
 let g:indentLine_color_term = 239
 " }}} IndentLine plugin config
 
-" Java
+" Java config {{{
 let g:java_highlight_functions = 'style'
 let g:java_highlight_all=1
 let g:java_highlight_debug=1
 let g:java_allow_cpp_keywords=1
 let g:java_space_errors=1
+" }}}
 
+nmap <F8> :TagbarToggle<CR>
 " Plugin key-mappings.
 inoremap <expr><C-g>     neocomplete#undo_completion()
 inoremap <expr><C-l>     neocomplete#complete_common_string()
@@ -420,4 +448,6 @@ augroup filetype_vim
 augroup END
 " }}}
 
+let g:EasyMotion_smartcase = 1
+let g:EasyMotion_do_mapping = 0
 nmap <leader><leader> <Plug>(easymotion-s)

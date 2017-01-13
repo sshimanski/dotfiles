@@ -5,6 +5,8 @@ set incsearch
 set showcmd
 set showmode
 set smartcase
+" Enable vim-surround
+set surround
 
 let mapleader=","
 
@@ -21,6 +23,7 @@ nnoremap ' `
 nnoremap ` '
 nnoremap n nzz
 nnoremap N Nzz
+nnoremap gd gdzz
 nnoremap vv ggVG
 nnoremap U :action Vcs.RollbackChangedLines<CR>
 
@@ -33,20 +36,23 @@ vnoremap > >gv
 " unimpaired legacy
 noremap ]m :action MethodDown<CR>
 noremap [m :action MethodUp<CR>
-noremap ]l :action GotoNextError<CR>:action ShowErrorDescription<CR>
-noremap [l :action GotoPreviousError<CR>:action ShowErrorDescription<CR>
-noremap [b gT
-noremap ]b gt
+noremap ]e :action GotoNextError<CR>:action ShowErrorDescription<CR>
+noremap [e :action GotoPreviousError<CR>:action ShowErrorDescription<CR>
+
+"No tabs => no tabs navigation
+"noremap [b gT
+"noremap ]b gt
+
 " camelcase words: ] - forward, [ - backward
 noremap [w [b
 noremap ]w [w
-noremap [c :action VcsShowPrevChangeMarker<CR>
-noremap ]c :action VcsShowNextChangeMarker<CR>
+noremap [c :action VcsShowPrevChangeMarker<CR>:action Vcs.ShowDiffWithLocal<CR>
+noremap ]c :action VcsShowNextChangeMarker<CR>:action Vcs.ShowDiffWithLocal<CR>
 nnoremap [<Space> O<ESC>j 0 w
 nnoremap ]<Space> o<ESC>k 0 w
-nnoremap [oh :nohlsearch<Bar>echo<CR>
-noremap ]e :action MoveLineDown<CR>
-noremap [e :action MoveLineUp<CR>
+nnoremap coh :nohlsearch<CR>
+" noremap ]e :action MoveLineDown<CR>
+" noremap [e :action MoveLineUp<CR>
 
 noremap <S-A-j> :action MoveStatementDown<CR>
 noremap <S-A-k> :action MoveStatementUp<CR>
@@ -54,23 +60,22 @@ xnoremap <C-S-o> :action OverrideMethods<CR>
 xnoremap <C-S-i> :action ImplementMethods<CR>
 " Identifier Highlighter Reloaded plugin mapping
 " Wait till original Identifier Highlighter plugin will be fixed
-noremap <C-S-j> :action NextIdentifier<CR>
-noremap <C-S-k> :action PreviousIdentifier<CR>
+noremap <C-S-j> :action NextIdentifierReloaded<CR>
+noremap <C-S-k> :action PreviousIdentifierReloaded<CR>
 
 nmap gcc :action CommentByLineComment<CR>
 vmap gcc :action CommentByBlockComment<CR>
 
 " unite.vim (lists)
-" noremap <Space>b :action Switcher<CR>
-noremap <Space>b :action RecentFiles<CR>
+noremap <Space>b :action Switcher<CR>
+noremap <Space>r :action RecentFiles<CR>
 noremap <Space>c :action GotoClass<CR>
 noremap <Space>f :action GotoFile<CR>
 noremap <Space>g :action FindInPath<CR>
 noremap <Space>s :action GotoSymbol<CR>
 
 " unite outline
-" works with patched plugin see: https://youtrack.jetbrains.com/issue/VIM-796
-nnoremap <Space>o :action FileStructurePopup<CR>:action FileStructurePopup<CR>
+nnoremap <Space>m :action FileStructurePopup<CR>
 noremap <Space>u :action FindUsages<CR>
 noremap <Space>w :action SelectIn<CR>
 
@@ -80,7 +85,8 @@ nmap gM :action ShowBookmarks<CR>
 nmap gn :action GotoNextBookmark<CR>
 nmap gp :action GotoPreviousBookmark<CR>
 
-noremap gh :action HideAllWindows<CR>
+" maximize working are
+noremap <C--> :action HideAllWindows<CR>
 
 " Mnemonic: 'to'
 nnoremap td :action GotoTypeDeclaration<CR>
@@ -108,44 +114,39 @@ noremap <C-i> :action Forward<CR>
 " Mnemonic 'extract'
 nnoremap <leader>em :action ExtractMethod<CR>
 vnoremap <leader>em :action ExtractMethod<CR>
+vnoremap <leader>s :action SurroundWithLiveTemplate<CR>
 noremap <leader>ec :action ExtractClass<CR>
 
 noremap <leader>N :action NewElement<CR>
 
-nnoremap <leader>q' ciw''<Esc>P
-vnoremap <leader>q' c''<Esc>P
+" Mnemonic 'introduce'
+noremap <leader>ic :action IntroduceConstant<CR>
+noremap <leader>if :action IntroduceField<CR>
+noremap <leader>ip :action IntroduceParameter<CR>
+noremap <leader>iv :action IntroduceVariable<CR>
 
-nnoremap <leader>q" ciw""<Esc>P
-vnoremap <leader>q" c""<Esc>P
+" generate getters/setters/constructors etc.
+noremap <leader>G :action Generate<CR>
 
-nnoremap <leader>q( ciw()<Esc>P
-vnoremap <leader>q( c()<Esc>P
-
-nnoremap <leader>q{ ciw{}<Esc>P
-vnoremap <leader>q{ c{}<Esc>P
-
-" Mnemonic 'generate'
-noremap <leader>gc :action IntroduceConstant<CR>
-noremap <leader>gf :action IntroduceField<CR>
-noremap <leader>gp :action IntroduceParameter<CR>
-noremap <leader>gv :action IntroduceVariable<CR>
-noremap <leader>gg :action GenerateGetter<CR>
-noremap <leader>gs :action GenerateSetter<CR>
-noremap <leader>ga :action GenerateGetterAndSetter<CR>
+" git blame
+noremap <leader>gb :action Annotate<CR>
 
 " EasyMotion (AceJump plugin)
-nmap <leader><leader> :action AceJumpAction<cr>
+nmap <leader><leader> :action AceAction<CR>
+
 nmap RR :action Refactorings.QuickListPopupAction<CR>
 
 " Common
-noremap <leader>a :action Annotate<CR>
 noremap <leader>c :action CheckinProject<CR>
 noremap <leader>u :action Vcs.UpdateProject<CR>
 noremap <leader>b :action ToggleLineBreakpoint<CR>
-noremap <leader>h <C-w>s
-noremap <leader>i :action Inline<CR>
+noremap <leader>h :action TypeHierarchy<CR>
+noremap <leader>I :action Inline<CR>
 noremap <leader>k :q<CR>
+noremap <leader>d :action ChooseDebugConfiguration<CR>
 noremap <leader>m :action Move<CR>
 noremap <leader>r :action RenameElement<CR>
-noremap <leader>v <C-w>v
-noremap <leader>t :action ActivateTerminalToolWindow<cr>
+noremap <leader>n :action ShowNavBar<CR>
+" noremap <leader>t :action RunClass<cr>
+noremap <leader>t :action ChooseDebugConfiguration<cr>
+noremap <leader>f :action ReformatCode<CR>:action OptimizeImports<CR>
