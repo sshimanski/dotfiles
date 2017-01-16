@@ -50,16 +50,14 @@ noremap [c :action VcsShowPrevChangeMarker<CR>:action Vcs.ShowDiffWithLocal<CR>
 noremap ]c :action VcsShowNextChangeMarker<CR>:action Vcs.ShowDiffWithLocal<CR>
 nnoremap [<Space> O<ESC>j 0 w
 nnoremap ]<Space> o<ESC>k 0 w
+
 nnoremap coh :nohlsearch<CR>
-" noremap ]e :action MoveLineDown<CR>
-" noremap [e :action MoveLineUp<CR>
 
 noremap <S-A-j> :action MoveStatementDown<CR>
 noremap <S-A-k> :action MoveStatementUp<CR>
 xnoremap <C-S-o> :action OverrideMethods<CR>
 xnoremap <C-S-i> :action ImplementMethods<CR>
 " Identifier Highlighter Reloaded plugin mapping
-" Wait till original Identifier Highlighter plugin will be fixed
 noremap <C-S-j> :action NextIdentifierReloaded<CR>
 noremap <C-S-k> :action PreviousIdentifierReloaded<CR>
 
@@ -85,7 +83,7 @@ nmap gM :action ShowBookmarks<CR>
 nmap gn :action GotoNextBookmark<CR>
 nmap gp :action GotoPreviousBookmark<CR>
 
-" maximize working are
+" maximize working area
 noremap <C--> :action HideAllWindows<CR>
 
 " Mnemonic: 'to'
@@ -96,16 +94,6 @@ nnoremap tt :action GotoTest<CR>
 nnoremap tu :action ShowUsages<CR>
 " to 'class'
 nnoremap tc gg<Bar>:action MethodDown<CR>zz
-
-"noremap <C-j> <C-W>j
-"noremap <C-k> <C-W>k
-"noremap <C-l> <C-W>l
-"noremap <C-h> <C-W>h
-
-" Additional <ESC> required
-" noremap / :action Find<CR>
-" noremap n :action FindNext<CR>
-" noremap N :action FindPrevious<CR>
 
 " native back/forward is less buggy, <C-t> still useful
 noremap <C-o> :action Back<CR>
@@ -125,11 +113,10 @@ noremap <leader>if :action IntroduceField<CR>
 noremap <leader>ip :action IntroduceParameter<CR>
 noremap <leader>iv :action IntroduceVariable<CR>
 
-" generate getters/setters/constructors etc.
-noremap <leader>G :action Generate<CR>
-
-" git blame
+" Git
 noremap <leader>gb :action Annotate<CR>
+noremap <leader>gl :action Vcs.Show.Log<CR>
+noremap <leader>gg :action Vcs.QuickListPopupAction<CR>
 
 " EasyMotion (AceJump plugin)
 nmap <leader><leader> :action AceAction<CR>
@@ -140,13 +127,14 @@ nmap RR :action Refactorings.QuickListPopupAction<CR>
 noremap <leader>c :action CheckinProject<CR>
 noremap <leader>u :action Vcs.UpdateProject<CR>
 noremap <leader>b :action ToggleLineBreakpoint<CR>
-noremap <leader>h :action TypeHierarchy<CR>
+" noremap <leader>h :action TypeHierarchy<CR>
+noremap <leader>h :action HighlightUsagesInFile<CR>
 noremap <leader>I :action Inline<CR>
 noremap <leader>k :q<CR>
-noremap <leader>d :action ChooseDebugConfiguration<CR>
 noremap <leader>m :action Move<CR>
 noremap <leader>r :action RenameElement<CR>
-noremap <leader>n :action ShowNavBar<CR>
-" noremap <leader>t :action RunClass<cr>
-noremap <leader>t :action ChooseDebugConfiguration<cr>
 noremap <leader>f :action ReformatCode<CR>:action OptimizeImports<CR>
+noremap <leader>G :action Generate<CR>
+
+noremap \t :action ChooseDebugConfiguration<CR>
+noremap \r :action ChooseRunConfiguration<CR>

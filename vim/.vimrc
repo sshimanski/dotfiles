@@ -272,15 +272,15 @@ let g:go_highlight_structs = 1
 
 augroup golang
     autocmd!
+    autocmd FileType go nnoremap \r :GoRun<CR>
+    autocmd FileType go nnoremap \t :GoTest<CR>
+    autocmd FileType go nnoremap <Leader>f :GoFmt<CR>
+    autocmd FileType go nnoremap <Leader>r :GoRename<CR>
     autocmd FileType go nnoremap <Leader>s :GoImplmenets<CR>
     autocmd FileType go nnoremap <Leader>I :GoInfo<CR>
     autocmd FileType go nnoremap <buffer> <leader>i :exe 'GoImport ' . expand('<cword>')<CR>
-    autocmd FileType go nnoremap <Leader>r :GoRun<CR>
     autocmd FileType go nnoremap <Leader>b :GoBuild<CR>
-    autocmd FileType go nnoremap <Leader>t :GoTest<CR>
     autocmd FileType go nnoremap <Leader>c :GoCoverageToggle<CR>
-    autocmd FileType go nnoremap <Leader>e :GoRename<CR>
-    autocmd FileType go nnoremap <Leader>f :GoFmt<CR>
 augroup END
 " }}}
 
@@ -288,9 +288,9 @@ augroup END
 augroup rustlang
     autocmd!
     autocmd BufRead,BufNewFile *.rs compiler cargo
-    autocmd FileType rust nnoremap <Leader>r :RustRun<CR>
+    autocmd FileType rust nnoremap \r :RustRun<CR>
+    autocmd FileType rust nnoremap \t :CargoTest<CR>
     autocmd FileType rust nnoremap <Leader>f :RustFmt<CR>
-    autocmd FileType rust nnoremap <Leader>t :CargoTest<CR>
     autocmd FileType rust nnoremap <Leader>e :CargoRun<CR>
     autocmd FileType rust nnoremap <Leader>c :CargoBuild<CR>
     autocmd FileType rust nnoremap <silent>[unite]k :<C-u>Unite -silent -start-insert rust/doc<CR>
