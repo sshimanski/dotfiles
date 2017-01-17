@@ -42,7 +42,7 @@ Plug 'rhysd/rust-doc.vim',  { 'for' : 'rust' }
 " Plug 'Shougo/vim-javacomplete2', { 'for': 'java' }
 Plug 'Yggdroot/indentLine', { 'on': 'IndentLinesEnable' }
 Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-commentary', { 'on': '<Plug>Commentary' }
+Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
 " settings toggling + fast navigation (tabs, files)
 Plug 'tpope/vim-unimpaired'
@@ -132,10 +132,6 @@ nnoremap <Leader>sv :source $MYVIMRC<cr>
 let g:snips_author="Shimanski Sergei"
 let g:snips_email="shimanski.sergei@gmail.com"
 let g:snips_github="https://github.com/sshimanski"
-
-" vim-commentary
-map  gc  <Plug>Commentary
-nmap gcc <Plug>CommentaryLine
 
 " Haskell config {{{
 augroup haskell
