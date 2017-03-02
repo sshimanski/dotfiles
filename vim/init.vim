@@ -1,17 +1,19 @@
 ﻿" Plugins {{{
 
 " set the runtime path to include Vundle and initialize
-call plug#begin('~/.vim/bundle')
+call plug#begin('~/.config/nvim/bundle')
 
 " my preffered colorscheme
 Plug 'sheerun/vim-wombat-scheme'
-Plug 'w0ng/vim-hybrid'
 " tagbar
 Plug 'majutsushi/tagbar'
+" tests
+Plug 'janko-m/vim-test'
 " golang for vim
 Plug 'fatih/vim-go', { 'for': 'go' }
 " keyword completion system by maintaining a cache of keywords in the current buffer 
-Plug 'Shougo/neocomplete.vim'
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'zchee/deoplete-jedi'
 " status line
 Plug 'bling/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
@@ -39,15 +41,16 @@ Plug 'racer-rust/vim-racer', { 'for': 'rust' }
 Plug 'timonv/vim-cargo', { 'for': 'rust' }
 Plug 'rhysd/rust-doc.vim', { 'for': 'rust' }
 " Diff
-" Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java' }
+Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java' }
 Plug 'Yggdroot/indentLine', { 'on': 'IndentLinesEnable' }
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
 " settings toggling + fast navigation (tabs, files)
 Plug 'tpope/vim-unimpaired'
+" Plug 'scrooloose/syntastic'
 " Lint. Check syntax on :w ([l, [L for error traversing)
-Plug 'scrooloose/syntastic'
+Plug 'neomake/neomake'
 " Arduino 
 Plug 'vim-scripts/Hardy', { 'for': 'arduino' }
 
@@ -79,7 +82,7 @@ set wildmenu
 " VIM Colors {{{
 set t_Co=256
 set background=dark
-colorscheme hybrid
+colorscheme wombat
 " }}}
 
 " VIM Search {{{
@@ -185,20 +188,22 @@ let g:jedi#rename_command = "<leader>r"
 let g:jedi#show_call_signatures = "2"
 " }}}
 
-if !exists('g:neocomplete#force_omni_input_patterns')
-    let g:neocomplete#force_omni_input_patterns = {}
-endif
-let g:neocomplete#force_omni_input_patterns.python = '\%([^. \t]\.\|^\s*@\|^\s*from\s.\+import \|^\s*from \|^\s*import \)\w*'
+" if !exists('g:neocomplete#force_omni_input_patterns')
+"     let g:neocomplete#force_omni_input_patterns = {}
+" endif
+" let g:neocomplete#force_omni_input_patterns.python = '\%([^. \t]\.\|^\s*@\|^\s*from\s.\+import \|^\s*from \|^\s*import \)\w*'
 
-let g:neocomplete#enable_auto_select = 1
-let g:neocomplete#enable_at_startup = 1
-let g:neocomplete#enable_smart_case = 1
-let g:neocomplete#enable_refresh_always = 1
-let g:neocomplete#max_list = 30
-let g:neocomplete#min_keyword_length = 2
-let g:neocomplete#sources#syntax#min_keyword_length = 2
-let g:neocomplete#data_directory = $HOME.'/.vim/tmp/neocomplete'
+" let g:neocomplete#enable_auto_select = 1
+" let g:neocomplete#enable_at_startup = 1
+" let g:neocomplete#enable_smart_case = 1
+" let g:neocomplete#enable_refresh_always = 1
+" let g:neocomplete#max_list = 30
+" let g:neocomplete#min_keyword_length = 2
+" let g:neocomplete#sources#syntax#min_keyword_length = 2
+" let g:neocomplete#data_directory = $HOME.'/.vim/tmp/neocomplete'
 " let g:neocomplete#enable_auto_select = 0
+"
+let g:deoplete#enable_at_startup = 1
 
 let g:neomru#file_mru_path = $HOME.'/.vim/tmp/neomru/file'
 let g:neomru#directory_mru_path = $HOME.'/.vim/tmp/neomru/directory'
@@ -223,31 +228,56 @@ let g:airline_symbols.paste = 'Þ'
 let g:airline_symbols.whitespace = 'Ξ'
 
 let g:airline_theme='wombat'
-let g:airline#extensions#syntastic#enabled = 1
+" let g:airline#extensions#syntastic#enabled = 1
 let g:airline#extensions#branch#enabled = 1
 let g:airline#extensions#whitespace#enabled = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#fnamemod = ':t'
 " }}}
 
+" Tests {{{
+let test#strategy = "neovim"
+nmap <silent> \tn :TestNearest<CR>
+nmap <silent> \tf :TestFile<CR>
+nmap <silent> \ts :TestSuite<CR>
+nmap <silent> \tl :TestLast<CR>
+nmap <silent> \tv :TestVisit<CR>
+" }}}
+
+" NeoMake {{{
+" Automatically open error list if errors exists
+" let g:neomake_open_list = 2
+let g:neomake_haskell_enabled_makers = ['ghcmod', 'hlint']
+let g:neomake_python_enabled_makers = ['pylint', 'flake8']
+" Change gutter formatting for errors and warnings
+highlight NeomakeErrorMsg ctermfg=196
+let g:neomake_error_sign={'text': '✖︎', 'texthl': 'NeomakeErrorMsg'}
+
+highlight NeomakeWarningMsg ctermfg=226
+let g:neomake_warning_sign={'text': '⚠', 'texthl': 'NeomakeWarningMsg'}
+
+autocmd! BufWritePost * Neomake
+" noremap <leader>c :Neomake<CR>
+" }}}
+
 " Syntastic configuration {{{
-noremap <leader>c :SyntasticCheck<CR>
+" noremap <leader>c :SyntasticCheck<CR>
 
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
+" set statusline+=%#warningmsg#
+" set statusline+=%{SyntasticStatuslineFlag()}
+" set statusline+=%*
 
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 0
-let g:syntastic_check_on_wq = 0
-" pip install flake8
-let g:syntastic_python_checkers = ['flake8']
+" let g:syntastic_always_populate_loc_list = 1
+" let g:syntastic_auto_loc_list = 1
+" let g:syntastic_check_on_open = 0
+" let g:syntastic_check_on_wq = 0
+" " pip install flake8
+" let g:syntastic_python_checkers = ['flake8']
 
-let g:syntastic_error_symbol  = '⚡'
-let g:syntastic_warning_symbol = '⚠'
-let g:syntastic_style_error_symbol  = 'SE'
-let g:syntastic_style_warning_symbol = 'SW'
+" let g:syntastic_error_symbol  = '⚡'
+" let g:syntastic_warning_symbol = '⚠'
+" let g:syntastic_style_error_symbol  = 'SE'
+" let g:syntastic_style_warning_symbol = 'SW'
 " }}}
 
 let g:auto_save = 1  " enable AutoSave on Vim startup
@@ -270,14 +300,13 @@ let g:go_highlight_structs = 1
 augroup golang
     autocmd!
     autocmd FileType go nnoremap \r :GoRun<CR>
-    autocmd FileType go nnoremap \t :GoTest<CR>
     autocmd FileType go nnoremap <Leader>f :GoFmt<CR>
     autocmd FileType go nnoremap <Leader>r :GoRename<CR>
     autocmd FileType go nnoremap <Leader>s :GoImplmenets<CR>
     autocmd FileType go nnoremap <Leader>I :GoInfo<CR>
     autocmd FileType go nnoremap <buffer> <leader>i :exe 'GoImport ' . expand('<cword>')<CR>
     autocmd FileType go nnoremap <Leader>b :GoBuild<CR>
-    autocmd FileType go nnoremap <Leader>c :GoCoverageToggle<CR>
+    " autocmd FileType go nnoremap <Leader>c :GoCoverageToggle<CR>
 augroup END
 " }}}
 
@@ -289,7 +318,6 @@ augroup rustlang
     autocmd FileType rust nnoremap K :call racer#ShowDocumentation()<CR>
 
     autocmd FileType rust nnoremap \r :RustRun<CR>
-    autocmd FileType rust nnoremap \t :CargoTest<CR>
     autocmd FileType rust nnoremap \c :CargoBuild<CR>
     autocmd FileType rust nnoremap <Leader>f :RustFmt<CR>
 
@@ -299,7 +327,7 @@ augroup END
 
 " Rust autocmplete
 let g:rust_doc#downloaded_rust_doc_dir = '/home/shim/.rustup/toolchains/stable-x86_64-unknown-linux-gnu'
-" let g:rust_doc#define_map_K=0
+let g:rust_doc#define_map_K=0
 let g:racer_cmd = 'racer'
 let g:racer_experimental_completer = 1
 " }}}
@@ -326,6 +354,16 @@ augroup MyAutoCmd
 augroup END
 
 " Unite plugin config {{{
+call unite#custom#source('file_rec', 'sorters', 'sorter_reverse')
+call unite#custom#source('buffer,file_rec,file_rec/async', 'matchers',
+  \ ['converter_tail', 'matcher_fuzzy'])
+call unite#custom#source('file_mru', 'matchers',
+  \ ['matcher_project_files', 'matcher_hide_hidden_files'])
+call unite#custom#source('file', 'matchers',
+  \ ['matcher_fuzzy', 'matcher_hide_hidden_files'])
+call unite#custom#source('file_rec/async,file_mru', 'converters',
+  \ ['converter_file_directory'])
+
 call unite#filters#matcher_default#use(['matcher_fuzzy'])
 call unite#filters#sorter_default#use(['sorter_rank'])
 
@@ -363,7 +401,7 @@ nnoremap <silent>[unite]gf :<C-u>UniteWithProjectDir -start-insert -silent -togg
 
 nnoremap <silent>[unite]b :<C-u>Unite -buffer-name=buffers/bookmarks -silent -start-insert buffer<CR>
 nnoremap <silent>[unite]f :<C-u>UniteWithProjectDir -silent -start-insert -buffer-name=project_files file_rec/async:!<cr>
-nnoremap <silent>[unite]d :<C-u>UniteWithBufferDir -silent -buffer-name=directory file<CR>
+nnoremap <silent>[unite]d :<C-u>UniteWithBufferDir -silent -start-insert -buffer-name=directory file<CR>
 nnoremap <silent>[unite]r :<C-u>Unite -silent -buffer-name=mru file_mru -start-insert<CR>
 nnoremap <silent>[unite]l :<C-u>Unite -silent -no-split -auto-preview -start-insert line<CR>
 " grep word in current working directory
@@ -422,23 +460,23 @@ let g:java_space_errors=1
 
 nmap <F8> :TagbarToggle<CR>
 " Plugin key-mappings.
-inoremap <expr><C-g>     neocomplete#undo_completion()
-inoremap <expr><C-l>     neocomplete#complete_common_string()
+" inoremap <expr><C-g>     neocomplete#undo_completion()
+" inoremap <expr><C-l>     neocomplete#complete_common_string()
 
 " Recommended key-mappings.
 " <CR>: close popup and save indent.
-inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-function! s:my_cr_function()
+" inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+" function! s:my_cr_function()
   " For no inserting <CR> key.
-  return pumvisible() ? neocomplete#close_popup() : "\<CR>"
-endfunction
+  " return pumvisible() ? neocomplete#close_popup() : "\<CR>"
+" endfunction
 
 " <C-h>: close popup and delete backword char.
-inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
-inoremap <expr><C-y>  neocomplete#close_popup()
-inoremap <expr><C-e>  neocomplete#cancel_popup()
+" inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
+" inoremap <expr><C-y>  neocomplete#close_popup()
+" inoremap <expr><C-e>  neocomplete#cancel_popup()
 
-inoremap <expr><C-space> neocomplete#start_manual_complete()
+" inoremap <expr><C-space> neocomplete#start_manual_complete()
 imap <C-@> <C-Space>
 
 " Vimscript file settings {{{
