@@ -3,8 +3,8 @@
 " set the runtime path to include Vundle and initialize
 call plug#begin('~/.config/nvim/bundle')
 
-" my preffered colorscheme
-Plug 'sheerun/vim-wombat-scheme'
+Plug 'plasticboy/vim-markdown'
+Plug 'chriskempson/base16-vim'
 " tagbar
 Plug 'majutsushi/tagbar'
 " tests
@@ -41,7 +41,7 @@ Plug 'racer-rust/vim-racer', { 'for': 'rust' }
 Plug 'timonv/vim-cargo', { 'for': 'rust' }
 Plug 'rhysd/rust-doc.vim', { 'for': 'rust' }
 " Diff
-Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java' }
+" Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java' }
 Plug 'Yggdroot/indentLine', { 'on': 'IndentLinesEnable' }
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-commentary'
@@ -79,10 +79,18 @@ set ttyfast
 set virtualedit=all " allow the cursor to go in to 'invalid' places
 set wildmenu
 
+syntax on
+
 " VIM Colors {{{
-set t_Co=256
-set background=dark
-colorscheme wombat
+" colorscheme wombat256i
+" set background=dark
+if filereadable(expand("~/.vimrc_background"))
+  let base16colorspace=256
+  source ~/.vimrc_background
+endif
+
+hi Normal ctermbg=none
+hi NonText ctermbg=none
 " }}}
 
 " VIM Search {{{
@@ -99,13 +107,12 @@ if has('persistent_undo')
     set undofile
 endif
 
-syntax on
-
 let mapleader=","
 let maplocalleader="\\"
 
+vnoremap <Leader>y "+y
 nnoremap <Leader>y "+y
-nnoremap <Leader>p "*p==
+nnoremap <Leader>p "+p==
 nnoremap <Leader>P :set invpaste<CR>
 nnoremap <Leader>qq :qa!<CR>
 
@@ -188,21 +195,6 @@ let g:jedi#rename_command = "<leader>r"
 let g:jedi#show_call_signatures = "2"
 " }}}
 
-" if !exists('g:neocomplete#force_omni_input_patterns')
-"     let g:neocomplete#force_omni_input_patterns = {}
-" endif
-" let g:neocomplete#force_omni_input_patterns.python = '\%([^. \t]\.\|^\s*@\|^\s*from\s.\+import \|^\s*from \|^\s*import \)\w*'
-
-" let g:neocomplete#enable_auto_select = 1
-" let g:neocomplete#enable_at_startup = 1
-" let g:neocomplete#enable_smart_case = 1
-" let g:neocomplete#enable_refresh_always = 1
-" let g:neocomplete#max_list = 30
-" let g:neocomplete#min_keyword_length = 2
-" let g:neocomplete#sources#syntax#min_keyword_length = 2
-" let g:neocomplete#data_directory = $HOME.'/.vim/tmp/neocomplete'
-" let g:neocomplete#enable_auto_select = 0
-"
 let g:deoplete#enable_at_startup = 1
 
 let g:neomru#file_mru_path = $HOME.'/.vim/tmp/neomru/file'
@@ -210,27 +202,8 @@ let g:neomru#directory_mru_path = $HOME.'/.vim/tmp/neomru/directory'
 
 let g:JavaComplete_BaseDir = $HOME.'/.vim/tmp/java'
 " Airline plugin config {{{
-
-if !exists('g:airline_symbols')
-    let g:airline_symbols = {}
-endif
-
- " unicode symbols
-let g:airline_left_sep = '»'
-let g:airline_left_sep = '▶'
-let g:airline_right_sep = '«'
-let g:airline_right_sep = '◀'
-let g:airline_symbols.linenr = '␊'
-let g:airline_symbols.linenr = '␤'
-let g:airline_symbols.branch = '⎇'
-let g:airline_symbols.paste = 'ρ'
-let g:airline_symbols.paste = 'Þ'
-let g:airline_symbols.whitespace = 'Ξ'
-
-let g:airline_theme='wombat'
-" let g:airline#extensions#syntastic#enabled = 1
-let g:airline#extensions#branch#enabled = 1
-let g:airline#extensions#whitespace#enabled = 1
+let g:airline_powerline_fonts = 1
+let g:airline_theme='base16_oceanicnext'
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#fnamemod = ':t'
 " }}}
@@ -288,7 +261,7 @@ nnoremap <Leader>eU :UltiSnipsEdit<CR>
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
-let g:UltiSnipsSnippetsDir=$HOME."/vim/UltiSnips"
+let g:UltiSnipsSnippetsDir=$HOME."/.config/nvim/UltiSnips"
 let g:UltiSnipsEditSplit="horizontal"
 " }}}
 
@@ -357,8 +330,8 @@ augroup END
 call unite#custom#source('file_rec', 'sorters', 'sorter_reverse')
 call unite#custom#source('buffer,file_rec,file_rec/async', 'matchers',
   \ ['converter_tail', 'matcher_fuzzy'])
-call unite#custom#source('file_mru', 'matchers',
-  \ ['matcher_project_files', 'matcher_hide_hidden_files'])
+" call unite#custom#source('file_mru', 'matchers',
+  " \ ['matcher_project_files', 'matcher_hide_hidden_files'])
 call unite#custom#source('file', 'matchers',
   \ ['matcher_fuzzy', 'matcher_hide_hidden_files'])
 call unite#custom#source('file_rec/async,file_mru', 'converters',
