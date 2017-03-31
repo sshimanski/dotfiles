@@ -186,7 +186,7 @@ bindsym $mod+d exec rofi -show run
 bindsym $mod+Shift+d exec rofi -show window
 
 bindsym $mod+t exec ~/work/scripts/seltr
-bindsym --release $mod+x exec xdotool search --onlyvisible --title rangerfloat windowunmap || xdotool search --title rangerfloat windowmap || urxvt -title rangerfloat -e ranger &
+bindsym --release $mod+x exec xdotool search --onlyvisible --title rangerfloat windowunmap || xdotool search --title rangerfloat windowmap || urxvt -title rangerfloat -e zsh
 # bindsym $mod+x exec --no-startup-id i3-sensible-terminal -e ranger
 
 bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 10
@@ -214,11 +214,13 @@ exec google-chrome-stable
 assign [class="Thunderbird"] $workspace3
 exec thunderbird
 
-assign [class="skypeforlinux"] $workspace4
-exec skypeforlinux
+# assign [class="skypeforlinux"] $workspace4
+# exec skypeforlinux
 
-assign [class="Slack"] $workspace4
-exec slack
+# assign [class="Slack"] $workspace4
+# exec slack
+exec --no-startup-id rambox
+assign [class="Rambox"] $workspace4
 
 assign [class="jetbrains-idea"] $workspace10
 assign [title="Oracle SQL Developer"] $workspace9
@@ -229,6 +231,8 @@ for_window [title="rangerfloat"] floating enable
 exec --no-startup-id nm-applet
 exec --no-startup-id compton -f -D5
 exec --no-startup-id kbdd
+# exec --no-startup-id gnome-settings-daemon
+exec --no-startup-id gnome-keyring-daemon
 
 # Mod_system
 set $Locker i3lock
