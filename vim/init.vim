@@ -133,7 +133,6 @@ nnoremap gd gdzz
 
 nnoremap zj m`o<Esc>``
 nnoremap zk m`O<Esc>``
-nnoremap gu gUiw`]
 
 vmap <tab> >gv
 vmap <s-tab> <gv
