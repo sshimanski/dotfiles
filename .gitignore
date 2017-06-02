@@ -1,0 +1,12 @@
+.gitignore/
+.ropeproject
+*.pyc
+daily-logs/
+
+target/
+.idea/
+*.class
+*.iml
+*.ipr
+*.iws
+*.log

@@ -14,6 +14,9 @@ Plug 'fatih/vim-go', { 'for': 'go' }
 " keyword completion system by maintaining a cache of keywords in the current buffer 
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'zchee/deoplete-jedi'
+" unite all
+Plug 'Shougo/denite.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'chemzqm/denite-extra' " many sources
 " status line
 Plug 'bling/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
@@ -27,22 +30,17 @@ Plug 'Lokaltog/vim-easymotion'
 Plug 'jiangmiao/auto-pairs'
 " unite all
 Plug 'Shougo/vimproc.vim', { 'do': 'make'  }
-Plug 'Shougo/unite.vim'
-" Require exuberant-ctags
-Plug 'Shougo/unite-outline'
-Plug 'Shougo/unite-help'
 Plug 'Shougo/neomru.vim'
-Plug 'osyo-manga/unite-quickfix'
 " GIT plugin
 Plug 'tpope/vim-fugitive'
 " Rust
-Plug 'rust-lang/rust.vim', { 'for': 'rust' }
+Plug 'rust-lang/rust.vim', { 'for': 'rust' } " install universal-ctags for denite::outline
 Plug 'racer-rust/vim-racer', { 'for': 'rust' }
 Plug 'timonv/vim-cargo', { 'for': 'rust' }
 Plug 'rhysd/rust-doc.vim', { 'for': 'rust' }
 " Diff
 " Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java' }
-Plug 'Yggdroot/indentLine', { 'on': 'IndentLinesEnable' }
+Plug 'Yggdroot/indentLine' ", { 'on': 'IndentLinesEnable' }
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
@@ -89,8 +87,10 @@ if filereadable(expand("~/.vimrc_background"))
   source ~/.vimrc_background
 endif
 
-hi Normal ctermbg=none
-hi NonText ctermbg=none
+highlight Normal ctermbg=none
+highlight NonText ctermbg=none
+highlight CursorLine ctermbg=none cterm=bold
+highlight LineNr ctermbg=none
 " }}}
 
 " VIM Search {{{
@@ -202,7 +202,7 @@ let g:neomru#directory_mru_path = $HOME.'/.vim/tmp/neomru/directory'
 let g:JavaComplete_BaseDir = $HOME.'/.vim/tmp/java'
 " Airline plugin config {{{
 let g:airline_powerline_fonts = 1
-let g:airline_theme='base16_oceanicnext'
+let g:airline_theme='base16_tomorrow'
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#fnamemod = ':t'
 " }}}
@@ -230,6 +230,7 @@ let g:neomake_warning_sign={'text': '⚠', 'texthl': 'NeomakeWarningMsg'}
 
 autocmd! BufWritePost * Neomake
 " noremap <leader>c :Neomake<CR>
+
 " }}}
 
 " Syntastic configuration {{{
@@ -293,8 +294,8 @@ augroup rustlang
     autocmd FileType rust nnoremap \c :CargoBuild<CR>
     autocmd FileType rust nnoremap <Leader>f :RustFmt<CR>
 
-    autocmd FileType rust nnoremap <silent>[unite]k :<C-u>Unite -silent -start-insert rust/doc<CR>
-    autocmd FileType rust nnoremap <silent>[unite]K :<C-u>Unite -silent -start-insert rust/doc:modules<CR>
+    autocmd FileType rust nnoremap <silent>[denite]k :<C-u>Denite -silent -start-insert rust/doc<CR>
+    autocmd FileType rust nnoremap <silent>[denite]K :<C-u>Denite -silent -start-insert rust/doc:modules<CR>
 augroup END
 
 " Rust autocmplete
@@ -325,99 +326,42 @@ augroup MyAutoCmd
     autocmd Filetype java setlocal omnifunc=javacomplete#Complete
 augroup END
 
-" Unite plugin config {{{
-call unite#custom#source('file_rec', 'sorters', 'sorter_reverse')
-call unite#custom#source('buffer,file_rec,file_rec/async', 'matchers',
-  \ ['converter_tail', 'matcher_fuzzy'])
-" call unite#custom#source('file_mru', 'matchers',
-  " \ ['matcher_project_files', 'matcher_hide_hidden_files'])
-call unite#custom#source('file', 'matchers',
-  \ ['matcher_fuzzy', 'matcher_hide_hidden_files'])
-call unite#custom#source('file_rec/async,file_mru', 'converters',
-  \ ['converter_file_directory'])
+" Denite plugin config {{{
+nnoremap    [denite]   <Nop>
+nmap     <Space> [denite]
 
-call unite#filters#matcher_default#use(['matcher_fuzzy'])
-call unite#filters#sorter_default#use(['sorter_rank'])
+nnoremap <silent> [denite]b         :<C-u>Denite buffer<CR>
+nnoremap <silent> [denite]d         :<C-u>DeniteBufferDir file_rec<CR>
+nnoremap <silent> [denite]f         :<C-u>DeniteProjectDir file_rec<CR>
+nnoremap <silent> [denite]g         :<C-u>Denite grep<CR>
+nnoremap <silent> [denite]h         :<C-u>Denite help<CR>
+nnoremap <silent> [denite]l         :<C-u>Denite line<CR>
+nnoremap <silent> [denite]m         :<C-u>Denite outline<CR>
+nnoremap <silent> [denite]r         :<C-u>Denite file_mru<CR>
 
-autocmd MyAutoCmd FileType unite call s:unite_my_settings()
+call denite#custom#source('buffer,file_mru,file_mru', 'sorters', ['sorter_sublime'])
+call denite#custom#source('buffer,file_mru,file_mru', 'matchers', ['matcher_substring', 'matcher_ignore_globs'])
 
-function! s:unite_my_settings()
-    nmap <buffer> <ESC> <Plug>(unite_exit)
-    nmap <buffer> <C-r> <Plug>(unite_redraw)
-    imap <buffer>  jj        <Plug>(unite_insert_leave)
-    imap <buffer>  <Tab>     <Plug>(unite_complete)
-    nnoremap <silent><buffer><expr>p unite#do_action('persist_open')
-endfunction
+call denite#custom#var('file_rec', 'command', ['ag', '--follow', '--nocolor', '--nogroup', '-g', ''])
+call denite#custom#var('grep', 'command', ['ag'])
+call denite#custom#var('grep', 'default_opts', ['-i', '--vimgrep'])
+call denite#custom#var('grep', 'recursive_opts', [])
+call denite#custom#var('grep', 'pattern_opt', [])
+call denite#custom#var('grep', 'separator', ['--'])
+call denite#custom#var('grep', 'final_opts', [])
 
-let g:unite_data_directory = $HOME.'/.vim/tmp/unite'
-let g:unite_winheight = 10
-let g:unite_candidate_icon="▸ "
-let g:unite_source_history_yank_enable = 1
+call denite#custom#option('default', 'prompt', '❯')
+call denite#custom#option('default', 'highlight_matched_char', 'Debug')
+call denite#custom#option('default', 'highlight_matched_range', 'Normal')
 
-" Default configuration.
-let default_context = {
-      \'prompt':'▸ ',
-      \ 'vertical' : 0,
-      \ }
-call unite#custom#profile('default', 'context', default_context)
-
-nnoremap <silent>gm :<C-u>UniteBookmarkAdd<CR>
-nnoremap <silent>gM :<C-u>Unite -silent -buffer-name=bookmarked bookmark<CR>
-
-noremap [unite] <Nop>
-map     <Space> [unite]
-" Git
-" nnoremap <silent>[unite]gg :exe 'silent Ggrep -i '.input("Pattern: ")<Bar> Unite -toggle quickfix<CR>
-nnoremap <silent>[unite]gl :exe 'silent Glog'<BAR> Unite -toggle quickfix<CR>
-nnoremap <silent>[unite]gf :<C-u>UniteWithProjectDir -start-insert -silent -toggle file_rec/git<CR>
-
-nnoremap <silent>[unite]b :<C-u>Unite -buffer-name=buffers/bookmarks -silent -start-insert buffer<CR>
-nnoremap <silent>[unite]f :<C-u>UniteWithProjectDir -silent -start-insert -buffer-name=project_files file_rec/async:!<cr>
-nnoremap <silent>[unite]d :<C-u>UniteWithBufferDir -silent -start-insert -buffer-name=directory file<CR>
-nnoremap <silent>[unite]r :<C-u>Unite -silent -buffer-name=mru file_mru -start-insert<CR>
-nnoremap <silent>[unite]l :<C-u>Unite -silent -no-split -auto-preview -start-insert line<CR>
-" grep word in current working directory
-nnoremap <silent>[unite]g :<C-u>UniteWithProjectDir -silent -buffer-name=grep -no-quit grep<CR>
-" grep word under the cursor in current working directory
-nnoremap <silent>[unite]w :<C-u>UniteWithCursorWord -silent -no-quit grep<CR>
-nnoremap <silent>[unite]y :<C-u>Unite -silent -no-quit history/yank<CR>
-" nnoremap <silent>[unite]m :<C-u>Unite -toggle -silent -vertical -start-insert -buffer-name=outline -winwidth=50 -direction=botright outline<CR>
-nnoremap <silent>[unite]m :<C-u>Unite -toggle -silent -start-insert -buffer-name=outline outline<CR>
-nnoremap <silent>[unite]R :<C-u>UniteResume<CR>
-nnoremap <silent>[unite]q :<C-u>Unite -toggle quickfix<CR>
-" grep in vim help
-nnoremap <silent>[unite]h :<C-u>Unite -start-insert -buffer-name=help help<CR>
-
-" Ignore wildignore
-call unite#custom#source('file_rec', 'ignore_globs', split(&wildignore, ','))
-call unite#custom#source('file_rec/async', 'ignore_globs', split(&wildignore, ','))
-
-if executable("ag")
-    " the silver search                    
-    let g:unite_source_grep_command = 'ag'
-    let g:unite_source_grep_default_opts = '--nogroup --nocolor --column --follow --smart-case --nocolor'
-    let g:unite_source_rec_async_command = ['ag', '--follow', '--nocolor', '--nogroup', '--hidden', '-g', '']
-endif
-
-" TODO init menu
-nnoremap [menu] <Nop>
-nmap <LocalLeader> [menu]
-nnoremap <silent>[menu]m :Unite -buffer-name=menus -silent -winheight=20 menu<CR>
-
-let g:unite_source_menu_menus = {}
-let g:unite_source_menu_menus.navigate = { 'description' : 'navigate in buffers, files, yank history, marks etc.'}
-
-let g:unite_source_menu_menus.navigate.command_candidates = [
-    \['▷ open buffer                                                  <Space>b',
-        \'Unite -buffer-name=buffers -silent buffer'],
-    \]
-nnoremap <silent>[menu]n :Unite -buffer-name=navigate -silent menu:navigate<CR>
-
+" Change mappings.
+call denite#custom#map('insert', '<C-n>', '<denite:move_to_next_line>', 'noremap')
+call denite#custom#map('insert', '<C-p>', '<denite:move_to_previous_line>', 'noremap')
 " }}} Unite plugin config
 
 " IndentLine plugin config {{{
 map <silent> <Leader>L :IndentLinesToggle<CR>
-let g:indentLine_enabled = 0
+let g:indentLine_enabled = 1
 let g:indentLine_char = '┊'
 let g:indentLine_color_term = 239
 " }}} IndentLine plugin config
@@ -431,25 +375,6 @@ let g:java_space_errors=1
 " }}}
 
 nmap <F8> :TagbarToggle<CR>
-" Plugin key-mappings.
-" inoremap <expr><C-g>     neocomplete#undo_completion()
-" inoremap <expr><C-l>     neocomplete#complete_common_string()
-
-" Recommended key-mappings.
-" <CR>: close popup and save indent.
-" inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-" function! s:my_cr_function()
-  " For no inserting <CR> key.
-  " return pumvisible() ? neocomplete#close_popup() : "\<CR>"
-" endfunction
-
-" <C-h>: close popup and delete backword char.
-" inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
-" inoremap <expr><C-y>  neocomplete#close_popup()
-" inoremap <expr><C-e>  neocomplete#cancel_popup()
-
-" inoremap <expr><C-space> neocomplete#start_manual_complete()
-imap <C-@> <C-Space>
 
 " Vimscript file settings {{{
 augroup filetype_vim

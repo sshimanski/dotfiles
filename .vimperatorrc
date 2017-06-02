@@ -1,0 +1,41 @@
+"3.16.0 (created: 2017/02/01 00:55:15)
+
+source! /home/shim/.vimperatorrc.local
+
+set editor="urxvt -e nvim"
+set hintchars=hjklasdfgyuiopqwertnmzxcvb
+set ignorecase
+set noanimations
+set smartcase
+set titlestring=Firefox
+set visualbell
+
+ignorekeys add www\\.inoreader\\.com -except=<C-n>,<C-p>,<C-e>,<C-y>
+
+nmap d <C-d>
+nmap j 4<C-e>
+nmap k 4<C-y>
+
+inoremap <C-a> <C-Home><C-S-End>
+
+inoremap <C-n> <Down>
+inoremap <C-p> <Up>
+inoremap <C-b> <Left>
+inoremap <C-f> <Right>
+
+nnoremap ,sv :source ~/.vimperatorrc<CR>
+
+let mapleader = ","
+nmap <leader>k :quit<CR>
+
+qmark i http://www.inoreader.com
+qmark b http://www.bcse.by/ru/currencymarket/rates/0
+qmark m http://somafm.com/player/#/now-playing/groovesalad
+qmark c https://ru.investing.com/currencies/eur-usd
+qmark w https://yandex.by/pogoda/brest/details
+qmark z https://pl.investing.com/currencies/usd-pln
+" translation
+qmark r https://translate.google.com/#ru/en/
+qmark e https://translate.google.com/#en/ru/
+
+" vim: set ft=vimperator:

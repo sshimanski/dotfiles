@@ -97,13 +97,13 @@ bindsym $mod+a focus parent
 # terminal
 set $workspace1 "1: &#xf120;"
 # web
-set $workspace2 "2: "
+set $workspace2 "2: &#xf269;"
 # mail
 set $workspace3 "3: &#xf003;"
 # chat
 set $workspace4 "4: &#xf0e5;"
 # db
-set $workspace9 "9: DB"
+set $workspace9 "9: &#xf1c0;"
 # work
 set $workspace10 "0: &#xf121;"
 
@@ -165,6 +165,21 @@ mode "resize" {
 
 bindsym $mod+r mode "resize"
 
+# bar {
+#       # font pango:DejaVu Sans Mono for Powerline 12
+#       position top
+#       status_command ~/work/projects/local/rust/github/i3status-rust/target/release/i3status-rs ~/work/projects/local/rust/github/i3status-rust/example_config.json --icons awesome --theme solarized-dark
+#       colors {
+#             separator #666666
+#             background #222222
+#             statusline #dddddd
+#             focused_workspace #0088CC #0088CC #ffffff
+#             active_workspace #333333 #333333 #ffffff
+#             inactive_workspace #333333 #333333 #888888
+#             urgent_workspace #2f343a #900000 #ffffff
+#       }
+# }
+
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
@@ -177,18 +192,18 @@ bar {
     colors {
 		background $bg-color
         separator #757575
-        #                  border             background         text
+        #                   border             background         text
 		focused_workspace   $bg-color          $bg-color          $text-color
 		inactive_workspace  $inactive-bg-color $inactive-bg-color $inactive-text-color
 		urgent_workspace    $urgent-bg-color   $urgent-bg-color   $text-color
     }
 }
 
-bindsym $mod+d exec rofi -show run
-bindsym $mod+Shift+d exec "rofi -show combi -combi-modi window,drun -modi combi"
+bindsym $mod+Tab exec "rofi -show window"
+bindsym $mod+d exec "rofi -show combi -combi-modi drun,run -modi combi"
 
 bindsym $mod+t exec ~/work/scripts/seltr
-bindsym --release $mod+x exec xdotool search --onlyvisible --title rangerfloat windowunmap || xdotool search --title rangerfloat windowmap || urxvt -title rangerfloat -e zsh
+# bindsym --release $mod+x exec xdotool search --onlyvisible --title rangerfloat windowunmap || xdotool search --title rangerfloat windowmap || urxvt -title rangerfloat -e zsh
 # bindsym $mod+x exec --no-startup-id i3-sensible-terminal -e ranger
 
 bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 10
@@ -211,16 +226,11 @@ exec_always feh --bg-scale ~/.config/i3/wallpaper.jpg
 
 assign [class="Google-chrome"] $workspace2
 assign [class="Firefox"] $workspace2
-exec google-chrome-stable
+exec --no-startup-id firefox
 
 assign [class="Thunderbird"] $workspace3
 exec thunderbird
 
-# assign [class="skypeforlinux"] $workspace4
-# exec skypeforlinux
-
-# assign [class="Slack"] $workspace4
-# exec slack
 exec --no-startup-id rambox
 assign [class="Rambox"] $workspace4
 
@@ -233,7 +243,6 @@ for_window [title="rangerfloat"] floating enable
 exec --no-startup-id nm-applet
 exec --no-startup-id compton -f -D5
 exec --no-startup-id kbdd
-# exec --no-startup-id gnome-settings-daemon
 exec --no-startup-id gnome-keyring-daemon
 
 # Mod_system
