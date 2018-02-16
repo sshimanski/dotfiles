@@ -9,6 +9,8 @@ set smartcase
 set surround
 
 let mapleader=","
+nnoremap ' `
+nnoremap ` '
 
 nnoremap <Space> <nop>
 nnoremap <leader>ev :e ~/.ideavimrc<CR>
@@ -19,8 +21,6 @@ map <leader>p "*p==
 map <leader>P a<space><esc>p
 
 noremap Y y$
-nnoremap ' `
-nnoremap ` '
 nnoremap n nzz
 nnoremap N Nzz
 " nnoremap gd gdzz
@@ -54,8 +54,6 @@ nnoremap ]<Space> o<ESC>k 0 w
 nnoremap coh :nohlsearch<CR>
 nnoremap cob :action ToggleLineBreakpoint<CR>
 
-noremap <S-A-j> :action MoveStatementDown<CR>
-noremap <S-A-k> :action MoveStatementUp<CR>
 xnoremap <C-S-o> :action OverrideMethods<CR>
 xnoremap <C-S-i> :action ImplementMethods<CR>
 " Identifier Highlighter Reloaded plugin mapping
@@ -66,7 +64,7 @@ nmap gcc :action CommentByLineComment<CR>
 vnoremap gc :<bs><bs><bs><bs><bs>action VimVisualSwapSelections<CR>:action CommentByLineComment<CR>
 vnoremap gC :<bs><bs><bs><bs><bs>action VimVisualSwapSelections<CR>:action CommentByBlockComment<CR>
 
-" unite.vim (lists)
+" denite.vim (lists)
 noremap <Space>b :action Switcher<CR>
 noremap <Space>r :action RecentFiles<CR>
 noremap <Space>d :action RecentChangedFiles<CR>
@@ -75,12 +73,12 @@ noremap <Space>f :action GotoFile<CR>
 noremap <Space>g :action FindInPath<CR>
 noremap <Space>s :action GotoSymbol<CR>
 
-" unite outline
+" denite outline
 nnoremap <Space>m :action FileStructurePopup<CR>
 noremap <Space>u :action FindUsages<CR>
 noremap <Space>w :action SelectIn<CR>
 
-" Do I really need this?
+" Intellij Idea marks
 nmap gm :action ToggleBookmark<CR>
 nmap gM :action ShowBookmarks<CR>
 nmap gn :action GotoNextBookmark<CR>
@@ -90,13 +88,13 @@ nmap gp :action GotoPreviousBookmark<CR>
 noremap <C--> :action HideAllWindows<CR>
 
 " Mnemonic: 'to'
-nnoremap td :action GotoTypeDeclaration<CR>
-nnoremap ti :action GotoImplementation<CR>
-nnoremap ts :action GotoSuperMethod<CR>
-nnoremap tt :action GotoTest<CR>
+nnoremap td :action GotoTypeDeclaration<CR>zt
+nnoremap ti :action GotoImplementation<CR>zt
+nnoremap ts :action GotoSuperMethod<CR>zt
+nnoremap tt :action GotoTest<CR>zt
 nnoremap tu :action ShowUsages<CR>
 " to 'class'
-nnoremap tc gg<BAR>:action MethodDown<CR>zz
+nnoremap tc gg<BAR>:action MethodDown<CR>zt
 
 " native back/forward is less buggy, <C-t> still useful
 noremap <C-o> :action Back<CR>
@@ -109,10 +107,11 @@ noremap <leader>ec :action ExtractClass<CR>
 
 noremap <leader>N :action NewElement<CR>
 
-" Mnemonic 'introduce' (use posfix .var for variable)
+" Mnemonic 'introduce'
 noremap <leader>ic :action IntroduceConstant<CR>
 noremap <leader>if :action IntroduceField<CR>
 noremap <leader>ip :action IntroduceParameter<CR>
+" use postfix .var for variable
 noremap <leader>iv :action IntroduceVariable<CR>
 
 " Git

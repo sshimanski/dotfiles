@@ -5,8 +5,11 @@ call plug#begin('~/.config/nvim/bundle')
 
 Plug 'plasticboy/vim-markdown'
 Plug 'chriskempson/base16-vim'
+Plug 'kshenoy/vim-signature'
 " tagbar
-Plug 'majutsushi/tagbar'
+" Plug 'majutsushi/tagbar'
+" snippets stuff
+Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
 " tests
 Plug 'janko-m/vim-test'
 " golang for vim
@@ -20,8 +23,6 @@ Plug 'chemzqm/denite-extra' " many sources
 " status line
 Plug 'bling/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-" snippets stuff
-Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
 " python autocomplete + rename + goto definition
 Plug 'davidhalter/jedi-vim', { 'for': 'python' }
 " easy motion
@@ -103,7 +104,7 @@ set ignorecase
 " }}}
 
 if has('persistent_undo')
-    set undodir=~/.vim/undo,~/tmp,/tmp
+    set undodir=~/.config/nvim/tmp/undo,~/tmp,/tmp
     set undofile
 endif
 
@@ -124,12 +125,13 @@ nnoremap <Leader>gl :Glog<CR>
 
 " Make the Y behavior similar to D & C
 nnoremap Y y$
-nnoremap ' `
-nnoremap ` '
 
+" zz
 nnoremap n nzz
 nnoremap N Nzz
 nnoremap gd gdzz
+nnoremap <C-o> <C-o>zz
+nnoremap <C-i> <C-i>zz
 
 nnoremap zj m`o<Esc>``
 nnoremap zk m`O<Esc>``
@@ -195,14 +197,21 @@ let g:jedi#show_call_signatures = "2"
 " }}}
 
 let g:deoplete#enable_at_startup = 1
+let g:deoplete#enable_smart_case = 1
 
-let g:neomru#file_mru_path = $HOME.'/.vim/tmp/neomru/file'
-let g:neomru#directory_mru_path = $HOME.'/.vim/tmp/neomru/directory'
+let g:neomru#file_mru_path = $HOME.'/.config/nvim/tmp/neomru/file'
+let g:neomru#directory_mru_path = $HOME.'/.config/nvim/tmp/neomru/directory'
+" do not ignore mnt
+let g:neomru#file_mru_ignore_pattern =
+      \'\~$\|\.\%(o\|exe\|dll\|bak\|zwc\|pyc\|sw[po]\)$'.
+      \'\|\%(^\|/\)\.\%(hg\|git\|bzr\|svn\)\%($\|/\)'.
+      \'\|^\%(\\\\\|/media/\|/temp/\|/tmp/\|\%(/private\)\=/var/folders/\)'.
+      \'\|\%(^\%(fugitive\)://\)'
 
-let g:JavaComplete_BaseDir = $HOME.'/.vim/tmp/java'
+let g:JavaComplete_BaseDir = $HOME.'/.config/nvim/tmp/java'
 " Airline plugin config {{{
 let g:airline_powerline_fonts = 1
-let g:airline_theme='base16_tomorrow'
+let g:airline_theme='wombat'
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#fnamemod = ':t'
 " }}}
@@ -294,8 +303,8 @@ augroup rustlang
     autocmd FileType rust nnoremap \c :CargoBuild<CR>
     autocmd FileType rust nnoremap <Leader>f :RustFmt<CR>
 
-    autocmd FileType rust nnoremap <silent>[denite]k :<C-u>Denite -silent -start-insert rust/doc<CR>
-    autocmd FileType rust nnoremap <silent>[denite]K :<C-u>Denite -silent -start-insert rust/doc:modules<CR>
+    autocmd FileType rust nnoremap <silent>[denite]k :<C-u>Denite rust/doc<CR>
+    autocmd FileType rust nnoremap <silent>[denite]K :<C-u>Denite rust/doc:modules<CR>
 augroup END
 
 " Rust autocmplete
@@ -331,9 +340,11 @@ nnoremap    [denite]   <Nop>
 nmap     <Space> [denite]
 
 nnoremap <silent> [denite]b         :<C-u>Denite buffer<CR>
+nnoremap <silent> [denite]c         :<C-u>Denite change<CR>
 nnoremap <silent> [denite]d         :<C-u>DeniteBufferDir file_rec<CR>
 nnoremap <silent> [denite]f         :<C-u>DeniteProjectDir file_rec<CR>
-nnoremap <silent> [denite]g         :<C-u>Denite grep<CR>
+nnoremap <silent> [denite]g         :<C-u>DeniteProjectDir grep<CR>
+nnoremap <silent> [denite]G         :<C-u>DeniteCursorWord grep<CR>
 nnoremap <silent> [denite]h         :<C-u>Denite help<CR>
 nnoremap <silent> [denite]l         :<C-u>Denite line<CR>
 nnoremap <silent> [denite]m         :<C-u>Denite outline<CR>

@@ -10,7 +10,11 @@ set smartcase
 set titlestring=Firefox
 set visualbell
 
-ignorekeys add www\\.inoreader\\.com -except=<C-n>,<C-p>,<C-e>,<C-y>
+highlight Hint -append font-size:14px;
+
+ignorekeys add inoreader.com -except=<C-n>,<C-p>
+ignorekeys add youtube.com -except=<C-n>,<C-p>
+ignorekeys add gerrit.devops.ose.discsrv.co.za -except=<C-n>,<C-p>
 
 nmap d <C-d>
 nmap j 4<C-e>
@@ -27,15 +31,17 @@ nnoremap ,sv :source ~/.vimperatorrc<CR>
 
 let mapleader = ","
 nmap <leader>k :quit<CR>
+nmap [b <C-p>
+nmap ]b <C-n>
 
-qmark i http://www.inoreader.com
 qmark b http://www.bcse.by/ru/currencymarket/rates/0
-qmark m http://somafm.com/player/#/now-playing/groovesalad
 qmark c https://ru.investing.com/currencies/eur-usd
-qmark w https://yandex.by/pogoda/brest/details
-qmark z https://pl.investing.com/currencies/usd-pln
-" translation
-qmark r https://translate.google.com/#ru/en/
 qmark e https://translate.google.com/#en/ru/
+qmark i http://www.inoreader.com
+qmark m http://somafm.com/player/#/now-playing/thetrip
+qmark r https://translate.google.com/#ru/en/
+qmark R https://doc.rust-lang.org/book/second-edition/
+qmark w https://yandex.by/pogoda/brest/details
+qmark z https://ru.investing.com/currencies/usd-pln
 
 " vim: set ft=vimperator:
