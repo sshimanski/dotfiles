@@ -15,8 +15,8 @@ Plug 'janko-m/vim-test'
 " golang for vim
 Plug 'fatih/vim-go', { 'for': 'go' }
 " keyword completion system by maintaining a cache of keywords in the current buffer 
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'zchee/deoplete-jedi'
+" Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+" Plug 'zchee/deoplete-jedi'
 " unite all
 Plug 'Shougo/denite.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'chemzqm/denite-extra' " many sources
@@ -27,6 +27,7 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'davidhalter/jedi-vim', { 'for': 'python' }
 " easy motion
 Plug 'Lokaltog/vim-easymotion'
+Plug 'Lokaltog/neoranger'
 " auto pairs - [], {}, '' etc.
 Plug 'jiangmiao/auto-pairs'
 " unite all
@@ -151,7 +152,7 @@ map <C-h> <C-W>h
 map vv ggVG
 
 " Fast window/buffer kill
-nnoremap <Leader>K <C-w>c           " window
+nnoremap <silent><Leader>K :bd!<CR>  " buffer do not save
 nnoremap <silent><Leader>k :bd<CR>  " buffer
 
 " Synonums

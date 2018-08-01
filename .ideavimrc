@@ -17,7 +17,7 @@ nnoremap <leader>ev :e ~/.ideavimrc<CR>
 nnoremap <leader>sv :source ~/.ideavimrc<CR>
 
 map <leader>y "+y
-map <leader>p "*p==
+map <leader>p "*p
 map <leader>P a<space><esc>p
 
 noremap Y y$
@@ -71,15 +71,14 @@ noremap <Space>d :action RecentChangedFiles<CR>
 noremap <Space>c :action GotoClass<CR>
 noremap <Space>f :action GotoFile<CR>
 noremap <Space>g :action FindInPath<CR>
-noremap <Space>s :action GotoSymbol<CR>
+" noremap <Space>s :action GotoSymbol<CR>
+noremap <Space>lp :action ManageRecentProjects<CR>
 
 " denite outline
 nnoremap <Space>m :action FileStructurePopup<CR>
 noremap <Space>u :action FindUsages<CR>
 noremap <Space>w :action SelectIn<CR>
 
-" Intellij Idea marks
-nmap gm :action ToggleBookmark<CR>
 nmap gM :action ShowBookmarks<CR>
 nmap gn :action GotoNextBookmark<CR>
 nmap gp :action GotoPreviousBookmark<CR>

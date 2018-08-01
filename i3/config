@@ -35,6 +35,8 @@ floating_modifier $mod
 
 # start a terminal
 bindsym $mod+Return exec i3-sensible-terminal
+bindsym $mod+Shift+Return exec --no-startup-id urxvt -e zsh -ci ranger
+bindsym $mod+Shift+i exec --no-startup-id urxvt -e zsh -ci htop
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -131,16 +133,15 @@ bindsym $mod+Shift+8 move container to workspace 8
 bindsym $mod+Shift+9 move container to workspace $workspace9
 bindsym $mod+Shift+0 move container to workspace $workspace10
 
-set $monitor HDMI1
-set $notebook LVDS1
-
-workspace $workspace1 output $monitor
-workspace $workspace2 output $monitor
-workspace $workspace3 output $monitor
-workspace $workspace4 output $monitor
-workspace $workspace9 output $monitor
-workspace $workspace10 output $monitor
-workspace 8 output $notebook
+# set $monitor HDMI1
+# set $notebook LVDS1
+# workspace $workspace1 output $monitor
+# workspace $workspace2 output $monitor
+# workspace $workspace3 output $monitor
+# workspace $workspace4 output $monitor
+# workspace $workspace9 output $monitor
+# workspace $workspace10 output $monitor
+# workspace 8 output $notebook
 
 # reload the configuration file
 bindsym $mod+Shift+c reload
@@ -209,31 +210,20 @@ bar {
 		urgent_workspace    $urgent-bg-color   $urgent-bg-color   $text-color
     }
 }
-
+# open app
 bindsym $mod+Tab exec "rofi -show window"
+# app switcher
 bindsym $mod+d exec "rofi -show combi -combi-modi drun,run -modi combi"
-
+# translate selected text
 bindsym $mod+t exec ~/work/scripts/seltr
-# bindsym --release $mod+x exec xdotool search --onlyvisible --title rangerfloat windowunmap || xdotool search --title rangerfloat windowmap || urxvt -title rangerfloat -e zsh
-#
-#
-set $displayMode "Set display mode [w]ork [n]otebook"
-bindsym $mod+x mode $displayMode
-mode $displayMode {
-    bindsym w exec ~/.config/i3/scripts/work-displays.sh, mode "default"
-    bindsym n exec ~/.config/i3/scripts/notebook-display.sh, mode "default"
-
-    bindsym Return mode "default"
-    bindsym Escape mode "default"
-}
+# ranger float
+bindsym $mod+u [instance="dropdown"] scratchpad show; [instance="dropdown"] move position center
 
 bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 10
 bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 10
-
 bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5% && pkill -RTMIN+10 i3blocks
 bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -5% && pkill -RTMIN+10 i3blocks
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle && pkill -RTMIN+10 i3blocks
-
 bindsym XF86ScreenSaver exec --no-startup-id $Locker
 bindsym XF86Sleep exec --no-startup-id $Locker && systemctl suspend
 bindsym XF86Battery exec --no-startup-id xset dpms force off
@@ -241,38 +231,38 @@ bindsym XF86Battery exec --no-startup-id xset dpms force off
 bindsym Print exec scrot -q 100 -e 'mv $f ~/Pictures'
 
 # turn off graphic card
-exec --no-startup-id gksudo ~/work/scripts/cards.sh
-# shift+shift 
-# CapsLock mapping
-exec "xkbcomp $HOME/.config/xkb/my $DISPLAY"
-# monitors
-exec "xrandr --output LVDS1 --auto --output HDMI1 --pos 0x0 --auto --left-of LVDS1 --primary"
+# exec --no-startup-id gksudo ~/work/scripts/cards.sh
 
+# shift+shift CapsLock mapping
+exec_always "xkbcomp $HOME/.config/xkb/my $DISPLAY"
 # set wallpaper
 exec_always feh --bg-scale ~/.config/i3/wallpaper.jpg
-
+# my mail client
+exec thunderbird
+# network manager applet
+exec --no-startup-id nm-applet
+# composite manager
+exec --no-startup-id compton -f -D5
+# keyboard library for per-window keyboard layout 
+exec --no-startup-id kbdd
+# certs
+exec --no-startup-id gnome-keyring-daemon
+#Unclutter makes the mouse invisible after a brief period
+exec --no-startup-id unclutter
+ 
+assign [class="Thunderbird"] $workspace3
 assign [class="Google-chrome"] $workspace2
 assign [class="Firefox"] $workspace2
-exec --no-startup-id firefox
-
-assign [class="Thunderbird"] $workspace3
-exec thunderbird
-
-assign [class="Rambox"] $workspace4
-
 assign [class="jetbrains-idea"] $workspace10
 assign [class="Eclipse"] $workspace10
 assign [title="Oracle SQL Developer"] $workspace9
 assign [class="Mysql-workbench-bin"] $workspace9
 
-for_window [title="rangerfloat"] floating enable
-for_window [instance="jetbrains*"] floating enable
-
-exec --no-startup-id nm-applet
-exec --no-startup-id compton -f -D5
-# keyboard library for per-window keyboard layout 
-exec --no-startup-id kbdd
-exec --no-startup-id gnome-keyring-daemon
+# scaratchpad ranger 
+for_window [instance="dropdown"] floating enable
+for_window [instance="dropdown"] resize set 956 537
+for_window [instance="dropdown"] move scratchpad
+exec --no-startup-id urxvt -name dropdown -e zsh -ci ranger 
 
 # Mod_system
 set $Locker i3lock
