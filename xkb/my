@@ -1,0 +1,14 @@
+xkb_keymap {
+	xkb_keycodes  { include "evdev+aliases(qwerty)"	};
+	xkb_types     { include "complete"	};
+	xkb_compat    { include "complete"	};
+	xkb_geometry  { include "pc(pc105)"	};
+	xkb_symbols "my"  { 
+        include "pc+us+ru:2+inet(evdev)+group(shifts_toggle)"	
+        key <CAPS> { [ ISO_Level3_Shift ] };
+        key <AC06> {        [         h, H, Left            ], [     Cyrillic_er,     Cyrillic_ER,  Left   ]       };
+        key <AC07> {        [         j, J, Down            ], [     Cyrillic_o,      Cyrillic_O,   Down   ]       };
+        key <AC08> {        [         k, K, Up              ], [     Cyrillic_el,     Cyrillic_EL,  Up     ]       };
+        key <AC09> {        [         l, L, Right           ], [     Cyrillic_de,     Cyrillic_DE,  Right  ]       };
+    };
+};
