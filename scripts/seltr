@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+notify-send -t 5000 -u critical "$(xsel -o)" "$(xsel -o | trans -b :ru)"

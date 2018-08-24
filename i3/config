@@ -187,7 +187,7 @@ bindsym $mod+Tab exec "rofi -show window"
 # app switcher
 bindsym $mod+d exec "rofi -show combi -combi-modi drun,run -modi combi"
 # translate selected text
-bindsym $mod+t exec ~/work/scripts/seltr
+bindsym $mod+t exec $HOME/dotfiles/scripts/seltr
 # ranger float
 bindsym $mod+u [instance="dropdown"] scratchpad show; [instance="dropdown"] move position center
 
