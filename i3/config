@@ -13,12 +13,12 @@ set $mod Mod4
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
-# font pango:DejaVu Sans Mono 10
-font pango:FontAwesome 10
+# font pango:DejaVu Sans Book 10
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
-#font pango:DejaVu Sans Mono 8
+font pango:DejaVu Sans Book 10
+# font pango:Ubuntu Mono 14
 
 # Before i3 v4.8, we used to recommend this one as the default:
 # font -misc-fixed-medium-r-normal--13-120-75-75-C-70-iso10646-1
@@ -34,7 +34,7 @@ bindsym $mod+z workspace back_and_forth
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec i3-sensible-terminal
+bindsym $mod+Return exec urxvt
 bindsym $mod+Shift+Return exec --no-startup-id urxvt -e zsh -ci ranger
 bindsym $mod+Shift+i exec --no-startup-id urxvt -e zsh -ci htop
 
@@ -96,42 +96,29 @@ bindsym $mod+a focus parent
 # focus the child container
 #bindsym $mod+d focus child
 
-# terminal
-set $workspace1 "1: &#xf120;"
-# web
-set $workspace2 "2: &#xf269;"
-# mail
-set $workspace3 "3: &#xf003;"
-# chat
-set $workspace4 "4: &#xf0e5;"
-# db
-set $workspace9 "9: &#xf1c0;"
-# work
-set $workspace10 "0: &#xf121;"
-
 # switch to workspace
-bindsym $mod+1 workspace $workspace1
-bindsym $mod+2 workspace $workspace2
-bindsym $mod+3 workspace $workspace3
-bindsym $mod+4 workspace $workspace4
+bindsym $mod+1 workspace 1
+bindsym $mod+2 workspace 2
+bindsym $mod+3 workspace 3
+bindsym $mod+4 workspace 4
 bindsym $mod+5 workspace 5
 bindsym $mod+6 workspace 6
 bindsym $mod+7 workspace 7
 bindsym $mod+8 workspace 8
-bindsym $mod+9 workspace $workspace9
-bindsym $mod+0 workspace $workspace10
+bindsym $mod+9 workspace 9
+bindsym $mod+0 workspace 10
 
 # move focused container to workspace
-bindsym $mod+Shift+1 move container to workspace $workspace1
-bindsym $mod+Shift+2 move container to workspace $workspace2
-bindsym $mod+Shift+3 move container to workspace $workspace3
-bindsym $mod+Shift+4 move container to workspace $workspace4
+bindsym $mod+Shift+1 move container to workspace 1
+bindsym $mod+Shift+2 move container to workspace 2
+bindsym $mod+Shift+3 move container to workspace 3
+bindsym $mod+Shift+4 move container to workspace 4
 bindsym $mod+Shift+5 move container to workspace 5
 bindsym $mod+Shift+6 move container to workspace 6
 bindsym $mod+Shift+7 move container to workspace 7
 bindsym $mod+Shift+8 move container to workspace 8
-bindsym $mod+Shift+9 move container to workspace $workspace9
-bindsym $mod+Shift+0 move container to workspace $workspace10
+bindsym $mod+Shift+9 move container to workspace 9
+bindsym $mod+Shift+0 move container to workspace 10
 
 # set $monitor HDMI1
 # set $notebook LVDS1
@@ -177,21 +164,6 @@ mode "resize" {
 
 bindsym $mod+r mode "resize"
 
-# bar {
-#       # font pango:DejaVu Sans Mono for Powerline 12
-#       position top
-#       status_command ~/work/projects/local/rust/github/i3status-rust/target/release/i3status-rs ~/work/projects/local/rust/github/i3status-rust/example_config.json --icons awesome --theme solarized-dark
-#       colors {
-#             separator #666666
-#             background #222222
-#             statusline #dddddd
-#             focused_workspace #0088CC #0088CC #ffffff
-#             active_workspace #333333 #333333 #ffffff
-#             inactive_workspace #333333 #333333 #888888
-#             urgent_workspace #2f343a #900000 #ffffff
-#       }
-# }
-
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
@@ -233,10 +205,12 @@ bindsym Print exec scrot -q 100 -e 'mv $f ~/Pictures'
 # turn off graphic card
 # exec --no-startup-id gksudo ~/work/scripts/cards.sh
 
-# shift+shift CapsLock mapping
-exec_always "xkbcomp $HOME/.config/xkb/my $DISPLAY"
+# decrease dimension for acceptable views of some programs
+exec xrandr --dpi 144
 # set wallpaper
 exec_always feh --bg-scale ~/.config/i3/wallpaper.jpg
+# shift+shift CapsLock mapping
+exec_always "xkbcomp $HOME/dotfiles/xkb/my $DISPLAY"
 # my mail client
 exec thunderbird
 # network manager applet
@@ -247,16 +221,16 @@ exec --no-startup-id compton -f -D5
 exec --no-startup-id kbdd
 # certs
 exec --no-startup-id gnome-keyring-daemon
-#Unclutter makes the mouse invisible after a brief period
+# unclutter makes the mouse invisible after a brief period
 exec --no-startup-id unclutter
  
-assign [class="Thunderbird"] $workspace3
-assign [class="Google-chrome"] $workspace2
-assign [class="Firefox"] $workspace2
-assign [class="jetbrains-idea"] $workspace10
-assign [class="Eclipse"] $workspace10
-assign [title="Oracle SQL Developer"] $workspace9
-assign [class="Mysql-workbench-bin"] $workspace9
+assign [class="Thunderbird"] 3
+assign [class="Google-chrome"] 2
+assign [class="Firefox"] 2
+assign [class="jetbrains-idea"] 10
+assign [class="Eclipse"] 10
+assign [title="Oracle SQL Developer"] 9
+assign [class="Mysql-workbench-bin"] 9
 
 # scaratchpad ranger 
 for_window [instance="dropdown"] floating enable
@@ -267,21 +241,7 @@ exec --no-startup-id urxvt -name dropdown -e zsh -ci ranger
 # Mod_system
 set $Locker i3lock
 
-set $mode_system System (l) lock, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (Shift+s) shutdown
-mode "$mode_system" {
-    bindsym l exec --no-startup-id $Locker, mode "default"
-    bindsym e exec --no-startup-id i3-msg exit, mode "default"
-    bindsym s exec --no-startup-id $Locker && systemctl suspend, mode "default"
-    bindsym h exec --no-startup-id $Locker && systemctl hibernate, mode "default"
-    bindsym r exec --no-startup-id systemctl reboot, mode "default"
-    bindsym Shift+s exec --no-startup-id systemctl poweroff -i, mode "default"
-
-    # back to normal: Enter or Escape
-    bindsym Return mode "default"
-    bindsym Escape mode "default"
-}
-
-bindsym $mod+q mode "$mode_system"
+bindsym $mod+q exec $HOME/.config/i3blocks-contrib/shutdown_menu/shutdown_menu
 
 # colors
 set $bg-color               #2f343f

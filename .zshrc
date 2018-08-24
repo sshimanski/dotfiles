@@ -2,7 +2,7 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH=/home/shim/.oh-my-zsh
+export ZSH=/home/sshimanski/.oh-my-zsh
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
@@ -110,5 +110,5 @@ BASE16_SHELL=$HOME/.config/base16-shell/
 [ -n "$PS1" ] && [ -s $BASE16_SHELL/profile_helper.sh ] && eval "$($BASE16_SHELL/profile_helper.sh)"
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="/home/shim/.sdkman"
-[[ -s "/home/shim/.sdkman/bin/sdkman-init.sh" ]] && source "/home/shim/.sdkman/bin/sdkman-init.sh"
+export SDKMAN_DIR="/home/sshimanski/.sdkman"
+[[ -s "/home/sshimanski/.sdkman/bin/sdkman-init.sh" ]] && source "/home/sshimanski/.sdkman/bin/sdkman-init.sh"
