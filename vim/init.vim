@@ -3,6 +3,7 @@
 " set the runtime path to include Vundle and initialize
 call plug#begin('~/.config/nvim/bundle')
 
+Plug 'lervag/vimtex'
 Plug 'plasticboy/vim-markdown'
 Plug 'chriskempson/base16-vim'
 Plug 'kshenoy/vim-signature'
@@ -15,8 +16,8 @@ Plug 'janko-m/vim-test'
 " golang for vim
 Plug 'fatih/vim-go', { 'for': 'go' }
 " keyword completion system by maintaining a cache of keywords in the current buffer 
-" Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-" Plug 'zchee/deoplete-jedi'
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'zchee/deoplete-jedi'
 " unite all
 Plug 'Shougo/denite.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'chemzqm/denite-extra' " many sources
@@ -37,8 +38,9 @@ Plug 'Shougo/neomru.vim'
 Plug 'tpope/vim-fugitive'
 " Rust
 Plug 'rust-lang/rust.vim', { 'for': 'rust' } " install universal-ctags for denite::outline
+" code completion
 Plug 'racer-rust/vim-racer', { 'for': 'rust' }
-Plug 'timonv/vim-cargo', { 'for': 'rust' }
+" docs
 Plug 'rhysd/rust-doc.vim', { 'for': 'rust' }
 " Diff
 " Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java' }
@@ -69,6 +71,7 @@ set nobackup
 set nofoldenable
 set noswapfile
 set wrap
+set relativenumber
 set number
 set shiftwidth=4
 set showcmd
@@ -140,8 +143,8 @@ nnoremap zk m`O<Esc>``
 vmap <tab> >gv
 vmap <s-tab> <gv
 
-nnoremap j gj
-nnoremap k gk
+" nnoremap j gj
+" nnoremap k gk
 
 " Window movements
 map <C-j> <C-W>j
@@ -309,23 +312,14 @@ augroup rustlang
 augroup END
 
 " Rust autocmplete
-let g:rust_doc#downloaded_rust_doc_dir = '/home/shim/.rustup/toolchains/stable-x86_64-unknown-linux-gnu'
+let g:rustfmt_autosave = 1
+let g:rust_doc#downloaded_rust_doc_dir = '/home/sshimanski/.rustup/toolchains/stable-x86_64-unknown-linux-gnu'
 let g:rust_doc#define_map_K=0
 let g:racer_cmd = 'racer'
 let g:racer_experimental_completer = 1
 " }}}
 
-" Ranger file manager {{{
-fun! RangerChooser()
-    exec "silent !ranger --choosefile=/tmp/chosenfile " . expand("%:p:h")
-    if filereadable('/tmp/chosenfile')
-        exec 'edit ' . system('cat /tmp/chosenfile')
-        call system('rm /tmp/chosenfile')
-    endif
-    redraw!
-endfun
-map <Leader>x :call RangerChooser()<CR>
-" }}}
+map <Leader>x :Ranger<CR>
 
 augroup MyAutoCmd
     autocmd!

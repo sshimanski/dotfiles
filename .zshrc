@@ -51,7 +51,7 @@ ENABLE_CORRECTION="true"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(vi-mode git git-extras gradle cargo colored-man-pages common-aliases copydir copyfile rust ssh-agent tig)
+plugins=(vi-mode git git-extras gradle cargo colored-man-pages common-aliases copydir copyfile docker docker-compose rust ssh-agent tig fzf)
 zstyle :omz:plugins:ssh-agent identities id_rsa dhplinadmin01 dpmdocker github.com exadel.github.com
 
 source $ZSH/oh-my-zsh.sh

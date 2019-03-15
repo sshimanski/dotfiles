@@ -3,4 +3,4 @@
 #include ".config/rofi/rofi.config"
 
 ! for 1920x1080 screen
-Xft.dpi: 144
+Xft.dpi: 120

@@ -28,16 +28,19 @@ fi
 
 export BROWSER="firefox"
 export READER="zathura"
-
-# export GDK_SCALE=2
-# export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=gasp -Dswing.aatext=true'
+export EDITOR="nvim"
 
 # JAVA
 export JAVA_HOME="$HOME/work/apps/java/jdk1.8.0_181"
 # export JAVA_HOME="$HOME/work/apps/java/jdk-9.0.4"
 # export JAVA_HOME="$HOME/work/apps/java/jdk-10.0.2"
-
 # MVN
 export M2_HOME="$HOME/work/apps/mvn/apache-maven-3.5.4"
+# Groovy
+export GROOVY_HOME="$HOME/work/apps/groovy/groovy-3.0.0-alpha-3"
+# FZF
+export FZF_BASE="$HOME/work/apps/fzf"
+# Rust
+export RUST_SRC_PATH="$HOME/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/src"
 
-export PATH="$PATH:$HOME/dotfiles/scripts:$JAVA_HOME/bin:$M2_HOME/bin"
+export PATH="$PATH:$HOME/work/appimage:$HOME/dotfiles/scripts:$JAVA_HOME/bin:$JAVA_HOME/jre:$M2_HOME/bin:$GROOVY_HOME/bin:$HOME/.cargo/bin"

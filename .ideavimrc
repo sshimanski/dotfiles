@@ -5,6 +5,8 @@ set incsearch
 set showcmd
 set showmode
 set smartcase
+" set rnu
+set nu
 " Enable vim-surround
 set surround
 
@@ -34,13 +36,13 @@ vnoremap < <gv
 vnoremap > >gv
 
 " unimpaired legacy
-noremap ]m :action MethodDown<CR>
-noremap [m :action MethodUp<CR>
+noremap ]m :action MethodDown<CR>zt<CR>
+noremap [m :action MethodUp<CR>zt<CR>
 noremap ]l :action GotoNextError<CR>:action ShowErrorDescription<CR>
 noremap [l :action GotoPreviousError<CR>:action ShowErrorDescription<CR>
 
 "No tabs => no tabs navigation
-"noremap [b gT
+"noremap [b gt
 "noremap ]b gt
 
 " camelcase words: ] - forward, [ - backward
@@ -51,14 +53,18 @@ noremap ]c :action VcsShowNextChangeMarker<CR>:action Vcs.ShowDiffWithLocal<CR>
 nnoremap [<Space> O<ESC>j 0 w
 nnoremap ]<Space> o<ESC>k 0 w
 
-nnoremap coh :nohlsearch<CR>
-nnoremap cob :action ToggleLineBreakpoint<CR>
+nnoremap yoh :nohlsearch<CR>
+nnoremap yob :action ToggleLineBreakpoint<CR>
+nnoremap yop :action TogglePresentationMode<CR>
+nnoremap yow :action EditorToggleShowWhitespaces<CR>
 
 xnoremap <C-S-o> :action OverrideMethods<CR>
 xnoremap <C-S-i> :action ImplementMethods<CR>
 " Identifier Highlighter Reloaded plugin mapping
 noremap <C-S-j> :action NextIdentifierReloaded<CR>
 noremap <C-S-k> :action PreviousIdentifierReloaded<CR>
+noremap <C-S-h> :action MoveElementLeft<CR>
+noremap <C-S-l> :action MoveElementRight<CR>
 
 nmap gcc :action CommentByLineComment<CR>
 vnoremap gc :<bs><bs><bs><bs><bs>action VimVisualSwapSelections<CR>:action CommentByLineComment<CR>
@@ -79,6 +85,7 @@ nnoremap <Space>m :action FileStructurePopup<CR>
 noremap <Space>u :action FindUsages<CR>
 noremap <Space>w :action SelectIn<CR>
 
+nmap gm :action ToggleBookmark<CR>
 nmap gM :action ShowBookmarks<CR>
 nmap gn :action GotoNextBookmark<CR>
 nmap gp :action GotoPreviousBookmark<CR>
@@ -93,7 +100,7 @@ nnoremap ts :action GotoSuperMethod<CR>zt
 nnoremap tt :action GotoTest<CR>zt
 nnoremap tu :action ShowUsages<CR>
 " to 'class'
-nnoremap tc gg<BAR>:action MethodDown<CR>zt
+nnoremap tc gg<BAR>:action MethodDown<CR>zt<CR>
 
 " native back/forward is less buggy, <C-t> still useful
 noremap <C-o> :action Back<CR>
@@ -133,6 +140,7 @@ noremap <leader>k :q<CR>
 noremap <leader>m :action Move<CR>
 noremap <leader>r :action RenameElement<CR>
 noremap <leader>f :action ReformatCode<CR>:action OptimizeImports<CR>:action AutoIndentLines<CR>
+" noremap <leader>fr :action Rust.CargoFmtFile<CR>
 noremap <leader>G :action Generate<CR>
 vnoremap <leader>s :<BS><BS><BS><BS><BS>action VimVisualSwapSelections<CR>:action SurroundWithLiveTemplate<CR>
 
