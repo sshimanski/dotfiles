@@ -1,0 +1,46 @@
+set newtab about:blank
+unset hintuppercase
+
+unbind d
+bind <C-o> back
+bind <C-i> forward
+bind ,k tabclose
+bind ,u reload
+
+" Ctrl-F should use the browser's native 'find' functionality.
+unbind <C-f>
+
+bind ]b tabnext_gt
+bind [b tabprev
+
+" Sane hinting mode
+set hintfiltermode simple
+set hintnames short
+set hintchars asdfghjkl
+set relatedopenpos related
+
+set searchurls.g https://www.google.com/search?q=
+set searchurls.yt https://www.youtube.com/results?search_query=
+set searchurls.gh https://github.com/search?q=
+set searchurls.ghf https://github.com/search?q=filename:%s
+set searchurls.rs https://doc.rust-lang.org/std/?search=%s
+set searchurls.crate https://crates.io/search?q=%s
+
+quickmark b http://www.bcse.by/ru/currencymarket/rates/0
+quickmark c https://calendar.google.com/calendar/r
+quickmark d https://ru.investing.com/currencies/eur-usd
+quickmark z https://ru.investing.com/currencies/usd-pln
+quickmark e https://translate.google.com/#en/ru/
+quickmark r https://translate.google.com/#ru/en/
+quickmark i http://www.inoreader.com
+quickmark m http://somafm.com/player/#/now-playing/thetrip
+quickmark R https://doc.rust-lang.org/book/second-edition/
+quickmark w https://yandex.by/pogoda/brest/details
+
+blacklistadd www.inoreader.com
+blacklistadd app.sketchup.com
+blacklistadd app.diagrams.net
+
+bindurl google(\.[a-zA-Z0-9]+){1,2}/search f hint -Jc #top_nav a, #search a, .card-section a, a.fl, #pnnext, #pnprev
+bindurl google(\.[a-zA-Z0-9]+){1,2}/search F hint -Jbc #top_nav a, #search a, .card-section a, a.fl, #pnnext, #pnprev
+bindurl google(\.[a-zA-Z0-9]+){1,2}/search gF hint -Jqbc #top_nav a, #search a, .card-section a, a.fl, #pnnext, #pnprev

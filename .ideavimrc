@@ -1,3 +1,7 @@
+" !!!!! CTRL+SPACE (2 times) - complete static methods!
+" !!!!! CTRL+ALT+SHIFT+INSERT - scratch file to experiments
+" !!!!! Ctrl+Shift+F7   - show where exception get caused
+
 set laststatus=2
 set hlsearch
 set ignorecase
@@ -7,12 +11,23 @@ set showmode
 set smartcase
 " set rnu
 set nu
-" Enable vim-surround
-set surround
 
 let mapleader=","
 nnoremap ' `
 nnoremap ` '
+
+" Enable vim-surround
+set surround
+" Enable vim-commentary
+set commentary
+" Enable vim-easymotion (AceJump plugin required)
+set easymotion
+" Enable exchange
+set exchange
+" Enable smart join
+set ideajoin
+" Enable highliting yanked text
+set highlightedyank
 
 nnoremap <Space> <nop>
 nnoremap <leader>ev :e ~/.ideavimrc<CR>
@@ -21,6 +36,8 @@ nnoremap <leader>sv :source ~/.ideavimrc<CR>
 map <leader>y "+y
 map <leader>p "*p
 map <leader>P a<space><esc>p
+nnoremap H :action MoveElementLeft<CR>
+nnoremap L :action MoveElementRight<CR>
 
 noremap Y y$
 nnoremap n nzz
@@ -29,15 +46,12 @@ nnoremap N Nzz
 nnoremap vv ggVG
 nnoremap U :action Vcs.RollbackChangedLines<CR>
 
-nmap z+ :action EditorIncreaseFontSize<CR>
-nmap z- :action EditorDecreaseFontSize<CR>
-
 vnoremap < <gv
 vnoremap > >gv
 
 " unimpaired legacy
-noremap ]m :action MethodDown<CR>zt<CR>
-noremap [m :action MethodUp<CR>zt<CR>
+noremap ]m :action MethodDown<CR>
+noremap [m :action MethodUp<CR>
 noremap ]l :action GotoNextError<CR>:action ShowErrorDescription<CR>
 noremap [l :action GotoPreviousError<CR>:action ShowErrorDescription<CR>
 
@@ -67,20 +81,21 @@ noremap <C-S-h> :action MoveElementLeft<CR>
 noremap <C-S-l> :action MoveElementRight<CR>
 
 nmap gcc :action CommentByLineComment<CR>
-vnoremap gc :action CommentByLineComment<CR>
-vnoremap gC :action CommentByBlockComment<CR>
+" vnoremap gc :action CommentByLineComment<CR>
+" vnoremap gC :action CommentByBlockComment<CR>
 
 " denite.vim (lists)
-noremap <Space>b :action Switcher<CR>
-noremap <Space>r :action RecentFiles<CR>
+noremap <Space>b :action RecentFiles<CR>
+noremap <Space>r :action Switcher<CR>
 noremap <Space>d :action RecentChangedFiles<CR>
 noremap <Space>c :action GotoClass<CR>
 noremap <Space>f :action GotoFile<CR>
 noremap <Space>g :action FindInPath<CR>
-" noremap <Space>s :action GotoSymbol<CR>
+noremap <Space>s :action GotoSymbol<CR>
+" List Projects
 noremap <Space>lp :action ManageRecentProjects<CR>
 
-" denite outline
+" denite/outline
 nnoremap <Space>m :action FileStructurePopup<CR>
 noremap <Space>u :action FindUsages<CR>
 noremap <Space>w :action SelectIn<CR>
@@ -100,7 +115,7 @@ nnoremap ts :action GotoSuperMethod<CR>
 nnoremap tt :action GotoTest<CR>
 nnoremap tu :action ShowUsages<CR>
 " to 'class'
-nnoremap tc gg<BAR>:action MethodDown<CR>
+nnoremap tc gg<BAR>:action MethodDown<CR><BAR>zt
 
 " native back/forward is less buggy, <C-t> still useful
 noremap <C-o> :action Back<CR>
@@ -124,9 +139,7 @@ noremap <leader>iv :action IntroduceVariable<CR>
 noremap <leader>gb :action Annotate<CR>
 noremap <leader>gl :action Vcs.Show.Log<CR>
 noremap <leader>gg :action Vcs.QuickListPopupAction<CR>
-
-" EasyMotion (AceJump plugin)
-nmap <leader><leader> :action AceAction<CR>
+noremap <leader>gh :action ActivateVersionControlToolWindow<CR>
 
 nmap RR :action Refactorings.QuickListPopupAction<CR>
 
@@ -136,14 +149,17 @@ noremap <leader>u :action Vcs.UpdateProject<CR>
 noremap <leader>h :action TypeHierarchy<CR>
 " noremap <leader>h :action HighlightUsagesInFile<CR>
 noremap <leader>I :action Inline<CR>
+noremap <leader>d :action ShowUmlDiagramPopup<CR>
 noremap <leader>k :q<CR>
 noremap <leader>m :action Move<CR>
 noremap <leader>r :action RenameElement<CR>
-noremap <leader>f :action ReformatCode<CR>:action OptimizeImports<CR>:action AutoIndentLines<CR>
-" noremap <leader>fr :action Rust.CargoFmtFile<CR>
+" noremap <leader>f :action OptimizeImports<CR><BAR>:action AutoIndentLines<CR><BAR>:action ReformatCode<CR>
+map <leader>f <Action>(ReformatCode)<Action>(AutoIndentLines)<Action>(OptimizeImports)
+map <leader>o <Action>(OptimizeImports)
 noremap <leader>G :action Generate<CR>
 vnoremap <leader>s :action SurroundWithLiveTemplate<CR>
 
 noremap \t :action ChooseDebugConfiguration<CR>
 noremap \d :action ChooseDebugConfiguration<CR>
 noremap \r :action ChooseRunConfiguration<CR>
+noremap \s :action Stop<CR>

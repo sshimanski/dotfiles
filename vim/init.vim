@@ -2,8 +2,17 @@
 
 " set the runtime path to include Vundle and initialize
 call plug#begin('~/.config/nvim/bundle')
+" exchange
+Plug 'tommcdo/vim-exchange'
+" file explorer
+Plug 'preservim/nerdtree'
 
+Plug 'machakann/vim-highlightedyank'
+
+" docs
+Plug 'rhysd/vim-grammarous'
 Plug 'lervag/vimtex'
+
 Plug 'plasticboy/vim-markdown'
 Plug 'chriskempson/base16-vim'
 Plug 'kshenoy/vim-signature'
@@ -26,11 +35,16 @@ Plug 'bling/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 " python autocomplete + rename + goto definition
 Plug 'davidhalter/jedi-vim', { 'for': 'python' }
+" single interface for formatting (adjuct Go/Rust Fmt)
+Plug 'Chiel92/vim-autoformat'
 " easy motion
+" Plug 'justinmk/vim-sneak'
 Plug 'Lokaltog/vim-easymotion'
 Plug 'Lokaltog/neoranger'
 " auto pairs - [], {}, '' etc.
 Plug 'jiangmiao/auto-pairs'
+" colorful brackets
+Plug 'frazrepo/vim-rainbow'
 " unite all
 Plug 'Shougo/vimproc.vim', { 'do': 'make'  }
 Plug 'Shougo/neomru.vim'
@@ -44,7 +58,7 @@ Plug 'racer-rust/vim-racer', { 'for': 'rust' }
 Plug 'rhysd/rust-doc.vim', { 'for': 'rust' }
 " Diff
 " Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java' }
-Plug 'Yggdroot/indentLine' ", { 'on': 'IndentLinesEnable' }
+" Plug 'Yggdroot/indentLine' ", { 'on': 'IndentLinesEnable' }
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
@@ -85,17 +99,23 @@ set wildmenu
 syntax on
 
 " VIM Colors {{{
-" colorscheme wombat256i
-" set background=dark
+" colorscheme darkblue
 if filereadable(expand("~/.vimrc_background"))
   let base16colorspace=256
   source ~/.vimrc_background
 endif
 
+highlight Visual ctermbg=DarkGrey
 highlight Normal ctermbg=none
 highlight NonText ctermbg=none
-highlight CursorLine ctermbg=none cterm=bold
 highlight LineNr ctermbg=none
+highlight CursorLine ctermbg=none cterm=bold
+highlight CursorLineNr ctermbg=none
+highlight VertSplit ctermbg=none
+highlight Folded ctermbg=none
+highlight Pmenu ctermbg=none
+highlight PmenuSel cterm=bold
+highlight PmenuSbar ctermbg=none
 " }}}
 
 " VIM Search {{{
@@ -143,8 +163,8 @@ nnoremap zk m`O<Esc>``
 vmap <tab> >gv
 vmap <s-tab> <gv
 
-" nnoremap j gj
-" nnoremap k gk
+nnoremap j gj
+nnoremap k gk
 
 " Window movements
 map <C-j> <C-W>j
@@ -161,7 +181,7 @@ nnoremap <silent><Leader>k :bd<CR>  " buffer
 " Synonums
 cab Wq wq
 
-
+nnoremap <Leader>f :Autoformat<CR>
 " Manage .vimrc file {{{
 nnoremap <Leader>ev :e $MYVIMRC<cr>
 nnoremap <Leader>sv :source $MYVIMRC<cr>
@@ -200,8 +220,13 @@ let g:jedi#rename_command = "<leader>r"
 let g:jedi#show_call_signatures = "2"
 " }}}
 
+let g:rainbow_active = 1
+
+call deoplete#custom#option({
+    \ 'auto_complete_delay': 200,
+    \ 'smart_case': v:true,
+    \ })
 let g:deoplete#enable_at_startup = 1
-let g:deoplete#enable_smart_case = 1
 
 let g:neomru#file_mru_path = $HOME.'/.config/nvim/tmp/neomru/file'
 let g:neomru#directory_mru_path = $HOME.'/.config/nvim/tmp/neomru/directory'
@@ -319,7 +344,16 @@ let g:racer_cmd = 'racer'
 let g:racer_experimental_completer = 1
 " }}}
 
+" LaTeX config {{{
+let g:tex_conceal = ''
+let g:tex_flavor = 'latex'
+let g:vimtex_view_general_viewer = 'zathura'
+" }}}
+
 map <Leader>x :Ranger<CR>
+let g:neoranger_viewmode='miller'
+
+map <C-_> :NERDTreeToggle<CR>
 
 augroup MyAutoCmd
     autocmd!
@@ -336,14 +370,35 @@ nmap     <Space> [denite]
 
 nnoremap <silent> [denite]b         :<C-u>Denite buffer<CR>
 nnoremap <silent> [denite]c         :<C-u>Denite change<CR>
-nnoremap <silent> [denite]d         :<C-u>DeniteBufferDir file_rec<CR>
-nnoremap <silent> [denite]f         :<C-u>DeniteProjectDir file_rec<CR>
+nnoremap <silent> [denite]d         :<C-u>DeniteBufferDir file/rec<CR>
+nnoremap <silent> [denite]f         :<C-u>DeniteProjectDir file/rec<CR>
 nnoremap <silent> [denite]g         :<C-u>DeniteProjectDir grep<CR>
 nnoremap <silent> [denite]G         :<C-u>DeniteCursorWord grep<CR>
 nnoremap <silent> [denite]h         :<C-u>Denite help<CR>
 nnoremap <silent> [denite]l         :<C-u>Denite line<CR>
 nnoremap <silent> [denite]m         :<C-u>Denite outline<CR>
 nnoremap <silent> [denite]r         :<C-u>Denite file_mru<CR>
+
+autocmd FileType denite call s:denite_my_settings()
+function! s:denite_my_settings() abort
+  nnoremap <silent><buffer><expr> <CR>
+  \ denite#do_map('do_action')
+  nnoremap <silent><buffer><expr> d
+  \ denite#do_map('do_action', 'delete')
+  nnoremap <silent><buffer><expr> p
+  \ denite#do_map('do_action', 'preview')
+  nnoremap <silent><buffer><expr> q
+  \ denite#do_map('quit')
+  nnoremap <silent><buffer><expr> i
+  \ denite#do_map('open_filter_buffer')
+  nnoremap <silent><buffer><expr> <Space>
+  \ denite#do_map('toggle_select').'j'
+endfunction
+
+autocmd FileType denite-filter call s:denite_filter_my_settings()
+function! s:denite_filter_my_settings() abort
+  imap <silent><buffer> <C-o> <Plug>(denite_filter_quit)
+endfunction
 
 call denite#custom#source('buffer,file_mru,file_mru', 'sorters', ['sorter_sublime'])
 call denite#custom#source('buffer,file_mru,file_mru', 'matchers', ['matcher_substring', 'matcher_ignore_globs'])
@@ -391,5 +446,9 @@ augroup END
 " }}}
 
 let g:EasyMotion_smartcase = 1
-let g:EasyMotion_do_mapping = 0
-nmap <leader><leader> <Plug>(easymotion-s)
+let g:vim_json_syntax_conceal = 0
+let g:vim_markdown_conceal = 0
+
+set conceallevel=0
+" let g:EasyMotion_do_mapping = 0
+" nmap <leader><leader> <Plug>(easymotion-s)

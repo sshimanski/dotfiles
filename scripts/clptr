@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+# install translate-shell from Google
+notify-send -t 5000 -u critical "$(xclip -selection clipboard -o)" "$(xclip -selection clipboard -o | trans -b :ru)"

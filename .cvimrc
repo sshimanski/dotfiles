@@ -1,10 +1,11 @@
-set configpath = '~/.cvimrc'
-let localconfig
-
+let configpath='/home/sshimanski/.cvimrc'
+set localconfig
 set cncpcompletion
 set autohidecursor
+
 let completionengines = ["google", "amazon", "imdb", "dogpile"]
 let highlight = "#ffff00"
+
 map <C-o> goBack
 map <C-i> goForward
 map ]b nextTab

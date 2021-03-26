@@ -51,7 +51,7 @@ ENABLE_CORRECTION="true"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(vi-mode git git-extras gradle cargo colored-man-pages common-aliases copydir copyfile docker docker-compose rust ssh-agent tig fzf)
+plugins=(vi-mode git git-extras gradle golang cargo colored-man-pages common-aliases copydir copyfile docker docker-compose rust ssh-agent tig fzf sdk mvn)
 zstyle :omz:plugins:ssh-agent identities id_rsa dhplinadmin01 dpmdocker github.com exadel.github.com
 
 source $ZSH/oh-my-zsh.sh
@@ -105,10 +105,19 @@ rg() {
 [ -n "$RANGER_LEVEL"  ] && PS1="$PS1"'(rg) '
 
 # colors
-BASE16_SHELL_SET_BACKGROUND=false 
-BASE16_SHELL=$HOME/.config/base16-shell/
-[ -n "$PS1" ] && [ -s $BASE16_SHELL/profile_helper.sh ] && eval "$($BASE16_SHELL/profile_helper.sh)"
+BASE16_SHELL="$HOME/.config/base16-shell/"
+[ -n "$PS1" ] && \
+    [ -s "$BASE16_SHELL/profile_helper.sh" ] && \
+        eval "$("$BASE16_SHELL/profile_helper.sh")"
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="/home/sshimanski/.sdkman"
 [[ -s "/home/sshimanski/.sdkman/bin/sdkman-init.sh" ]] && source "/home/sshimanski/.sdkman/bin/sdkman-init.sh"
+
+PATH="/home/sshimanski/perl5/bin${PATH:+:${PATH}}"; export PATH;
+PERL5LIB="/home/sshimanski/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
+PERL_LOCAL_LIB_ROOT="/home/sshimanski/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
+PERL_MB_OPT="--install_base \"/home/sshimanski/perl5\""; export PERL_MB_OPT;
+PERL_MM_OPT="INSTALL_BASE=/home/sshimanski/perl5"; export PERL_MM_OPT;
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
