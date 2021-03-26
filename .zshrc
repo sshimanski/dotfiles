@@ -52,7 +52,7 @@ ENABLE_CORRECTION="true"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(vi-mode git git-extras gradle golang cargo colored-man-pages common-aliases copydir copyfile docker docker-compose rust ssh-agent tig fzf sdk mvn)
-zstyle :omz:plugins:ssh-agent identities id_rsa dhplinadmin01 dpmdocker github.com exadel.github.com
+zstyle :omz:plugins:ssh-agent identities id_rsa github.com
 
 source $ZSH/oh-my-zsh.sh
 

@@ -1,4 +1,5 @@
 set newtab about:blank
+set smoothscroll true
 unset hintuppercase
 
 unbind d
