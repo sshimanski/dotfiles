@@ -11,6 +11,7 @@ set showmode
 set smartcase
 " set rnu
 set nu
+set NERDTree
 
 let mapleader=","
 nnoremap ' `
@@ -127,6 +128,8 @@ vnoremap <leader>em :action ExtractMethod<CR>
 noremap <leader>ec :action ExtractClass<CR>
 
 noremap <leader>N :action NewElement<CR>
+
+" NERDTree - I found that native Alt+1 is more intuitive. Mappings inside NERDTree are still useful
 
 " Mnemonic 'introduce'
 noremap <leader>ic :action IntroduceConstant<CR>

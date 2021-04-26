@@ -23,7 +23,7 @@ Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
 " tests
 Plug 'janko-m/vim-test'
 " golang for vim
-Plug 'fatih/vim-go', { 'for': 'go' }
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 " keyword completion system by maintaining a cache of keywords in the current buffer 
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'zchee/deoplete-jedi'
@@ -137,7 +137,7 @@ let maplocalleader="\\"
 
 vnoremap <Leader>y "+y
 nnoremap <Leader>y "+y
-nnoremap <Leader>p "+p==
+nnoremap <Leader>p "+p
 nnoremap <Leader>P :set invpaste<CR>
 nnoremap <Leader>qq :qa!<CR>
 
@@ -307,13 +307,15 @@ let g:UltiSnipsEditSplit="horizontal"
 let g:go_highlight_functions = 1
 let g:go_highlight_methods = 1
 let g:go_highlight_structs = 1
+let g:go_def_mode='gopls'
+let g:go_info_mode='gopls'
 
 augroup golang
     autocmd!
     autocmd FileType go nnoremap \r :GoRun<CR>
     autocmd FileType go nnoremap <Leader>f :GoFmt<CR>
     autocmd FileType go nnoremap <Leader>r :GoRename<CR>
-    autocmd FileType go nnoremap <Leader>s :GoImplmenets<CR>
+    autocmd FileType go nnoremap <Leader>s :GoImplements<CR>
     autocmd FileType go nnoremap <Leader>I :GoInfo<CR>
     autocmd FileType go nnoremap <buffer> <leader>i :exe 'GoImport ' . expand('<cword>')<CR>
     autocmd FileType go nnoremap <Leader>b :GoBuild<CR>

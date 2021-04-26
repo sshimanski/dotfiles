@@ -1,8 +1,14 @@
 set newtab about:blank
 set smoothscroll true
 unset hintuppercase
+" Sane hinting mode
+set hintfiltermode simple
+set hintnames short
+set hintchars asdfghjkl
+set relatedopenpos related
 
 unbind d
+
 bind <C-o> back
 bind <C-i> forward
 bind ,k tabclose
@@ -13,12 +19,14 @@ unbind <C-f>
 
 bind ]b tabnext_gt
 bind [b tabprev
+bind j scrollline 5
+bind k scrollline -5
 
-" Sane hinting mode
-set hintfiltermode simple
-set hintnames short
-set hintchars asdfghjkl
-set relatedopenpos related
+bind ,ev !s nvim ~/.tridactylrc;
+bind ,es composite source ~/.tridactylrc; exclaim echo "Config reloaded"
+
+bind n findnext 1
+bind N findnext -1
 
 set searchurls.g https://www.google.com/search?q=
 set searchurls.yt https://www.youtube.com/results?search_query=
@@ -42,6 +50,7 @@ blacklistadd www.inoreader.com
 blacklistadd app.sketchup.com
 blacklistadd app.diagrams.net
 
+" required for Google
 bindurl google(\.[a-zA-Z0-9]+){1,2}/search f hint -Jc #top_nav a, #search a, .card-section a, a.fl, #pnnext, #pnprev
 bindurl google(\.[a-zA-Z0-9]+){1,2}/search F hint -Jbc #top_nav a, #search a, .card-section a, a.fl, #pnnext, #pnprev
 bindurl google(\.[a-zA-Z0-9]+){1,2}/search gF hint -Jqbc #top_nav a, #search a, .card-section a, a.fl, #pnnext, #pnprev
