@@ -231,6 +231,7 @@ assign [class="zoom"] 4
 assign [class="Telegram"] 4
 assign [class="jetbrains-idea"] 10
 assign [class="jetbrains-clion"] 10
+assign [class="jetbrains-pycharm"] 10
 
 # scaratchpad ranger (ranger float)
 bindsym $mod+u [instance="dropdown"] scratchpad show; [instance="dropdown"] move position center

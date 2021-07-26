@@ -24,9 +24,10 @@ Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
 Plug 'janko-m/vim-test'
 " golang for vim
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+" full LSP support
+" Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'}
 " keyword completion system by maintaining a cache of keywords in the current buffer 
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'zchee/deoplete-jedi'
 " unite all
 Plug 'Shougo/denite.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'chemzqm/denite-extra' " many sources
@@ -35,6 +36,7 @@ Plug 'bling/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 " python autocomplete + rename + goto definition
 Plug 'davidhalter/jedi-vim', { 'for': 'python' }
+" Plug 'zchee/deoplete-jedi'
 " single interface for formatting (adjuct Go/Rust Fmt)
 Plug 'Chiel92/vim-autoformat'
 " easy motion
@@ -142,10 +144,10 @@ nnoremap <Leader>P :set invpaste<CR>
 nnoremap <Leader>qq :qa!<CR>
 
 " fugitive
-nnoremap <Leader>gs :Gstatus<CR>
-nnoremap <Leader>gb :Gblame<CR>
+nnoremap <Leader>gs :Git status<CR>
+nnoremap <Leader>gb :Git blame<CR>
 nnoremap <Leader>gd :Gvdiff<CR>
-nnoremap <Leader>gl :Glog<CR>
+nnoremap <Leader>gl :Git log<CR>
 
 " Make the Y behavior similar to D & C
 nnoremap Y y$
@@ -213,7 +215,7 @@ let g:jedi#popup_on_dot = 1
 let g:jedi#popup_select_first = 1
 let g:jedi#goto_assignments_command = "<Leader>g"
 let g:jedi#goto_definitions_command = "gd"
-let g:jedi#usages_command = "<Space>u"
+let g:jedi#usages_command = "tu"
 let g:jedi#completions_command = "<C-Space>"
 let g:jedi#rename_command = "<leader>r"
 " 1 - in popup, 2 in command line
@@ -222,11 +224,16 @@ let g:jedi#show_call_signatures = "2"
 
 let g:rainbow_active = 1
 
-call deoplete#custom#option({
-    \ 'auto_complete_delay': 200,
-    \ 'smart_case': v:true,
-    \ })
 let g:deoplete#enable_at_startup = 1
+call deoplete#custom#option('omni_patterns', {
+            \ 'go': '[^. *\t]\.\w*',
+            \})
+call deoplete#custom#option({
+            \ 'auto_complete_delay': 200,
+            \ 'smart_case': v:true,
+            \ })
+" close preview window
+autocmd CompleteDone * silent! pclose!
 
 let g:neomru#file_mru_path = $HOME.'/.config/nvim/tmp/neomru/file'
 let g:neomru#directory_mru_path = $HOME.'/.config/nvim/tmp/neomru/directory'
@@ -307,15 +314,25 @@ let g:UltiSnipsEditSplit="horizontal"
 let g:go_highlight_functions = 1
 let g:go_highlight_methods = 1
 let g:go_highlight_structs = 1
+" Completion with native LSP
 let g:go_def_mode='gopls'
 let g:go_info_mode='gopls'
 
 augroup golang
     autocmd!
     autocmd FileType go nnoremap \r :GoRun<CR>
+    autocmd FileType go nnoremap \d :GoDebugStart<CR>
+    autocmd FileType go nnoremap \t :GoTest<CR>
+    " to test
+    autocmd FileType go nnoremap tt :GoAlternate<CR>
+    " to type def
+    autocmd FileType go nnoremap td :GoDefType<CR>
+    " to implementations
+    autocmd FileType go nnoremap ti :GoImplements<CR>
+    " optimize imports
+    autocmd FileType go nnoremap <Leader>o :GoImports<CR>
     autocmd FileType go nnoremap <Leader>f :GoFmt<CR>
     autocmd FileType go nnoremap <Leader>r :GoRename<CR>
-    autocmd FileType go nnoremap <Leader>s :GoImplements<CR>
     autocmd FileType go nnoremap <Leader>I :GoInfo<CR>
     autocmd FileType go nnoremap <buffer> <leader>i :exe 'GoImport ' . expand('<cword>')<CR>
     autocmd FileType go nnoremap <Leader>b :GoBuild<CR>
@@ -374,12 +391,13 @@ nnoremap <silent> [denite]b         :<C-u>Denite buffer<CR>
 nnoremap <silent> [denite]c         :<C-u>Denite change<CR>
 nnoremap <silent> [denite]d         :<C-u>DeniteBufferDir file/rec<CR>
 nnoremap <silent> [denite]f         :<C-u>DeniteProjectDir file/rec<CR>
-nnoremap <silent> [denite]g         :<C-u>DeniteProjectDir grep<CR>
-nnoremap <silent> [denite]G         :<C-u>DeniteCursorWord grep<CR>
+nnoremap <silent> [denite]gg        :<C-u>DeniteProjectDir grep<CR>
+nnoremap <silent> [denite]gw        :<C-u>DeniteCursorWord grep<CR>
 nnoremap <silent> [denite]h         :<C-u>Denite help<CR>
 nnoremap <silent> [denite]l         :<C-u>Denite line<CR>
 nnoremap <silent> [denite]m         :<C-u>Denite outline<CR>
 nnoremap <silent> [denite]r         :<C-u>Denite file_mru<CR>
+nnoremap <silent> [denite]/         :<C-u>Denite buffer grep<CR>
 
 autocmd FileType denite call s:denite_my_settings()
 function! s:denite_my_settings() abort

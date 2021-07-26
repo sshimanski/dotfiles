@@ -12,6 +12,7 @@ set smartcase
 " set rnu
 set nu
 set NERDTree
+set ideajoin
 
 let mapleader=","
 nnoremap ' `
@@ -87,11 +88,12 @@ nmap gcc :action CommentByLineComment<CR>
 
 " denite.vim (lists)
 noremap <Space>b :action RecentFiles<CR>
-noremap <Space>r :action Switcher<CR>
-noremap <Space>d :action RecentChangedFiles<CR>
 noremap <Space>c :action GotoClass<CR>
+noremap <Space>d :action RecentChangedFiles<CR>
 noremap <Space>f :action GotoFile<CR>
-noremap <Space>g :action FindInPath<CR>
+noremap <Space>gg :action FindInPath<CR>
+noremap <Space>gw :action FindSelectionInPath<CR>
+noremap <Space>r :action Switcher<CR>
 noremap <Space>s :action GotoSymbol<CR>
 " List Projects
 noremap <Space>lp :action ManageRecentProjects<CR>
@@ -156,9 +158,7 @@ noremap <leader>d :action ShowUmlDiagramPopup<CR>
 noremap <leader>k :q<CR>
 noremap <leader>m :action Move<CR>
 noremap <leader>r :action RenameElement<CR>
-" noremap <leader>f :action OptimizeImports<CR><BAR>:action AutoIndentLines<CR><BAR>:action ReformatCode<CR>
 map <leader>f <Action>(ReformatCode)<Action>(AutoIndentLines)<Action>(OptimizeImports)
-map <leader>o <Action>(OptimizeImports)
 noremap <leader>G :action Generate<CR>
 vnoremap <leader>s :action SurroundWithLiveTemplate<CR>
 
