@@ -82,16 +82,12 @@ noremap <C-S-k> :action PreviousIdentifierReloaded<CR>
 noremap <C-S-h> :action MoveElementLeft<CR>
 noremap <C-S-l> :action MoveElementRight<CR>
 
-nmap gcc :action CommentByLineComment<CR>
-" vnoremap gc :action CommentByLineComment<CR>
-" vnoremap gC :action CommentByBlockComment<CR>
-
-" denite.vim (lists)
-noremap <Space>b :action RecentFiles<CR>
-noremap <Space>c :action GotoClass<CR>
-noremap <Space>d :action RecentChangedFiles<CR>
-noremap <Space>f :action GotoFile<CR>
-noremap <Space>gg :action FindInPath<CR>
+" nvim: Telescope
+noremap <leader>lb :action RecentFiles<CR>
+noremap <leader>lf :action GotoClass<CR>
+noremap <leader>lr :action RecentChangedFiles<CR>
+" sd = Search Directory
+noremap <leader>sd :action FindInPath<CR>
 noremap <Space>gw :action FindSelectionInPath<CR>
 noremap <Space>r :action Switcher<CR>
 noremap <Space>s :action GotoSymbol<CR>
@@ -99,7 +95,7 @@ noremap <Space>s :action GotoSymbol<CR>
 noremap <Space>lp :action ManageRecentProjects<CR>
 
 " denite/outline
-nnoremap <Space>m :action FileStructurePopup<CR>
+nnoremap <leader>ls :action FileStructurePopup<CR>
 noremap <Space>u :action FindUsages<CR>
 noremap <Space>w :action SelectIn<CR>
 

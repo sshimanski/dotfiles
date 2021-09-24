@@ -35,9 +35,9 @@ bindsym $mod+z workspace back_and_forth
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec urxvt
-bindsym $mod+Shift+Return exec --no-startup-id urxvt -e zsh -ci ranger
-bindsym $mod+Shift+i exec --no-startup-id urxvt -e zsh -ci htop
+bindsym $mod+Return exec alacritty
+bindsym $mod+Shift+Return exec --no-startup-id alacritty -e zsh -ci ranger
+bindsym $mod+Shift+i exec --no-startup-id alacritty -e zsh -ci htop
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -238,7 +238,7 @@ bindsym $mod+u [instance="dropdown"] scratchpad show; [instance="dropdown"] move
 for_window [instance="dropdown"] floating enable
 for_window [instance="dropdown"] resize set 1400 820
 for_window [instance="dropdown"] move scratchpad
-exec --no-startup-id urxvt -name dropdown -e zsh -ci ranger 
+exec --no-startup-id alacritty -o window.opacity=0.8 -name dropdown -e zsh -ci ranger 
 
 # popup focus fix
 #for_window [class="^jetbrains-.+"][window_type=dialog] focus

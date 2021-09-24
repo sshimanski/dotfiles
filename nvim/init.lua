@@ -1,78 +1,86 @@
 ﻿local function map(mode, lhs, rhs, opts)
-  local options = { noremap = true }
-  if opts then
-    options = vim.tbl_extend("force", options, opts)
-  end
+	local options = { noremap = true }
+	if opts then
+		options = vim.tbl_extend("force", options, opts)
+	end
 
-  vim.api.nvim_set_keymap(mode, lhs, rhs, options)
+	vim.api.nvim_set_keymap(mode, lhs, rhs, options)
 end
 
--- Map leader to space
 vim.g.mapleader = ","
 
--- Bootstrap Paq when needed
-local install_path = vim.fn.stdpath("data") .. "/site/pack/paqs/start/paq-nvim"
-if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
-  vim.fn.system({ "git", "clone", "--depth=1", "https://github.com/savq/paq-nvim.git", install_path })
-end
-
 -- Plugins
-require("paq-nvim")({
-  "savq/paq-nvim",
+require('packer').startup( function()
+    -- plugin manager
+	use "wbthomason/packer.nvim"
+    -- config for LSP clients
+	use "neovim/nvim-lspconfig"
+	-- easy install LSP servers
+	use "kabouzeid/nvim-lspinstall"
+    -- helper lib for other plugins
+	use "nvim-lua/plenary.nvim"
+    -- popups
+	use "nvim-lua/popup.nvim"
+    -- super cool lists and more
+    use "nvim-telescope/telescope.nvim"
+    -- nvim interface for tree-sitter (parser/generator; syntax tree)
+	use "nvim-treesitter/nvim-treesitter"
+    -- A light-weight plugin, which enhance builtin-lsp ui performance
+	use "glepnir/lspsaga.nvim"
+    -- nice info line
+	use "hoob3rt/lualine.nvim"
+	use "kyazdani42/nvim-web-devicons" -- nerd fonts required
+    -- completion tool
+	use "hrsh7th/nvim-cmp"
+    -- git signs
+    use "lewis6991/gitsigns.nvim"
 
-  "neovim/nvim-lspconfig",
-  "kabouzeid/nvim-lspinstall",
+	-- cmp sources
+	use "hrsh7th/cmp-nvim-lsp"
+	use "hrsh7th/cmp-vsnip"
+	use "hrsh7th/cmp-path"
+	use "hrsh7th/cmp-buffer"
 
-  "nvim-lua/plenary.nvim",
-  "nvim-lua/popup.nvim",
-  "nvim-telescope/telescope.nvim",
-  "nvim-treesitter/nvim-treesitter",
+    -- V(SCode) Snip(pet) like plugin.
+	use "hrsh7th/vim-vsnip"
+    -- parentheses for neovim using tree-sitter
+	use "p00f/nvim-ts-rainbow"
+    -- quick jump
+	use "phaazon/hop.nvim"
+    -- Tim Pope helper plugins
+	use "tpope/vim-repeat"
+	use "tpope/vim-surround"
+	use "tpope/vim-unimpaired"
+    use "tpope/vim-commentary"
 
-  "glepnir/lspsaga.nvim",
-  "hoob3rt/lualine.nvim",
-  "kyazdani42/nvim-web-devicons",
-  "ryanoasis/vim-devicons",
-
-  "hrsh7th/nvim-cmp",
-  -- cmp sources
-  "hrsh7th/cmp-nvim-lsp",
-  "hrsh7th/cmp-vsnip",
-  "hrsh7th/cmp-path",
-  "hrsh7th/cmp-buffer",
-
-  "hrsh7th/vim-vsnip",
-
-  "onsails/lspkind-nvim",
-  "p00f/nvim-ts-rainbow",
-  "phaazon/hop.nvim",
-  "tpope/vim-repeat",
-  "tpope/vim-surround",
-
-  "simrat39/rust-tools.nvim",
-  "arcticicestudio/nord-vim",
-})
+    -- rust tools
+	use "simrat39/rust-tools.nvim"
+    -- utils pack for jdtls LSP server
+    use "mfussenegger/nvim-jdtls"
+	-- colorscheme
+	use "arcticicestudio/nord-vim"
+end)
 
 require("nvim-treesitter.configs").setup({
-  rainbow = {
-    enable = true,
-    extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
-    max_file_lines = nil, -- Do not enable for files with more than n lines, int
-  },
+    highlight = {enable = true},
+	rainbow = {
+		enable = true,
+		extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
+		max_file_lines = nil, -- Do not enable for files with more than n lines, int
+	},
+    autopairs = {enable = true}
 })
-
--- lspkind Icon setup
-require("lspkind").init({})
 
 require("lspinstall").setup() -- important
 
 local servers = require("lspinstall").installed_servers()
 for _, server in pairs(servers) do
-    if server == 'rust' then
-        local configs = require'lspconfig/configs'
-        rawset(configs, 'rust_analyzer', configs['rust'])
-    end
+	if server == 'rust' then
+		local configs = require'lspconfig/configs'
+		rawset(configs, 'rust_analyzer', configs['rust'])
+	end
 
-    require("lspconfig")[server].setup{}
+	require("lspconfig")[server].setup{}
 end
 
 require("rust-tools").setup({})
@@ -89,7 +97,6 @@ vim.opt.expandtab = true -- Use spaces instead of tabs
 vim.opt.foldenable = false
 vim.opt.foldmethod = "indent"
 vim.opt.formatoptions = "l"
-vim.opt.hidden = true
 vim.opt.hidden = true -- Enable background buffers
 vim.opt.hlsearch = true -- Highlight found searches
 vim.opt.ignorecase = true -- Ignore case
@@ -98,9 +105,9 @@ vim.opt.incsearch = true -- Shows the match while typing
 vim.opt.joinspaces = false -- No double spaces with join
 vim.opt.linebreak = true -- Stop words being broken on wrap
 vim.opt.list = false -- Show some invisible characters
-vim.opt.mouse = "a"
+vim.opt.mouse = "a" -- Enable mouse
 vim.opt.number = true -- Show line numbers
-vim.opt.numberwidth = 5 -- Make the gutter wider by default
+vim.opt.numberwidth = 4 -- Make the gutter wider by default
 vim.opt.scrolloff = 4 -- Lines of context
 vim.opt.shiftround = true -- Round indent
 vim.opt.shiftwidth = 4 -- Size of an indent
@@ -113,54 +120,118 @@ vim.opt.spelllang = "en"
 vim.opt.splitbelow = true -- Put new windows below current
 vim.opt.splitright = true -- Put new windows right of current
 vim.opt.tabstop = 4 -- Number of spaces tabs count for
---vim.opt.termguicolors = true -- You will have bad experience for diagnostic messages when it's default 4000.
+
+vim.opt.termguicolors = true -- 
+
 vim.opt.undodir = vim.fn.stdpath("config") .. "/undo"
 vim.opt.undofile = true
 vim.opt.wrap = true
 
-vim.cmd('colorscheme nord')
+vim.opt.syntax = 'on'
+
+vim.cmd([[
+colorscheme nord
+]])
 
 require('lualine').setup({
-    options = {
-        icons_enabled = true,
-        theme = "nord",
-    },
-    tabline = {
-        lualine_a = {},
-        lualine_b = {'branch'},
-        lualine_c = {'filename'},
-        lualine_x = {},
-        lualine_y = {},
-        lualine_z = {}
-    }
+	options = {
+		icons_enabled = true,
+		theme = "nord",
+	}
 })
 
--- Hop
+-- Hop (quick jump)
 require("hop").setup()
-map("n", "<leader>h", "<cmd>lua require'hop'.hint_char2()<cr>")
-map("n", "<leader>l", "<cmd>lua require'hop'.hint_lines()<cr>")
-map("v", "<leader>h", "<cmd>lua require'hop'.hint_char2()<cr>")
-map("v", "<leader>l", "<cmd>lua require'hop'.hint_lines()<cr>")
+map("n", "<leader><leader>c", "<cmd>lua require('hop').hint_char1()<CR>")
+map("n", "<leader><leader>l", "<cmd>lua require('hop').hint_lines()<CR>")
+map("n", "<leader><leader>w", "<cmd>lua require('hop').hint_words()<CR>")
+map("n", "<leader><leader>p", "<cmd>lua require('hop').hint_patterns()<CR>")
+
+map("v", "<leader><leader>c", "<cmd>lua require('hop').hint_char1()<CR>")
+map("v", "<leader><leader>l", "<cmd>lua require('hop').hint_lines()<CR>")
+map("v", "<leader><leader>w", "<cmd>lua require('hop').hint_words()<CR>")
+map("v", "<leader><leader>p", "<cmd>lua require('hop').hint_patterns()<CR>")
+
 
 map("n", "<Leader>ev", "<cmd>e $MYVIMRC<CR>")
 map("n", "<Leader>sv", ":luafile %<CR>")
+map("n", "<Leader>k", ":bd<CR>")
+
+-- LSP
+map("n", "<Leader>f", "<cmd>lua vim.lsp.buf.formatting()<CR>")
+map("v", "<Leader>f", "<cmd>lua vim.lsp.buf.range_formatting()<CR>")
+
+map("n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>")
+map("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>")
+
+-- Telescope
+
+-- gs = Git Status
+map("n", "<Leader>gs", "<cmd>lua require('telescope.builtin').git_status()<CR>")
+-- gc = Git Commits
+map("n", "<Leader>gc", "<cmd>lua require('telescope.builtin').git_commits()<CR>")
+-- gd = Git Diff
+map("n", "<Leader>gd", "<cmd>lua require('telescope.builtin').git_bcommits()<CR>")
+-- gf = List Files
+map("n", "<Leader>gf", "<cmd>lua require('telescope.builtin').git_files()<CR>")
+
+-- sb = Search Buffer
+map("n", "<Leader>sb", "<cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<CR>")
+-- sd = Search Directory
+map("n", "<Leader>sd", "<cmd>lua require('telescope.builtin').live_grep()<CR>")
+
+-- la = List Actions
+map("n", "<Leader>la", "<cmd>lua require('telescope.builtin').lsp_code_actions()<CR>")
+-- lb = List Buffers
+map("n", "<Leader>lb", "<cmd>lua require('telescope.builtin').buffers()<CR>")
+-- lC = List Commands
+map("n", "<Leader>lc", "<cmd>lua require('telescope.builtin').commands()<CR>")
+-- Lists files in current working directory, respects .gitignore
+-- ld = List Files (in current working dir)
+map("n", "<Leader>lf", "<cmd>lua require('telescope.builtin').find_files()<CR>")
+-- le = List Errors
+map("n", "<Leader>le", "<cmd>lua require('telescope.builtin').lsp_document_diagnostics()<CR>")
+-- lq = List Quickfix
+map("n", "<Leader>lq", "<cmd>lua require('telescope.builtin').quickfix()<CR>")
+-- ls = List Symbols; (Ctrl-l) - to filter symbols
+map("n", "<Leader>ls", "<cmd>lua require('telescope.builtin').lsp_document_symbols()<CR>")
+-- lr = List Recent
+map("n", "<Leader>lr", "<cmd>lua require('telescope.builtin').oldfiles()<CR>")
+-- lw = List Workspace
+map("n", "<Leader>lw", "<cmd>lua require('telescope.builtin').lsp_workspace_symbols()<CR>")
+
+-- lu = to Usages
+map("n", "<Leader>tu", "<cmd>lua require('telescope.builtin').lsp_references()<CR>")
+-- td = to Definition
+map("n", "<Leader>td", "<cmd>lua require('telescope.builtin').lsp_definitions()<CR>")
+-- tt = to Type 
+map("n", "<Leader>tt", "<cmd>lua require('telescope.builtin').lsp_type_definitions()<CR>")
+-- ti = to Implementations
+map("n", "<Leader>ti", "<cmd>lua require('telescope.builtin').lsp_implementations()<CR>")
 
 local cmp = require("cmp")
 cmp.setup({
-    snippet = {
-        expand = function(args) vim.fn["vsnip#anonymous"](args.body) end
-    },
-    mapping = {
-      ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-      ['<C-f>'] = cmp.mapping.scroll_docs(4),
-      ['<C-Space>'] = cmp.mapping.complete(),
-      ['<C-e>'] = cmp.mapping.close(),
-      ['<CR>'] = cmp.mapping.confirm({ select = true }),
-    },
-    sources = {
-      { name = 'nvim_lsp' },
-      { name = 'vsnip' },
-      { name = 'buffer' },
-      { name = 'path' },
-    }
+	snippet = {
+		expand = function(args) vim.fn["vsnip#anonymous"](args.body) end
+	},
+	mapping = {
+		['<C-d>'] = cmp.mapping.scroll_docs(-4),
+		['<C-f>'] = cmp.mapping.scroll_docs(4),
+		['<C-Space>'] = cmp.mapping.complete(),
+		['<C-e>'] = cmp.mapping.close(),
+		['<CR>'] = cmp.mapping.confirm({ select = true }),
+	},
+	sources = {
+		{ name = 'nvim_lsp' },
+		{ name = 'vsnip' },
+		{ name = 'buffer' },
+		{ name = 'path' },
+	}
 })
+
+require("telescope").setup({})
+
+require("nvim-web-devicons").setup({})
+
+require('gitsigns').setup({})
+-- require('jdtls').setup({})
