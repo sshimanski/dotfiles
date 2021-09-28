@@ -65,6 +65,7 @@ require('packer').startup( function(use)
     use "shadmansaleh/lualine.nvim"
 
     use { 'TimUntersberger/neogit', requires = 'nvim-lua/plenary.nvim' }
+    use {'sindrets/diffview.nvim'}
 end)
 
 vim.g.mapleader = ","
@@ -254,3 +255,5 @@ require("telescope").setup({})
 require("nvim-web-devicons").setup({})
 
 require('gitsigns').setup({})
+
+require('diffview').setup({})
