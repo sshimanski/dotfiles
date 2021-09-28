@@ -108,11 +108,11 @@ nmap gp :action GotoPreviousBookmark<CR>
 noremap <C--> :action HideAllWindows<CR>
 
 " Mnemonic: 'to'
-nnoremap td :action GotoTypeDeclaration<CR>
-nnoremap ti :action GotoImplementation<CR>
+nnoremap <leader>td :action GotoTypeDeclaration<CR>
+nnoremap <leader>ti :action GotoImplementation<CR>
 nnoremap ts :action GotoSuperMethod<CR>
 nnoremap tt :action GotoTest<CR>
-nnoremap tu :action ShowUsages<CR>
+nnoremap <leader>tu :action ShowUsages<CR>
 " to 'class'
 nnoremap tc gg<BAR>:action MethodDown<CR><BAR>zt
 
@@ -126,8 +126,6 @@ vnoremap <leader>em :action ExtractMethod<CR>
 noremap <leader>ec :action ExtractClass<CR>
 
 noremap <leader>N :action NewElement<CR>
-
-" NERDTree - I found that native Alt+1 is more intuitive. Mappings inside NERDTree are still useful
 
 " Mnemonic 'introduce'
 noremap <leader>ic :action IntroduceConstant<CR>

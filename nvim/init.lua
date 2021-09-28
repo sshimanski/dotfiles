@@ -7,10 +7,8 @@
 	vim.api.nvim_set_keymap(mode, lhs, rhs, options)
 end
 
-vim.g.mapleader = ","
-
 -- Plugins
-require('packer').startup( function()
+require('packer').startup( function(use)
     -- plugin manager
 	use "wbthomason/packer.nvim"
     -- config for LSP clients
@@ -25,10 +23,7 @@ require('packer').startup( function()
     use "nvim-telescope/telescope.nvim"
     -- nvim interface for tree-sitter (parser/generator; syntax tree)
 	use "nvim-treesitter/nvim-treesitter"
-    -- A light-weight plugin, which enhance builtin-lsp ui performance
-	use "glepnir/lspsaga.nvim"
     -- nice info line
-	use "hoob3rt/lualine.nvim"
 	use "kyazdani42/nvim-web-devicons" -- nerd fonts required
     -- completion tool
 	use "hrsh7th/nvim-cmp"
@@ -47,6 +42,7 @@ require('packer').startup( function()
 	use "p00f/nvim-ts-rainbow"
     -- quick jump
 	use "phaazon/hop.nvim"
+
     -- Tim Pope helper plugins
 	use "tpope/vim-repeat"
 	use "tpope/vim-surround"
@@ -55,37 +51,23 @@ require('packer').startup( function()
 
     -- rust tools
 	use "simrat39/rust-tools.nvim"
-    -- utils pack for jdtls LSP server
+    -- java tools (TODO: unable to configure)
     use "mfussenegger/nvim-jdtls"
+
 	-- colorscheme
 	use "arcticicestudio/nord-vim"
+
+    -- autosave
+    use "Pocco81/AutoSave.nvim"
+
+    -- TODO
+	-- use "hoob3rt/lualine.nvim"
+    use "shadmansaleh/lualine.nvim"
+
+    use { 'TimUntersberger/neogit', requires = 'nvim-lua/plenary.nvim' }
 end)
 
-require("nvim-treesitter.configs").setup({
-    highlight = {enable = true},
-	rainbow = {
-		enable = true,
-		extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
-		max_file_lines = nil, -- Do not enable for files with more than n lines, int
-	},
-    autopairs = {enable = true}
-})
-
-require("lspinstall").setup() -- important
-
-local servers = require("lspinstall").installed_servers()
-for _, server in pairs(servers) do
-	if server == 'rust' then
-		local configs = require'lspconfig/configs'
-		rawset(configs, 'rust_analyzer', configs['rust'])
-	end
-
-	require("lspconfig")[server].setup{}
-end
-
-require("rust-tools").setup({})
-
-require("lspsaga").init_lsp_saga({})
+vim.g.mapleader = ","
 
 vim.opt.backspace = { "indent", "eol", "start" }
 -- vim.opt.cc = "80"
@@ -129,19 +111,8 @@ vim.opt.wrap = true
 
 vim.opt.syntax = 'on'
 
-vim.cmd([[
-colorscheme nord
-]])
+vim.cmd([[ colorscheme nord ]])
 
-require('lualine').setup({
-	options = {
-		icons_enabled = true,
-		theme = "nord",
-	}
-})
-
--- Hop (quick jump)
-require("hop").setup()
 map("n", "<leader><leader>c", "<cmd>lua require('hop').hint_char1()<CR>")
 map("n", "<leader><leader>l", "<cmd>lua require('hop').hint_lines()<CR>")
 map("n", "<leader><leader>w", "<cmd>lua require('hop').hint_words()<CR>")
@@ -158,11 +129,12 @@ map("n", "<Leader>sv", ":luafile %<CR>")
 map("n", "<Leader>k", ":bd<CR>")
 
 -- LSP
-map("n", "<Leader>f", "<cmd>lua vim.lsp.buf.formatting()<CR>")
-map("v", "<Leader>f", "<cmd>lua vim.lsp.buf.range_formatting()<CR>")
-
 map("n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>")
 map("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>")
+map("n", "<Leader>dr", "<cmd>lua vim.lsp.buf.rename()<CR>")
+map("n", "<Leader>df", "<cmd>lua vim.lsp.buf.formatting()<CR>")
+map("v", "<Leader>df", "<cmd>lua vim.lsp.buf.range_formatting()<CR>")
+map("v", "<Leader>dl", "<cmd>lua vim.lsp.buf.list_workspace_folders()<CR>")
 
 -- Telescope
 
@@ -172,23 +144,31 @@ map("n", "<Leader>gs", "<cmd>lua require('telescope.builtin').git_status()<CR>")
 map("n", "<Leader>gc", "<cmd>lua require('telescope.builtin').git_commits()<CR>")
 -- gd = Git Diff
 map("n", "<Leader>gd", "<cmd>lua require('telescope.builtin').git_bcommits()<CR>")
--- gf = List Files
-map("n", "<Leader>gf", "<cmd>lua require('telescope.builtin').git_files()<CR>")
+-- gf = Git Files
+map("n", "<Leader>gf", "<cmd>lua require('telescope.builtin').git_files({path_display={'shorten'}})<CR>")
+-- gb = Git blame
+map("n", "<Leader>gb", "<cmd>lua require('gitsigns').blame_line()<CR>")
 
 -- sb = Search Buffer
 map("n", "<Leader>sb", "<cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<CR>")
 -- sd = Search Directory
 map("n", "<Leader>sd", "<cmd>lua require('telescope.builtin').live_grep()<CR>")
 
+-- Lists files and folders in your current working directory, open files,
+-- navigate your filesystem, and create new files and folders
+-- e = Explorer
+map("n", "<Leader>e", "<cmd>lua require('telescope.builtin').file_browser()<CR>")
+
 -- la = List Actions
 map("n", "<Leader>la", "<cmd>lua require('telescope.builtin').lsp_code_actions()<CR>")
+map("v", "<Leader>la", "<cmd>lua require('telescope.builtin').lsp_range_code_actions()<CR>")
 -- lb = List Buffers
-map("n", "<Leader>lb", "<cmd>lua require('telescope.builtin').buffers()<CR>")
+map("n", "<Leader>lb", "<cmd>lua require('telescope.builtin').buffers({path_display={'tail'}})<CR>")
 -- lC = List Commands
 map("n", "<Leader>lc", "<cmd>lua require('telescope.builtin').commands()<CR>")
 -- Lists files in current working directory, respects .gitignore
 -- ld = List Files (in current working dir)
-map("n", "<Leader>lf", "<cmd>lua require('telescope.builtin').find_files()<CR>")
+map("n", "<Leader>lf", "<cmd>lua require('telescope.builtin').find_files({path_display={'tail'}})<CR>")
 -- le = List Errors
 map("n", "<Leader>le", "<cmd>lua require('telescope.builtin').lsp_document_diagnostics()<CR>")
 -- lq = List Quickfix
@@ -204,10 +184,50 @@ map("n", "<Leader>lw", "<cmd>lua require('telescope.builtin').lsp_workspace_symb
 map("n", "<Leader>tu", "<cmd>lua require('telescope.builtin').lsp_references()<CR>")
 -- td = to Definition
 map("n", "<Leader>td", "<cmd>lua require('telescope.builtin').lsp_definitions()<CR>")
--- tt = to Type 
+-- tt = to Type
 map("n", "<Leader>tt", "<cmd>lua require('telescope.builtin').lsp_type_definitions()<CR>")
 -- ti = to Implementations
 map("n", "<Leader>ti", "<cmd>lua require('telescope.builtin').lsp_implementations()<CR>")
+
+require('lualine').setup({
+	options = { theme = "nord" }
+})
+
+-- Hop (quick jump)
+require("hop").setup()
+
+require("nvim-treesitter.configs").setup({
+    highlight = {enable = true},
+	rainbow = {
+		enable = true,
+		extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
+		max_file_lines = nil, -- Do not enable for files with more than n lines, int
+	},
+    autopairs = {enable = true}
+})
+
+require("lspinstall").setup() -- important
+
+local servers = require("lspinstall").installed_servers()
+for _, server in pairs(servers) do
+    -- The server name must match those found in the table of contents in lspconfig/CONFIG.md
+    if server ~= 'java' then
+        local configs = require'lspconfig/configs'
+        if server == 'rust' then
+            -- 'rust' doesn't match, but 'rust_analyzer' does
+            rawset(configs, 'rust_analyzer', configs['rust'])
+            require("lspconfig")['rust_analyzer'].setup{}
+        elseif server == 'lua' then
+            -- 'lua' doesn't match, but 'sumneko_lua' does
+            rawset(configs, 'sumneko_lua', configs['lua'])
+            require("lspconfig")['sumneko_lua'].setup({})
+        else
+            require("lspconfig")[server].setup{}
+        end
+    end
+end
+
+require("rust-tools").setup({})
 
 local cmp = require("cmp")
 cmp.setup({
@@ -234,4 +254,3 @@ require("telescope").setup({})
 require("nvim-web-devicons").setup({})
 
 require('gitsigns').setup({})
--- require('jdtls').setup({})
