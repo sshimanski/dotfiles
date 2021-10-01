@@ -13,7 +13,7 @@ map("v", "K", ":m '<-2<CR>gv=gv")
 map("n", "Y", "yg_")
 map("n", "n", "nzzzv")
 map("n", "N", "Nzzzv")
-map("n", "J", "mzJ`z")
+map("n", "J", "mzJ`z") -- think about it
 map("x", "<Leader>p", "_dP")
 
 map("n", "<leader><leader>c", "<cmd>lua require('hop').hint_char1()<CR>")
@@ -27,7 +27,7 @@ map("v", "<leader><leader>p", "<cmd>lua require('hop').hint_patterns()<CR>")
 map("v", "<leader><leader>w", "<cmd>lua require('hop').hint_words()<CR>")
 
 map("n", "<Leader>ev", "<cmd>lua require('utils').dotfiles()<CR>")
-map("n", "<Leader>sv", ":luafile '~/dotfiles/nvim/init.lua'<CR>")
+map("n", "<Leader>sv", ":luafile ~/dotfiles/nvim/init.lua<CR>")
 map("n", "<Leader>k", ":bd<CR>")
 
 -- LSP

@@ -12,7 +12,6 @@ packer.init({
     },
 })
 
-
 local plugins = {
     -- plugin manager
     {"wbthomason/packer.nvim"},
@@ -72,20 +71,15 @@ local plugins = {
     -- fancy status line
     require("plugins.lualine"),
 
-    -- git signs
     {
         "lewis6991/gitsigns.nvim",
         config = require('gitsigns').setup({})
     },
-    -- git actions
-    {"TimUntersberger/neogit"},
 
-    {
-        "sindrets/diffview.nvim",
-        config = require('diffview').setup({})
-    },
+    require("plugins.neogit"),
 }
 
+-- one more comment
 -- do use plugins with configs
 packer.startup(function(use)
     for _, plugin in ipairs(plugins) do

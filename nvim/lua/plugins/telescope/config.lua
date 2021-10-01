@@ -1,3 +1,5 @@
+local actions = require('telescope.actions')
+
 require("telescope").setup({
     defaults = {
         prompt_prefix = "❯ ",
@@ -13,23 +15,22 @@ require("telescope").setup({
         path_display = {"smart"},
         mappings = {
             i = {
-                ["<ESC>"] = require('telescope.actions').close,
+                ["<ESC>"] = actions.close,
             }
         },
     },
     pickers = {
         file_browser = {
-            prompt_prefix = "   ",
+            prompt_prefix = "  ",
             hidden = true,
         },
         buffers = {
-            prompt_prefix = " ﬘  ",
+            prompt_prefix = " ﬘ ",
             theme = "dropdown",
             previewer = false,
             ignore_current_buffer = true,
         },
         live_grep = {
-            prompt_prefix = "   ",
             theme = "dropdown",
         },
         git_status = {
@@ -45,13 +46,11 @@ require("telescope").setup({
                 untracked = "",
             },
         },
-        lsp_code_actions = {
-            prompt_prefix = " ﯧ  ",
-            theme = "cursor",
-        },
-        lsp_range_code_actions = {
-            prompt_prefix = " ﯧ  ",
-            theme = "cursor",
-        },
+        -- lsp_code_actions = {
+        --     prompt_prefix = "❯ ",
+        -- },
+        -- lsp_range_code_actions = {
+        --     prompt_prefix = "❯ ",
+        -- },
     }
 })

@@ -1,5 +1,4 @@
 local jdtls = require('jdtls')
-local lsp_key_mappings = {} --require('my.lsp.mappings')
 local M = {}
 
 local key_mappings = {
@@ -21,10 +20,6 @@ local on_attach = function(client, bufnr)
   -- TODO make it so the mappings here override potential mappings already
   -- defined in the LSP?
   -- TODO concatenate lsp key mappings and the ones from here
-  for _, mappings in pairs(lsp_key_mappings) do
-    local mode, lhs, rhs = unpack(mappings)
-    vim.api.nvim_buf_set_keymap(bufnr, mode, lhs, rhs, opts)
-  end
   for _, mappings in pairs(key_mappings) do
     local mode, lhs, rhs = unpack(mappings)
     vim.api.nvim_buf_set_keymap(bufnr, mode, lhs, rhs, opts)
