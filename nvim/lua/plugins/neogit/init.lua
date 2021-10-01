@@ -1,8 +1,10 @@
 return {
-    "TimUntersberger/neogit",
-    config = require("plugins.neogit.config"),
-    requires = {
-        'sindrets/diffview.nvim',
-        'nvim-lua/plenary.nvim',
+    {
+        "TimUntersberger/neogit",
+        config = require("plugins.neogit.config"),
+        requires = {
+            'nvim-lua/plenary.nvim',
+        },
     },
+    { 'sindrets/diffview.nvim' },
 }

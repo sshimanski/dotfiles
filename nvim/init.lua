@@ -1,3 +1,4 @@
-﻿require('configs')
+﻿--
+require('configs')
 require('mappings')
 require('plugins')

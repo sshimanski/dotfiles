@@ -43,6 +43,7 @@ map("n", "<Leader>dl", "<cmd>lua vim.lsp.buf.list_workspace_folders()<CR>")
 
 -- Telescope
 
+map("n", "<Leader>gg", ":Neogit<CR>")
 -- gs = Git Status
 map("n", "<Leader>gs", "<cmd>lua require('telescope.builtin').git_status()<CR>")
 -- gc = Git Commits
