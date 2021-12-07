@@ -29,9 +29,14 @@ require("telescope").setup({
             theme = "dropdown",
             previewer = false,
             ignore_current_buffer = true,
-        },
-        live_grep = {
-            theme = "dropdown",
+            mappings = {
+                i = {
+                    ["<C-d>"] = actions.delete_buffer
+                },
+                n = {
+                    ["<C-d>"] = actions.delete_buffer
+                },
+            },
         },
         git_status = {
             layout_config = { width = 0.5 },
@@ -46,11 +51,5 @@ require("telescope").setup({
                 untracked = "",
             },
         },
-        -- lsp_code_actions = {
-        --     prompt_prefix = "❯ ",
-        -- },
-        -- lsp_range_code_actions = {
-        --     prompt_prefix = "❯ ",
-        -- },
     }
 })

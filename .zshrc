@@ -51,15 +51,33 @@ ENABLE_CORRECTION="true"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(vi-mode git git-extras gradle golang cargo colored-man-pages common-aliases copydir copyfile docker docker-compose rust ssh-agent tig fzf sdk mvn)
+plugins=(
+    # cargo 
+    colored-man-pages 
+    common-aliases 
+    copydir 
+    copyfile 
+    docker 
+    docker-compose 
+    git 
+    git-extras 
+    gradle 
+    rust 
+    sdk 
+    ssh-agent 
+    tig 
+    vi-mode 
+    zsh-autosuggestions
+    zsh-completions
+    zoxide
+    fzf-tab
+    # mvn
+)
 zstyle :omz:plugins:ssh-agent identities id_rsa exadel.github.com github.com
 
 source $ZSH/oh-my-zsh.sh
 
-# User configuration
-# completion functions
-fpath+=~/.zfunc
-fpath=(~/.zsh/completion $fpath)
+# !!!!! completion functions are in ~/.oh-my-zsh/completions + zsh-completions
 # compinit
 autoload -Uz compinit && compinit -i
 
@@ -102,7 +120,7 @@ rg() {
     fi
 }
 
-[ -n "$RANGER_LEVEL"  ] && PS1="$PS1"'(rg) '
+[ -n "$RANGER_LEVEL"  ] && PS1="$PS1"'[rg] '
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="/home/sshimanski/.sdkman"

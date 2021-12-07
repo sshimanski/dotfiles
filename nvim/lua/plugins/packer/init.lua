@@ -24,7 +24,7 @@ local plugins = {
     -- config for LSP clients
     {"neovim/nvim-lspconfig"},
     -- easy install LSP servers
-    require("plugins.lspinstall"),
+    require("plugins.lspinstaller"),
 
     -- super cool lists and more
     require("plugins.telescope"),
@@ -60,13 +60,17 @@ local plugins = {
 
     -- rust tools
     require("plugins.rust-tools"),
+    -- java tools
     {"mfussenegger/nvim-jdtls"},
 
     -- colorscheme
     {"arcticicestudio/nord-vim"},
 
     -- autosave
-    {"Pocco81/AutoSave.nvim"},
+    {
+        "Pocco81/AutoSave.nvim",
+        config = require("autosave").setup({})
+    },
 
     -- fancy status line
     require("plugins.lualine"),
@@ -77,6 +81,12 @@ local plugins = {
     },
 
     require("plugins.neogit"),
+
+    {
+        "plasticboy/vim-markdown"
+    },
+
+    require("plugins.nvim-tree")
 }
 
 -- one more comment

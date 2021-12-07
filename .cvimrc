@@ -8,6 +8,8 @@ let highlight = "#ffff00"
 
 map <C-o> goBack
 map <C-i> goForward
+map <C-u> scrollFullPageUp
+map <C-d> scrollFullPageDown
 map ]b nextTab
 map [b previousTab
 map <Space>b :buffer<Space>

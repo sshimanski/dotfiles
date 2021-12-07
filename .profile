@@ -26,17 +26,10 @@ if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
 fi
 
-export BROWSER="firefox"
+export BROWSER="google-chrome"
 export READER="zathura"
 export EDITOR="nvim"
 
-# JAVA
-export JAVA_HOME="$HOME/work/apps/java/jdk1.8.0_181"
-# export JAVA_HOME="$HOME/work/apps/java/jdk-9.0.4"
-# export JAVA_HOME="$HOME/work/apps/java/jdk-10.0.2"
-# export JAVA_HOME="$HOME/work/apps/java/jdk-11.0.2"
-# MVN
-export M2_HOME="$HOME/work/apps/mvn/apache-maven-3.6.0"
 # Groovy
 export GROOVY_HOME="$HOME/work/apps/groovy/groovy-3.0.0-alpha-3"
 # FZF
@@ -44,6 +37,5 @@ export FZF_BASE="$HOME/work/apps/fzf"
 # Go
 export GO_HOME="$HOME/work/apps/go/go"
 export GOPATH="$HOME/go"
-export GOBIN="$GOPATH/bin"
 
-export PATH="$PATH:$HOME/work/appimage:$HOME/dotfiles/scripts:$JAVA_HOME/bin:$JAVA_HOME/jre:$M2_HOME/bin:$GROOVY_HOME/bin:$HOME/.cargo/bin:$GO_HOME/bin"
+export PATH="$PATH:$HOME/work/appimage:$HOME/dotfiles/scripts:$M2_HOME/bin:$GROOVY_HOME/bin:$HOME/.cargo/bin:$GO_HOME/bin:$GOPATH/bin:"

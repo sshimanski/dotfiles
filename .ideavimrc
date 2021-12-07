@@ -36,17 +36,15 @@ nnoremap <leader>ev :e ~/.ideavimrc<CR>
 nnoremap <leader>sv :source ~/.ideavimrc<CR>
 
 map <leader>y "+y
+map <leader>Y "+yg_
 map <leader>p "*p
 map <leader>P a<space><esc>p
-nnoremap H :action MoveElementLeft<CR>
-nnoremap L :action MoveElementRight<CR>
 
-noremap Y y$
-nnoremap n nzz
-nnoremap N Nzz
+noremap Y yg_
+nnoremap n nzzzv
+nnoremap N Nzzzv
 " nnoremap gd gdzz
 nnoremap vv ggVG
-nnoremap U :action Vcs.RollbackChangedLines<CR>
 
 vnoremap < <gv
 vnoremap > >gv
@@ -57,9 +55,8 @@ noremap [m :action MethodUp<CR>
 noremap ]l :action GotoNextError<CR>:action ShowErrorDescription<CR>
 noremap [l :action GotoPreviousError<CR>:action ShowErrorDescription<CR>
 
-"No tabs => no tabs navigation
-"noremap [b gt
-"noremap ]b gt
+noremap [b gt
+noremap ]b gt
 
 " camelcase words: ] - forward, [ - backward
 noremap [w [b
@@ -76,28 +73,48 @@ nnoremap yow :action EditorToggleShowWhitespaces<CR>
 
 xnoremap <C-S-o> :action OverrideMethods<CR>
 xnoremap <C-S-i> :action ImplementMethods<CR>
-" Identifier Highlighter Reloaded plugin mapping
 noremap <C-S-j> :action NextIdentifierReloaded<CR>
 noremap <C-S-k> :action PreviousIdentifierReloaded<CR>
 noremap <C-S-h> :action MoveElementLeft<CR>
 noremap <C-S-l> :action MoveElementRight<CR>
 
+noremap <A-k> :action ParameterInfo<CR>
+vnoremap <A-k> :action ParameterInfo<CR>
+
+" hr = hunk reset
+nnoremap <leader>hr :action Vcs.RollbackChangedLines<CR>
+
 " nvim: Telescope
+" noremap <leader>la :action QuickActions<CR>
+noremap <leader>la :action Refactorings.QuickListPopupAction<CR>
 noremap <leader>lb :action RecentFiles<CR>
 noremap <leader>lf :action GotoClass<CR>
+noremap <leader>lp :action ManageRecentProjects<CR>
 noremap <leader>lr :action RecentChangedFiles<CR>
-" sd = Search Directory
-noremap <leader>sd :action FindInPath<CR>
-noremap <Space>gw :action FindSelectionInPath<CR>
-noremap <Space>r :action Switcher<CR>
-noremap <Space>s :action GotoSymbol<CR>
-" List Projects
-noremap <Space>lp :action ManageRecentProjects<CR>
+noremap <leader>ls :action FileStructurePopup<CR>
 
-" denite/outline
-nnoremap <leader>ls :action FileStructurePopup<CR>
-noremap <Space>u :action FindUsages<CR>
-noremap <Space>w :action SelectIn<CR>
+" do formatting
+noremap <leader>df :action ReformatCode<CR><Bar>:action AutoIndentLines<Bar>:action  OptimizeImports<CR>
+vnoremap <leader>df :action ReformatCode<Bar>:action AutoIndentLines<Bar><CR>
+" do inline
+noremap <leader>di :action Inline<CR>
+" do rename
+noremap <leader>dr :action RenameElement<CR>
+
+" fp = fzf project
+noremap <leader>fp :action FindInPath<CR>
+" fw = fzf word
+noremap <leader>fw :action FindWordAtCaret<CR>
+
+" noremap <Space>r :action Switcher<CR>
+" noremap <Space>s :action GotoSymbol<CR>
+
+" noremap <Space>u :action FindUsages<CR>
+" noremap <Space>w :action SelectIn<CR>
+
+noremap <leader><leader>l :action AceLineIndentsAction<CR>
+noremap <leader><leader>w :action AceWordStartAction<CR>
+noremap <leader><leader>c :action AceTargetAction<CR>
 
 nmap gm :action ToggleBookmark<CR>
 nmap gM :action ShowBookmarks<CR>
@@ -110,49 +127,45 @@ noremap <C--> :action HideAllWindows<CR>
 " Mnemonic: 'to'
 nnoremap <leader>td :action GotoTypeDeclaration<CR>
 nnoremap <leader>ti :action GotoImplementation<CR>
+nnoremap <leader>tu :action ShowUsages<CR>
+nnoremap <leader>tU :action FindUsages<CR>
+
 nnoremap ts :action GotoSuperMethod<CR>
 nnoremap tt :action GotoTest<CR>
-nnoremap <leader>tu :action ShowUsages<CR>
 " to 'class'
-nnoremap tc gg<BAR>:action MethodDown<CR><BAR>zt
+nnoremap [[ gg<BAR>:action MethodDown<CR><BAR>zt
 
 " native back/forward is less buggy, <C-t> still useful
 noremap <C-o> :action Back<CR>
 noremap <C-i> :action Forward<CR>
 
+noremap <leader>N :action NewElement<CR>
+
 " Mnemonic 'extract'
 nnoremap <leader>em :action ExtractMethod<CR>
 vnoremap <leader>em :action ExtractMethod<CR>
 noremap <leader>ec :action ExtractClass<CR>
-
-noremap <leader>N :action NewElement<CR>
-
 " Mnemonic 'introduce'
 noremap <leader>ic :action IntroduceConstant<CR>
 noremap <leader>if :action IntroduceField<CR>
 noremap <leader>ip :action IntroduceParameter<CR>
-" use postfix .var for variable
 noremap <leader>iv :action IntroduceVariable<CR>
 
 " Git
+noremap <leader>ga: action Git.FileActions<CR>
 noremap <leader>gb :action Annotate<CR>
-noremap <leader>gl :action Vcs.Show.Log<CR>
 noremap <leader>gg :action Vcs.QuickListPopupAction<CR>
 noremap <leader>gh :action ActivateVersionControlToolWindow<CR>
-
-nmap RR :action Refactorings.QuickListPopupAction<CR>
+noremap <leader>gl :action Vcs.Show.Log<CR>
+noremap <leader>gu :action Vcs.UpdateProject<CR>
 
 " Common
 noremap <leader>c :action CheckinProject<CR>
-noremap <leader>u :action Vcs.UpdateProject<CR>
 noremap <leader>h :action TypeHierarchy<CR>
 " noremap <leader>h :action HighlightUsagesInFile<CR>
-noremap <leader>I :action Inline<CR>
 noremap <leader>d :action ShowUmlDiagramPopup<CR>
 noremap <leader>k :q<CR>
 noremap <leader>m :action Move<CR>
-noremap <leader>r :action RenameElement<CR>
-map <leader>f <Action>(ReformatCode)<Action>(AutoIndentLines)<Action>(OptimizeImports)
 noremap <leader>G :action Generate<CR>
 vnoremap <leader>s :action SurroundWithLiveTemplate<CR>
 
