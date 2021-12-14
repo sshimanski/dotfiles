@@ -28,6 +28,10 @@ local plugins = {
 
     -- super cool lists and more
     require("plugins.telescope"),
+    {"nvim-telescope/telescope-fzf-native.nvim", run = "make"},
+    {"nvim-telescope/telescope-symbols.nvim"},
+    {"tom-anders/telescope-vim-bookmarks.nvim"},
+
     -- nvim interface for tree-sitter (parser/generator; syntax tree) + textobjects
     require("plugins.treesitter"),
 
@@ -75,6 +79,7 @@ local plugins = {
     -- fancy status line
     require("plugins.lualine"),
 
+    -- <leader>h... mappings (hunks)
     {
         "lewis6991/gitsigns.nvim",
         config = require('gitsigns').setup({})

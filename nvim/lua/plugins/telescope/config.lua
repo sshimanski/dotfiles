@@ -16,7 +16,9 @@ require("telescope").setup({
         mappings = {
             i = {
                 ["<ESC>"] = actions.close,
-            }
+                ["<c-j>"] = actions.results_scrolling_down,
+                ["<c-k>"] = actions.results_scrolling_up,
+            },
         },
     },
     pickers = {
@@ -53,3 +55,5 @@ require("telescope").setup({
         },
     }
 })
+
+require('telescope').load_extension('fzf')

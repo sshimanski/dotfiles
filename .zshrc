@@ -127,3 +127,8 @@ export SDKMAN_DIR="/home/sshimanski/.sdkman"
 [[ -s "/home/sshimanski/.sdkman/bin/sdkman-init.sh" ]] && source "/home/sshimanski/.sdkman/bin/sdkman-init.sh"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+export NVM_DIR="/home/sshimanski/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"

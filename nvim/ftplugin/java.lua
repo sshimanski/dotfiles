@@ -3,6 +3,33 @@ local home = os.getenv('HOME')
 local root_dir = require('jdtls.setup').find_root({'.git', 'mvnw', 'gradlew'})
 local project_name = vim.fn.fnamemodify(root_dir, ':t')
 
+local function on_attach(_, bufnr)
+    -- require('jdtls.setup').add_commands()
+    -- require('lsp_keys').lsp_keys()
+
+    local opts = { noremap = true, silent = true }
+    local function buf_set_keymap(mode, mapping, command)
+        vim.api.nvim_buf_set_keymap(bufnr, mode, mapping, command, opts)
+    end
+
+    buf_set_keymap('v', '<leader>la', "<Esc><Cmd>lua require'jdtls'.code_action(true)<CR>")
+    buf_set_keymap('n', '<leader>la', "<Cmd>lua require'jdtls'.code_action()<CR>")
+
+    buf_set_keymap('n', '<leader>di', "<Cmd>lua require'jdtls'.organize_imports()<CR>")
+
+    -- TODO: dap
+    -- buf_set_keymap('n', 'gdt', "<Cmd>lua require'jdtls'.test_class()<CR>")
+    -- buf_set_keymap('n', 'gdn', "<Cmd>lua require'jdtls'.test_nearest_method()<CR>")
+
+    buf_set_keymap('v', '<leader>ic', "<Esc><Cmd>lua require('jdtls').extract_constant(true)<CR>")
+    buf_set_keymap('n', '<leader>ic', "<Cmd>lua require('jdtls').extract_constant()<CR>")
+
+    buf_set_keymap('v', '<leader>iv', "<Esc><Cmd>lua require('jdtls').extract_variable(true)<CR>")
+    buf_set_keymap('n', '<leader>iv', "<Cmd>lua require('jdtls').extract_variable()<CR>")
+
+    buf_set_keymap('v', '<leader>im', "<Esc><Cmd>lua require('jdtls').extract_method(true)<CR>")
+    require('jdtls').setup_dap({ hotcodereplace = 'auto' })
+end
 
 -- See `:help vim.lsp.start_client` for an overview of the supported `config` options.
 local config = {
@@ -65,6 +92,7 @@ local config = {
             },
         },
     },
+    on_attach = on_attach,
 }
 -- This starts a new client & server,
 -- or attaches to an existing client & server depending on the `root_dir`.

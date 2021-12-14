@@ -104,13 +104,7 @@ noremap <leader>dr :action RenameElement<CR>
 " fp = fzf project
 noremap <leader>fp :action FindInPath<CR>
 " fw = fzf word
-noremap <leader>fw :action FindWordAtCaret<CR>
-
-" noremap <Space>r :action Switcher<CR>
-" noremap <Space>s :action GotoSymbol<CR>
-
-" noremap <Space>u :action FindUsages<CR>
-" noremap <Space>w :action SelectIn<CR>
+noremap <leader>fw viw:action FindInPath<CR>
 
 noremap <leader><leader>l :action AceLineIndentsAction<CR>
 noremap <leader><leader>w :action AceWordStartAction<CR>

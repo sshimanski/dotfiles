@@ -11,9 +11,12 @@ map("v", "J", ":m '>+1<CR>gv=gv")
 map("v", "K", ":m '<-2<CR>gv=gv")
 
 map("n", "Y", "yg_")
+-- centering window when hit n/N
 map("n", "n", "nzzzv")
 map("n", "N", "Nzzzv")
 map("x", "<leader>p", "_dP")
+-- traversing windows with Alt+Tab
+map("n", "<M-Tab>", "<C-w>w")
 
 map("n", "<leader><leader>c", "<cmd>lua require('hop').hint_char1()<CR>")
 map("n", "<leader><leader>l", "<cmd>lua require('hop').hint_lines_skip_whitespace()<CR>")
@@ -33,7 +36,7 @@ map("n", "<leader>k", ":bd<CR>")
 
 -- LSP
 map("n", "<M-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>")
-map("v", "<M-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>")
+map("i", "<M-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>")
 map("n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>")
 map("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>")
 -- dr = do rename
@@ -56,18 +59,15 @@ map("n", "<leader>gd", "<cmd>lua require('telescope.builtin').git_bcommits()<CR>
 -- lf = List Files
 map("n", "<leader>lf", "<cmd>lua require('telescope.builtin').git_files()<CR>")
 -- gb = Git blame
-map("n", "<leader>gb", "<cmd>lua require('gitsigns').blame_line(true)<CR>")
+map("n", "<leader>gb", "<cmd>lua require('gitsigns').blame_line({})<CR>")
+
+map("n", "<leader>b", "<cmd>lua require('telescope.builtin').builtin()<CR>")
 
 -- fb = Fzf Buffer
 map("n", "<leader>fb", "<cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<CR>")
 -- fp = Fzf Project
 map("n", "<leader>fp", "<cmd>lua require('telescope.builtin').live_grep()<CR>")
 map("n", "<leader>fw", "<cmd>lua require('telescope.builtin').grep_string { search = vim.fn.expand('<cword>') }<CR>")
-
--- Lists files and folders in your current working directory, open files,
--- navigate your filesystem, and create new files and folders
--- e = Explorer
-map("n", "<leader>e", "<cmd>lua require('telescope.builtin').file_browser()<CR>")
 
 -- la = List Actions
 map("n", "<leader>la", "<cmd>lua require('telescope.builtin').lsp_code_actions()<CR>")
@@ -97,4 +97,5 @@ map("n", "<leader>tt", "<cmd>lua require('telescope.builtin').lsp_type_definitio
 -- ti = to Implementations
 map("n", "<leader>ti", "<cmd>lua require('telescope.builtin').lsp_implementations()<CR>")
 
-map('n', '<leader>z', '<cmd>NvimTreeToggle<cr>')
+map("n", "<leader>z", "<cmd>lua require('nvim-tree').toggle(true)<CR>")
+map("n", "<M-1>", "<cmd>lua require('nvim-tree').toggle(true)<CR>")
