@@ -1,3 +1,6 @@
--- ERROR durig init
--- local neogit = require("neogit")
--- neogit.setup { }
+local neogit = require("neogit")
+neogit.setup({
+    integrations = {
+        diffview = true,
+    }
+})

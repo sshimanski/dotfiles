@@ -57,10 +57,13 @@ map("n", "<leader>gc", "<cmd>lua require('telescope.builtin').git_commits()<CR>"
 -- gd = Git Diff
 map("n", "<leader>gd", "<cmd>lua require('telescope.builtin').git_bcommits()<CR>")
 -- lf = List Files
-map("n", "<leader>lf", "<cmd>lua require('telescope.builtin').git_files()<CR>")
--- gb = Git blame
-map("n", "<leader>gb", "<cmd>lua require('gitsigns').blame_line({})<CR>")
+map("n", "<leader>lf", "<cmd>lua require('utils').project_files()<CR>")
+-- ga = Git Annotate (blame)
+map("n", "<leader>ga", "<cmd>lua require('gitsigns').blame_line({})<CR>")
+-- ga = Git branches
+map("n", "<leader>gb", "<cmd>lua require('telescope.builtin').git_branches({})<CR>")
 
+-- !!!
 map("n", "<leader>b", "<cmd>lua require('telescope.builtin').builtin()<CR>")
 
 -- fb = Fzf Buffer
@@ -77,8 +80,7 @@ map("n", "<leader>lb", "<cmd>lua require('telescope.builtin').buffers()<CR>")
 -- ld = List Dir (current working dir)
 map("n", "<leader>ld", "<cmd>lua require('telescope.builtin').find_files()<CR>")
 -- le = List Errors
-map("n", "<leader>le", "<cmd>lua require('telescope.builtin').lsp_document_diagnostics()<CR>")
-map("n", "<leader>lE", "<cmd>lua require('telescope.builtin').lsp_workspace_diagnostics()<CR>")
+map("n", "<leader>le", "<cmd>lua require('telescope.builtin').diagnostics()<CR>")
 -- lh = list help
 map("n", "<leader>lh", "<cmd>lua require('telescope.builtin').help_tags()<CR>")
 -- lr = List Recent

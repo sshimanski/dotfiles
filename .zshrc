@@ -71,9 +71,9 @@ plugins=(
     zsh-completions
     zoxide
     fzf-tab
-    # mvn
+    mvn
 )
-zstyle :omz:plugins:ssh-agent identities id_rsa exadel.github.com github.com
+zstyle :omz:plugins:ssh-agent identities id_rsa exadel.github.com github.com bitbucket.exadel
 
 source $ZSH/oh-my-zsh.sh
 
@@ -132,3 +132,5 @@ export NVM_DIR="/home/sshimanski/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+
+source /home/sshimanski/.config/broot/launcher/bash/br

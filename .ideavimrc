@@ -89,6 +89,7 @@ nnoremap <leader>hr :action Vcs.RollbackChangedLines<CR>
 noremap <leader>la :action Refactorings.QuickListPopupAction<CR>
 noremap <leader>lb :action RecentFiles<CR>
 noremap <leader>lf :action GotoClass<CR>
+noremap <leader>ld :action GotoFile<CR>
 noremap <leader>lp :action ManageRecentProjects<CR>
 noremap <leader>lr :action RecentChangedFiles<CR>
 noremap <leader>ls :action FileStructurePopup<CR>
@@ -146,18 +147,20 @@ noremap <leader>ip :action IntroduceParameter<CR>
 noremap <leader>iv :action IntroduceVariable<CR>
 
 " Git
-noremap <leader>ga: action Git.FileActions<CR>
-noremap <leader>gb :action Annotate<CR>
-noremap <leader>gg :action Vcs.QuickListPopupAction<CR>
+"noremap <leader>gg: action Git.FileActions<CR>
+noremap <leader>ga :action Annotate<CR>
+noremap <leader>gb :action Git.Branches<CR>
+noremap <leader>gg :action Git.Menu<CR>
 noremap <leader>gh :action ActivateVersionControlToolWindow<CR>
 noremap <leader>gl :action Vcs.Show.Log<CR>
 noremap <leader>gu :action Vcs.UpdateProject<CR>
 
 " Common
 noremap <leader>c :action CheckinProject<CR>
-noremap <leader>h :action TypeHierarchy<CR>
+" overridden by <leader>hr
+" noremap <leader>h :action TypeHierarchy<CR>
 " noremap <leader>h :action HighlightUsagesInFile<CR>
-noremap <leader>d :action ShowUmlDiagramPopup<CR>
+noremap <leader>u :action ShowUmlDiagramPopup<CR>
 noremap <leader>k :q<CR>
 noremap <leader>m :action Move<CR>
 noremap <leader>G :action Generate<CR>

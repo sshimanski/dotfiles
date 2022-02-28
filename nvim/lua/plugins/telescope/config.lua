@@ -1,12 +1,12 @@
 local actions = require('telescope.actions')
+local width = 0.95
 
 require("telescope").setup({
     defaults = {
         prompt_prefix = "❯ ",
         selection_caret = "❯ ",
-        layout_strategy = 'horizontal',
         layout_config = {
-            width = 0.9,
+            width = width,
             horizontal = {
                 mirror = false,
                 preview_width = 0.65
@@ -16,8 +16,6 @@ require("telescope").setup({
         mappings = {
             i = {
                 ["<ESC>"] = actions.close,
-                ["<c-j>"] = actions.results_scrolling_down,
-                ["<c-k>"] = actions.results_scrolling_up,
             },
         },
     },
@@ -28,7 +26,11 @@ require("telescope").setup({
         },
         buffers = {
             prompt_prefix = " ﬘ ",
-            theme = "dropdown",
+            -- theme = "dropdown",
+            layout_strategy = 'vertical',
+            layout_config = {
+                width = width,
+            },
             previewer = false,
             ignore_current_buffer = true,
             mappings = {
@@ -39,21 +41,9 @@ require("telescope").setup({
                     ["<C-d>"] = actions.delete_buffer
                 },
             },
-        },
-        git_status = {
-            layout_config = { width = 0.5 },
-            previewer = false,
-            git_icons = {
-                added = "",
-                changed = "",
-                copied = "",
-                deleted = "",
-                renamed = "",
-                unmerged = "",
-                untracked = "",
-            },
-        },
+        }
     }
 })
 
 require('telescope').load_extension('fzf')
+require("telescope").load_extension("ui-select")

@@ -25,11 +25,13 @@ local plugins = {
     {"neovim/nvim-lspconfig"},
     -- easy install LSP servers
     require("plugins.lspinstaller"),
+    {'mfussenegger/nvim-dap'},
 
     -- super cool lists and more
     require("plugins.telescope"),
     {"nvim-telescope/telescope-fzf-native.nvim", run = "make"},
     {"nvim-telescope/telescope-symbols.nvim"},
+    {"nvim-telescope/telescope-ui-select.nvim"},
     {"tom-anders/telescope-vim-bookmarks.nvim"},
 
     -- nvim interface for tree-sitter (parser/generator; syntax tree) + textobjects
@@ -75,21 +77,20 @@ local plugins = {
         "Pocco81/AutoSave.nvim",
         config = require("autosave").setup({})
     },
+    {
+        "windwp/nvim-autopairs",
+        config = require("nvim-autopairs").setup({})
+    },
 
     -- fancy status line
     require("plugins.lualine"),
 
     -- <leader>h... mappings (hunks)
-    {
-        "lewis6991/gitsigns.nvim",
-        config = require('gitsigns').setup({})
-    },
+    require("plugins.gitsigns"),
 
     require("plugins.neogit"),
-
-    {
-        "plasticboy/vim-markdown"
-    },
+    { "sindrets/diffview.nvim" },
+    { "plasticboy/vim-markdown" },
 
     require("plugins.nvim-tree")
 }
