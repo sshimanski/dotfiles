@@ -99,5 +99,5 @@ map("n", "<leader>tt", "<cmd>lua require('telescope.builtin').lsp_type_definitio
 -- ti = to Implementations
 map("n", "<leader>ti", "<cmd>lua require('telescope.builtin').lsp_implementations()<CR>")
 
-map("n", "<leader>z", "<cmd>lua require('nvim-tree').toggle(true)<CR>")
 map("n", "<M-1>", "<cmd>lua require('nvim-tree').toggle(true)<CR>")
+map("n", "<leader>z", "<cmd>lua require('nvim-tree').find_files(true)<CR>")

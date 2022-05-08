@@ -55,7 +55,7 @@ plugins=(
     # cargo 
     colored-man-pages 
     common-aliases 
-    copydir 
+    copypath
     copyfile 
     docker 
     docker-compose 
@@ -73,7 +73,7 @@ plugins=(
     fzf-tab
     mvn
 )
-zstyle :omz:plugins:ssh-agent identities id_rsa exadel.github.com github.com bitbucket.exadel
+zstyle :omz:plugins:ssh-agent identities id_rsa exadel.github.com bitbucket.exadel
 
 source $ZSH/oh-my-zsh.sh
 
@@ -121,6 +121,9 @@ rg() {
 }
 
 [ -n "$RANGER_LEVEL"  ] && PS1="$PS1"'[rg] '
+
+# Fix vlc (iris_dri)
+export MESA_LOADER_DRIVER_OVERRIDE=i965
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="/home/sshimanski/.sdkman"

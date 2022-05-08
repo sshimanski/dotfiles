@@ -93,6 +93,7 @@ noremap <leader>ld :action GotoFile<CR>
 noremap <leader>lp :action ManageRecentProjects<CR>
 noremap <leader>lr :action RecentChangedFiles<CR>
 noremap <leader>ls :action FileStructurePopup<CR>
+noremap <leader>lm :action ShowBookmarks<CR>
 
 " do formatting
 noremap <leader>df :action ReformatCode<CR><Bar>:action AutoIndentLines<Bar>:action  OptimizeImports<CR>
@@ -112,7 +113,6 @@ noremap <leader><leader>w :action AceWordStartAction<CR>
 noremap <leader><leader>c :action AceTargetAction<CR>
 
 nmap gm :action ToggleBookmark<CR>
-nmap gM :action ShowBookmarks<CR>
 nmap gn :action GotoNextBookmark<CR>
 nmap gp :action GotoPreviousBookmark<CR>
 
@@ -131,8 +131,8 @@ nnoremap tt :action GotoTest<CR>
 nnoremap [[ gg<BAR>:action MethodDown<CR><BAR>zt
 
 " native back/forward is less buggy, <C-t> still useful
-noremap <C-o> :action Back<CR>
-noremap <C-i> :action Forward<CR>
+" noremap <C-o> :action Back<CR>
+" noremap <C-i> :action Forward<CR>
 
 noremap <leader>N :action NewElement<CR>
 

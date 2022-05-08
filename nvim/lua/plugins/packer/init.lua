@@ -92,7 +92,9 @@ local plugins = {
     { "sindrets/diffview.nvim" },
     { "plasticboy/vim-markdown" },
 
-    require("plugins.nvim-tree")
+    require("plugins.nvim-tree"),
+
+    {"hashivim/vim-terraform"}
 }
 
 -- one more comment

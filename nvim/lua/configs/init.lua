@@ -49,9 +49,7 @@ set.wrap = true
 
 set.syntax = 'on'
 
-cmd([[
-    colorscheme nord
-]])
+api.nvim_exec([[colorscheme nord]], false)
 
 api.nvim_exec([[
     augroup HighlightOnYank

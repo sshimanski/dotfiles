@@ -1,5 +1,5 @@
 require("nvim-treesitter.configs").setup({
-    ensure_installed = 'maintained', -- all
+    ensure_installed = 'all', -- all
     highlight = {
         enable = true
     },
@@ -26,8 +26,8 @@ require("nvim-treesitter.configs").setup({
         navigation = {
             enable = true,
             keymaps = {
-                goto_next_usage = "<C-J>", -- Ctrl + Shift + j (IdentifierHiglighter)
-                goto_previous_usage = "<C-K>", -- Ctrl + Shift + k (IdentifierHiglighter)
+                goto_next_usage = "<C-S-j>",
+                goto_previous_usage = "<C-S-k>",
             },
         },
     },
