@@ -1,5 +1,6 @@
 .gitignore/
 .ropeproject
+.sdkmanrc
 *.pyc
 daily-logs/
 
