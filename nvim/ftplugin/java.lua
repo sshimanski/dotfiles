@@ -8,9 +8,6 @@ local on_attach = function(_, bufnr)
     -- require('jdtls.setup').add_commands()
     -- require('lsp_keys').lsp_keys()
 
-    map(bufnr, 'v', '<leader>la', "<Esc><Cmd>lua require'jdtls'.code_action(true)<CR>")
-    map(bufnr, 'n', '<leader>la', "<Cmd>lua require'jdtls'.code_action()<CR>")
-
     map(bufnr, 'n', '<leader>di', "<Cmd>lua require'jdtls'.organize_imports()<CR>")
 
     -- TODO: dap

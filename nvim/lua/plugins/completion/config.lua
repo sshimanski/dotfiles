@@ -1,6 +1,8 @@
 require("luasnip.loaders.from_vscode").load {}
 
 local cmp = require("cmp")
+local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+cmp.event:on( 'confirm_done', cmp_autopairs.on_confirm_done({  map_char = { tex = '' } }))
 local luasnip = require("luasnip")
 local fn = vim.fn
 local api = vim.api

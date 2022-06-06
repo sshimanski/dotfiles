@@ -35,14 +35,12 @@ map("n", "<leader>sv", ":luafile ~/dotfiles/nvim/init.lua<CR>")
 map("n", "<leader>k", ":bd<CR>")
 
 -- LSP
-map("n", "<M-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>")
-map("i", "<M-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>")
 map("n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>")
 map("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>")
 -- dr = do rename
 map("n", "<leader>dr", "<cmd>lua vim.lsp.buf.rename()<CR>")
 -- df = do formatting
-map("n", "<leader>df", "<cmd>lua vim.lsp.buf.formatting()<CR>")
+map("n", "<leader>df", "<cmd>lua vim.lsp.buf.format({async = true})<CR>")
 map("v", "<leader>df", "<cmd>lua vim.lsp.buf.range_formatting()<CR>")
 -- dl = do list
 map("n", "<leader>dl", "<cmd>lua vim.lsp.buf.list_workspace_folders()<CR>")
@@ -54,10 +52,10 @@ map("n", "<leader>gg", ":Neogit<CR>")
 map("n", "<leader>gs", "<cmd>lua require('telescope.builtin').git_status()<CR>")
 -- gc = Git Commits
 map("n", "<leader>gc", "<cmd>lua require('telescope.builtin').git_commits()<CR>")
--- gd = Git Diff
-map("n", "<leader>gd", "<cmd>lua require('telescope.builtin').git_bcommits()<CR>")
--- lf = List Files
-map("n", "<leader>lf", "<cmd>lua require('utils').project_files()<CR>")
+-- ga = Git Diff
+map("n", "<leader>gd", "<cmd>lua require('gitsigns').preview_hunk({})<CR>")
+-- gd = Git History (Buffer commits)
+map("n", "<leader>gh", "<cmd>lua require('telescope.builtin').git_bcommits()<CR>")
 -- ga = Git Annotate (blame)
 map("n", "<leader>ga", "<cmd>lua require('gitsigns').blame_line({})<CR>")
 -- ga = Git branches
@@ -70,21 +68,28 @@ map("n", "<leader>b", "<cmd>lua require('telescope.builtin').builtin()<CR>")
 map("n", "<leader>fb", "<cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<CR>")
 -- fp = Fzf Project
 map("n", "<leader>fp", "<cmd>lua require('telescope.builtin').live_grep()<CR>")
+-- fw = Fzf Word
 map("n", "<leader>fw", "<cmd>lua require('telescope.builtin').grep_string { search = vim.fn.expand('<cword>') }<CR>")
 
 -- la = List Actions
-map("n", "<leader>la", "<cmd>lua require('telescope.builtin').lsp_code_actions()<CR>")
-map("v", "<leader>la", "<cmd>lua require('telescope.builtin').lsp_range_code_actions()<CR>")
+map("n", "<leader>la", "<cmd>lua vim.lsp.buf.code_action()<CR>")
+map("v", "<leader>la", "<cmd>lua vim.lsp.buf.range_code_action()<CR>")
 -- lb = List Buffers
 map("n", "<leader>lb", "<cmd>lua require('telescope.builtin').buffers()<CR>")
 -- ld = List Dir (current working dir)
 map("n", "<leader>ld", "<cmd>lua require('telescope.builtin').find_files()<CR>")
 -- le = List Errors
 map("n", "<leader>le", "<cmd>lua require('telescope.builtin').diagnostics()<CR>")
+-- lf = List Files
+map("n", "<leader>lf", "<cmd>lua require('utils').project_files()<CR>")
 -- lh = list help
 map("n", "<leader>lh", "<cmd>lua require('telescope.builtin').help_tags()<CR>")
+-- lm = list marks
+map("n", "<leader>lm", "<cmd>lua require('telescope.builtin').marks()<CR>")
 -- lr = List Recent
 map("n", "<leader>lr", "<cmd>lua require('telescope.builtin').oldfiles()<CR>")
+-- lr = List Registers
+map("n", "<leader>lR", "<cmd>lua require('telescope.builtin').registers()<CR>")
 -- ls = List Symbols; (Ctrl-l) - to filter symbols
 map("n", "<leader>ls", "<cmd>lua require('telescope.builtin').lsp_document_symbols()<CR>")
 -- lw = List Workspace
@@ -92,12 +97,10 @@ map("n", "<leader>lw", "<cmd>lua require('telescope.builtin').lsp_dynamic_worksp
 
 -- tu = to Usages
 map("n", "<leader>tu", "<cmd>lua require('telescope.builtin').lsp_references()<CR>")
--- td = to Definition
-map("n", "<leader>td", "<cmd>lua require('telescope.builtin').lsp_definitions()<CR>")
 -- tt = to Type
 map("n", "<leader>tt", "<cmd>lua require('telescope.builtin').lsp_type_definitions()<CR>")
 -- ti = to Implementations
 map("n", "<leader>ti", "<cmd>lua require('telescope.builtin').lsp_implementations()<CR>")
 
-map("n", "<M-1>", "<cmd>lua require('nvim-tree').toggle(true)<CR>")
-map("n", "<leader>z", "<cmd>lua require('nvim-tree').find_files(true)<CR>")
+map("n", "<M-1>", "<cmd>lua require('nvim-tree').toggle()<CR>")
+map("i", "<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>")

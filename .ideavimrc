@@ -78,8 +78,7 @@ noremap <C-S-k> :action PreviousIdentifierReloaded<CR>
 noremap <C-S-h> :action MoveElementLeft<CR>
 noremap <C-S-l> :action MoveElementRight<CR>
 
-noremap <A-k> :action ParameterInfo<CR>
-vnoremap <A-k> :action ParameterInfo<CR>
+inoremap <C-k> <C-O>:action ParameterInfo<CR>
 
 " hr = hunk reset
 nnoremap <leader>hr :action Vcs.RollbackChangedLines<CR>
@@ -94,6 +93,7 @@ noremap <leader>lp :action ManageRecentProjects<CR>
 noremap <leader>lr :action RecentChangedFiles<CR>
 noremap <leader>ls :action FileStructurePopup<CR>
 noremap <leader>lm :action ShowBookmarks<CR>
+noremap <leader>lw :action GotoClas<CR>
 
 " do formatting
 noremap <leader>df :action ReformatCode<CR><Bar>:action AutoIndentLines<Bar>:action  OptimizeImports<CR>
@@ -120,19 +120,20 @@ nmap gp :action GotoPreviousBookmark<CR>
 noremap <C--> :action HideAllWindows<CR>
 
 " Mnemonic: 'to'
-nnoremap <leader>td :action GotoTypeDeclaration<CR>
+nnoremap <leader>tt :action GotoTypeDeclaration<CR>
 nnoremap <leader>ti :action GotoImplementation<CR>
 nnoremap <leader>tu :action ShowUsages<CR>
 nnoremap <leader>tU :action FindUsages<CR>
+nnoremap <leader>ts :action GotoSuperMethod<CR>
 
-nnoremap ts :action GotoSuperMethod<CR>
 nnoremap tt :action GotoTest<CR>
+
 " to 'class'
 nnoremap [[ gg<BAR>:action MethodDown<CR><BAR>zt
 
 " native back/forward is less buggy, <C-t> still useful
-" noremap <C-o> :action Back<CR>
-" noremap <C-i> :action Forward<CR>
+map <C-o> <Action>(Back)
+map <C-i> <Action>(Forward)
 
 noremap <leader>N :action NewElement<CR>
 

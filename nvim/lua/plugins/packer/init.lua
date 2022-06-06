@@ -16,6 +16,12 @@ local plugins = {
     -- plugin manager
     {"wbthomason/packer.nvim"},
 
+    {
+        "goolord/alpha-nvim",
+        requires = { "kyazdani42/nvim-web-devicons" },
+        config = require'alpha'.setup(require'alpha.themes.startify'.config)
+    },
+
     -- helper lib for other plugins
     {"nvim-lua/plenary.nvim"},
     -- popups
@@ -85,15 +91,14 @@ local plugins = {
     -- fancy status line
     require("plugins.lualine"),
 
-    -- <leader>h... mappings (hunks)
+    -- git
     require("plugins.gitsigns"),
-
     require("plugins.neogit"),
-    { "sindrets/diffview.nvim" },
-    { "plasticboy/vim-markdown" },
+    {"sindrets/diffview.nvim"},
 
     require("plugins.nvim-tree"),
 
+    {"plasticboy/vim-markdown"},
     {"hashivim/vim-terraform"}
 }
 
