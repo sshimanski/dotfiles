@@ -1,3 +1,4 @@
+zmodload zsh/zprof
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
@@ -129,11 +130,16 @@ export MESA_LOADER_DRIVER_OVERRIDE=i965
 export SDKMAN_DIR="/home/sshimanski/.sdkman"
 [[ -s "/home/sshimanski/.sdkman/bin/sdkman-init.sh" ]] && source "/home/sshimanski/.sdkman/bin/sdkman-init.sh"
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-export NVM_DIR="/home/sshimanski/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-
-export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+# export NVM_DIR="/home/sshimanski/.nvm"
+# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+# export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 
 source /home/sshimanski/.config/broot/launcher/bash/br
+
+
+timezsh() {
+  shell=${1-$SHELL}
+  for i in $(seq 1 10); do /usr/bin/time $shell -i -c exit; done
+}
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

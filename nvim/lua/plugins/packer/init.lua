@@ -31,7 +31,12 @@ local plugins = {
     {"neovim/nvim-lspconfig"},
     -- easy install LSP servers
     require("plugins.lspinstaller"),
-    {'mfussenegger/nvim-dap'},
+    -- deugging
+    require("plugins.dap"),
+    {
+        'rcarriga/nvim-dap-ui',
+        config = require("dapui").setup()
+    },
 
     -- super cool lists and more
     require("plugins.telescope"),
@@ -52,7 +57,6 @@ local plugins = {
     -- A completion engine plugin for neovim written in Lua. Completion sources are installed from external repositories and "sourced".
     require("plugins.completion"),
 
-    -- require("plugins.completion"),
     {"L3MON4D3/LuaSnip"},
     {"rafamadriz/friendly-snippets"},
 
@@ -80,8 +84,8 @@ local plugins = {
 
     -- autosave
     {
-        "Pocco81/AutoSave.nvim",
-        config = require("autosave").setup({})
+        "Pocco81/auto-save.nvim",
+        config = require("auto-save").setup({})
     },
     {
         "windwp/nvim-autopairs",

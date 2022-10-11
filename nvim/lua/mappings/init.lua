@@ -34,41 +34,57 @@ map("n", "<leader>ev", "<cmd>lua require('utils').dotfiles()<CR>")
 map("n", "<leader>sv", ":luafile ~/dotfiles/nvim/init.lua<CR>")
 map("n", "<leader>k", ":bd<CR>")
 
--- LSP
 map("n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>")
 map("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>")
--- dr = do rename
-map("n", "<leader>dr", "<cmd>lua vim.lsp.buf.rename()<CR>")
--- df = do formatting
-map("n", "<leader>df", "<cmd>lua vim.lsp.buf.format({async = true})<CR>")
-map("v", "<leader>df", "<cmd>lua vim.lsp.buf.range_formatting()<CR>")
+
+-- rr = refactor: rename
+map("n", "<leader>rr", "<cmd>lua vim.lsp.buf.rename()<CR>")
+-- rf = refactor: format
+map("n", "<leader>rf", "<cmd>lua vim.lsp.buf.format({async = true})<CR>")
+map("v", "<leader>rf", "<cmd>lua vim.lsp.buf.range_formatting()<CR>")
+
+-- TODO
 -- dl = do list
 map("n", "<leader>dl", "<cmd>lua vim.lsp.buf.list_workspace_folders()<CR>")
 
--- Telescope
 
-map("n", "<leader>gg", ":Neogit<CR>")
--- gs = Git Status
-map("n", "<leader>gs", "<cmd>lua require('telescope.builtin').git_status()<CR>")
--- gc = Git Commits
-map("n", "<leader>gc", "<cmd>lua require('telescope.builtin').git_commits()<CR>")
--- ga = Git Diff
-map("n", "<leader>gd", "<cmd>lua require('gitsigns').preview_hunk({})<CR>")
--- gd = Git History (Buffer commits)
-map("n", "<leader>gh", "<cmd>lua require('telescope.builtin').git_bcommits()<CR>")
+-- Debugger
+map("n", "<F9>", '<Cmd>:lua require"dap".continue()<CR>')
+map("n", "<F7>", '<Cmd>lua require"dap".step_into()<CR>')
+map("n", "<F8>", '<Cmd>lua require"dap".step_over()<CR>')
+map("n", "<S-F8>", '<Cmd>lua require"dap".step_out()<CR>')
+-- db = debug breakpoint
+map("n", "<leader>db", '<Cmd>lua require"dap".toggle_breakpoint()<CR>')
+map("n", "<Leader>dB", "<Cmd>lua require'dap'.set_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>")
+-- db = debug repl
+map("n", "<leader>dr", '<Cmd>lua require"dap".repl.toggle()<CR>')
+-- db = debug debug
+map("n", "<leader>dd", '<Cmd>lua require"dapui".toggle()<CR>')
+
+
 -- ga = Git Annotate (blame)
 map("n", "<leader>ga", "<cmd>lua require('gitsigns').blame_line({})<CR>")
 -- ga = Git branches
 map("n", "<leader>gb", "<cmd>lua require('telescope.builtin').git_branches({})<CR>")
+-- gc = Git Commits
+map("n", "<leader>gc", "<cmd>lua require('telescope.builtin').git_commits()<CR>")
+-- ga = Git Diff
+map("n", "<leader>gd", "<cmd>lua require('gitsigns').preview_hunk({})<CR>")
+-- gg = Git Git
+map("n", "<leader>gg", ":Neogit<CR>")
+-- gd = Git History (Buffer commits)
+map("n", "<leader>gh", "<cmd>lua require('telescope.builtin').git_bcommits()<CR>")
+-- gs = Git Status
+map("n", "<leader>gs", "<cmd>lua require('telescope.builtin').git_status()<CR>")
 
 -- !!!
 map("n", "<leader>b", "<cmd>lua require('telescope.builtin').builtin()<CR>")
 
--- fb = Fzf Buffer
+-- fb = find Buffer
 map("n", "<leader>fb", "<cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<CR>")
--- fp = Fzf Project
+-- fp = find Project
 map("n", "<leader>fp", "<cmd>lua require('telescope.builtin').live_grep()<CR>")
--- fw = Fzf Word
+-- fw = find Word
 map("n", "<leader>fw", "<cmd>lua require('telescope.builtin').grep_string { search = vim.fn.expand('<cword>') }<CR>")
 
 -- la = List Actions

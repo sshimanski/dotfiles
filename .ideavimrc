@@ -95,18 +95,22 @@ noremap <leader>ls :action FileStructurePopup<CR>
 noremap <leader>lm :action ShowBookmarks<CR>
 noremap <leader>lw :action GotoClas<CR>
 
-" do formatting
-noremap <leader>df :action ReformatCode<CR><Bar>:action AutoIndentLines<Bar>:action  OptimizeImports<CR>
-vnoremap <leader>df :action ReformatCode<Bar>:action AutoIndentLines<Bar><CR>
-" do inline
-noremap <leader>di :action Inline<CR>
-" do rename
-noremap <leader>dr :action RenameElement<CR>
+"""""""""" Refactor.
+" refactor: format
+noremap <leader>rf :action ReformatCode<CR><Bar>:action AutoIndentLines<Bar>:action OptimizeImports<CR>
+vnoremap <leader>rf :action ReformatCode<Bar>:action AutoIndentLines<Bar><CR>
+" refactor: inline
+noremap <leader>ri :action Inline<CR>
+" refactor: rename
+noremap <leader>rr :action RenameElement<CR>
+"""""""""" Refactor. End.
 
-" fp = fzf project
+"""""""""" Find.
+" fp = find project
 noremap <leader>fp :action FindInPath<CR>
-" fw = fzf word
+" fw = find word
 noremap <leader>fw viw:action FindInPath<CR>
+"""""""""" Find. End.
 
 noremap <leader><leader>l :action AceLineIndentsAction<CR>
 noremap <leader><leader>w :action AceWordStartAction<CR>
@@ -131,7 +135,7 @@ nnoremap tt :action GotoTest<CR>
 " to 'class'
 nnoremap [[ gg<BAR>:action MethodDown<CR><BAR>zt
 
-" native back/forward is less buggy, <C-t> still useful
+" native back/forward is more predictable
 map <C-o> <Action>(Back)
 map <C-i> <Action>(Forward)
 

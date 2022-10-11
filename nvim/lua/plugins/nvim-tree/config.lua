@@ -7,7 +7,7 @@ local opts = {
     view = {
         hide_root_folder = false,
         width = '25%',
-        auto_resize = true,
+        -- auto_resize = true,
     },
     diagnostics = {
         enable = true,

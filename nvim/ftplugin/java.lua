@@ -5,14 +5,11 @@ local project_name = vim.fn.fnamemodify(root_dir, ':t')
 local map = require('utils').buf_set_keymap
 
 local on_attach = function(_, bufnr)
-    -- require('jdtls.setup').add_commands()
-    -- require('lsp_keys').lsp_keys()
-
     map(bufnr, 'n', '<leader>di', "<Cmd>lua require'jdtls'.organize_imports()<CR>")
 
     -- TODO: dap
-    -- map('n', 'gdt', "<Cmd>lua require'jdtls'.test_class()<CR>")
-    -- map('n', 'gdn', "<Cmd>lua require'jdtls'.test_nearest_method()<CR>")
+    map('n', 'gdt', "<Cmd>lua require'jdtls'.test_class()<CR>")
+    map('n', 'gdn', "<Cmd>lua require'jdtls'.test_nearest_method()<CR>")
 
     map(bufnr, 'v', '<leader>ic', "<Esc><Cmd>lua require('jdtls').extract_constant(true)<CR>")
     map(bufnr, 'n', '<leader>ic', "<Cmd>lua require('jdtls').extract_constant()<CR>")
@@ -23,7 +20,7 @@ local on_attach = function(_, bufnr)
     map(bufnr, 'v', '<leader>im', "<Esc><Cmd>lua require('jdtls').extract_method(true)<CR>")
 
     -- TODO: dap
-    -- require('jdtls').setup_dap({ hotcodereplace = 'auto' })
+    require('jdtls').setup_dap({ hotcodereplace = 'auto' })
 end
 
 -- See `:help vim.lsp.start_client` for an overview of the supported `config` options.
