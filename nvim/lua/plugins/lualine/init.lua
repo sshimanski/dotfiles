@@ -1,7 +1,8 @@
 return {
     "nvim-lualine/lualine.nvim",
     requires = { "kyazdani42/nvim-web-devicons" },
-    config = require("plugins.lualine.config"),
-    -- event = { "BufReadPost", "BufWritePost", "BufNewFile" },
+    config = function()
+        require("plugins.lualine.config")
+    end,
 }
 

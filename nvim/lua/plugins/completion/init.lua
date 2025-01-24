@@ -1,6 +1,8 @@
 return {
     "hrsh7th/nvim-cmp",
-    config = require("plugins.completion.config"),
+    config = function() 
+        require("plugins.completion.config")
+    end,
     requires = {
         { "hrsh7th/cmp-buffer"},
         { "hrsh7th/cmp-path"},

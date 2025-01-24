@@ -2,7 +2,6 @@ local set = vim.opt
 local global = vim.g
 local fnc = vim.fn
 local cmd = vim.cmd
-
 local api = vim.api
 
 global.mapleader = ","
@@ -49,7 +48,15 @@ set.wrap = true
 
 set.syntax = 'on'
 
-api.nvim_exec([[colorscheme nord]], false)
+api.nvim_exec([[colorscheme gruvbox]], false)
+
+-- transparent background
+cmd [[
+  highlight Normal guibg=none
+  highlight NonText guibg=none
+  highlight Normal ctermbg=none
+  highlight NonText ctermbg=none
+]]
 
 api.nvim_exec([[
     augroup HighlightOnYank

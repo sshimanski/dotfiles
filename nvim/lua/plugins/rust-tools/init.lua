@@ -1,4 +1,6 @@
 return {
     'simrat39/rust-tools.nvim',
-    config=require('plugins.rust-tools.config')
+    config = function()
+        require('plugins.rust-tools.config')
+    end,
 }

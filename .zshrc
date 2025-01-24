@@ -1,9 +1,12 @@
-zmodload zsh/zprof
+# Uncomment below (also at the end of file) for profiling
+# zmodload zsh/zprof
+
+
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH=/home/sshimanski/.oh-my-zsh
+export ZSH=/home/administrator/.oh-my-zsh
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
@@ -21,7 +24,7 @@ ZSH_THEME="robbyrussell"
 # DISABLE_AUTO_UPDATE="true"
 
 # Uncomment the following line to change how often to auto-update (in days).
-export UPDATE_ZSH_DAYS=10
+export UPDATE_ZSH_DAYS=5
 
 # Uncomment the following line to disable colors in ls.
 # DISABLE_LS_COLORS="true"
@@ -33,7 +36,7 @@ DISABLE_AUTO_TITLE="true"
 ENABLE_CORRECTION="true"
 
 # Uncomment the following line to display red dots whilst waiting for completion.
-# COMPLETION_WAITING_DOTS="true"
+COMPLETION_WAITING_DOTS="true"
 
 # Uncomment the following line if you want to disable marking untracked files
 # under VCS as dirty. This makes repository status check for large repositories
@@ -53,7 +56,6 @@ ENABLE_CORRECTION="true"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-    # cargo 
     colored-man-pages 
     common-aliases 
     copypath
@@ -73,14 +75,12 @@ plugins=(
     zoxide
     fzf-tab
     mvn
+    themes
 )
-zstyle :omz:plugins:ssh-agent identities id_rsa exadel.github.com bitbucket.exadel
+
+zstyle :omz:plugins:ssh-agent identities id_rsa nphase.github.com
 
 source $ZSH/oh-my-zsh.sh
-
-# !!!!! completion functions are in ~/.oh-my-zsh/completions + zsh-completions
-# compinit
-autoload -Uz compinit && compinit -i
 
 # export MANPATH="/usr/local/man:$MANPATH"
 
@@ -115,7 +115,8 @@ source $HOME/.aliases
 rg() {
     if [ -z "$RANGER_LEVEL"  ]
     then
-        ranger
+        #ranger
+        python3 ~/work/apps/ranger/ranger.py
     else
         exit
     fi
@@ -123,23 +124,37 @@ rg() {
 
 [ -n "$RANGER_LEVEL"  ] && PS1="$PS1"'[rg] '
 
-# Fix vlc (iris_dri)
-export MESA_LOADER_DRIVER_OVERRIDE=i965
+export EDITOR="nvim"
 
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="/home/sshimanski/.sdkman"
-[[ -s "/home/sshimanski/.sdkman/bin/sdkman-init.sh" ]] && source "/home/sshimanski/.sdkman/bin/sdkman-init.sh"
-
-# export NVM_DIR="/home/sshimanski/.nvm"
-# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-# export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
-
-source /home/sshimanski/.config/broot/launcher/bash/br
-
+export SDKMAN_DIR="/home/administrator/.sdkman"
+[[ -s "/home/administrator/.sdkman/bin/sdkman-init.sh" ]] && source "/home/administrator/.sdkman/bin/sdkman-init.sh"
 
 timezsh() {
   shell=${1-$SHELL}
   for i in $(seq 1 10); do /usr/bin/time $shell -i -c exit; done
 }
+
+
+export PATH=$PATH:/usr/local/go/bin
+export PATH=$PATH:$HOME/go/bin
+
+
+# [[ $commands[kubectl] ]] && source <(kubectl completion zsh)
+
+
+#[N]ode [V]ersion [M]anager - VERY SLOW
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+
+
+export BAT_THEME=gruvbox-dark
+
+# zprof
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

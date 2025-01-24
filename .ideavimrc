@@ -18,6 +18,7 @@ let mapleader=","
 nnoremap ' `
 nnoremap ` '
 
+set ideamarks
 " Enable vim-surround
 set surround
 " Enable vim-commentary
@@ -34,68 +35,78 @@ set highlightedyank
 nnoremap <Space> <nop>
 nnoremap <leader>ev :e ~/.ideavimrc<CR>
 nnoremap <leader>sv :source ~/.ideavimrc<CR>
+nmap <leader>ei <Action>(ShowSettings)
 
 map <leader>y "+y
 map <leader>Y "+yg_
 map <leader>p "*p
 map <leader>P a<space><esc>p
 
+" Do not overwrite unnamed register with x and s
+nnoremap x "_x
+nnoremap s "_s
+
 noremap Y yg_
 nnoremap n nzzzv
 nnoremap N Nzzzv
 " nnoremap gd gdzz
 nnoremap vv ggVG
+nnoremap gd gdzz
 
 vnoremap < <gv
 vnoremap > >gv
 
-" unimpaired legacy
-noremap ]m :action MethodDown<CR>
-noremap [m :action MethodUp<CR>
-noremap ]l :action GotoNextError<CR>:action ShowErrorDescription<CR>
-noremap [l :action GotoPreviousError<CR>:action ShowErrorDescription<CR>
-
 noremap [b gt
-noremap ]b gt
+noremap ]b gT
+
+" unimpaired legacy
+nmap ]m <Action>(MethodDown)
+nmap [m <Action>(MethodUp)
+nmap ]l <Action>(GotoNextError)<Action>(ShowErrorDescription)
+nmap [l <Action>(GotoPreviousError)<Action>(ShowErrorDescription)
 
 " camelcase words: ] - forward, [ - backward
 noremap [w [b
 noremap ]w [w
-noremap [c :action VcsShowPrevChangeMarker<CR>:action Vcs.ShowDiffWithLocal<CR>
-noremap ]c :action VcsShowNextChangeMarker<CR>:action Vcs.ShowDiffWithLocal<CR>
+nmap [c <Action>(VcsShowPrevChangeMarker)<Action>(Vcs.ShowDiffWithLocal)
+nmap ]c <Action>(VcsShowNextChangeMarker)<Action>(Vcs.ShowDiffWithLocal)
 nnoremap [<Space> O<ESC>j 0 w
 nnoremap ]<Space> o<ESC>k 0 w
 
 nnoremap yoh :nohlsearch<CR>
-nnoremap yob :action ToggleLineBreakpoint<CR>
-nnoremap yop :action TogglePresentationMode<CR>
-nnoremap yow :action EditorToggleShowWhitespaces<CR>
+nmap yob <Action>(ToggleLineBreakpoint)
+nmap yop <Action>(TogglePresentationMode)
+nmap yow <Action>(EditorToggleShowWhitespaces)
+nmap yol <Action>(EditorToggleShowLineNumbers)
+nmap yoz <Action>(ToggleZenMode)
 
-xnoremap <C-S-o> :action OverrideMethods<CR>
-xnoremap <C-S-i> :action ImplementMethods<CR>
-noremap <C-S-j> :action NextIdentifierReloaded<CR>
-noremap <C-S-k> :action PreviousIdentifierReloaded<CR>
-noremap <C-S-h> :action MoveElementLeft<CR>
-noremap <C-S-l> :action MoveElementRight<CR>
+nmap <C-S-o> <Action>(OverrideMethods)
+nmap <C-S-i> <Action>(ImplementMethods)
+nmap <C-S-j> <Action>(NextIdentifierReloaded)
+nmap <C-S-k> <Action>(PreviousIdentifierReloaded)
+nmap <C-S-h> <Action>(MoveElementLeft)
+nmap <C-S-l> <Action>(MoveElementRight)
 
-inoremap <C-k> <C-O>:action ParameterInfo<CR>
+imap <C-k> <C-O><Action>(ParameterInfo) i
 
 " hr = hunk reset
-nnoremap <leader>hr :action Vcs.RollbackChangedLines<CR>
+nmap <leader>hr <Action>(Vcs.RollbackChangedLines)
 
 " nvim: Telescope
 " noremap <leader>la :action QuickActions<CR>
-noremap <leader>la :action Refactorings.QuickListPopupAction<CR>
-noremap <leader>lb :action RecentFiles<CR>
-noremap <leader>lf :action GotoClass<CR>
-noremap <leader>ld :action GotoFile<CR>
-noremap <leader>lp :action ManageRecentProjects<CR>
-noremap <leader>lr :action RecentChangedFiles<CR>
-noremap <leader>ls :action FileStructurePopup<CR>
-noremap <leader>lm :action ShowBookmarks<CR>
-noremap <leader>lw :action GotoClas<CR>
+nmap <leader>la <Action>(Refactorings.QuickListPopupAction)
+nmap <leader>lb <Action>(RecentFiles)
+nmap <leader>lf <Action>(GotoFile)
+nmap <leader>lc <Action>(GotoClass)
+nmap <leader>ll <Action>(RecentLocations)
+nmap <leader>lm <Action>(ShowBookmarks)
+nmap <leader>lp <Action>(ManageRecentProjects)
+nmap <leader>lr <Action>(RecentChangedFiles)
+nmap <leader>ls <Action>(FileStructurePopup)
 
 """""""""" Refactor.
+" refactor: menu
+noremap <leader>rm :action RefactoringMenu<CR>
 " refactor: format
 noremap <leader>rf :action ReformatCode<CR><Bar>:action AutoIndentLines<Bar>:action OptimizeImports<CR>
 vnoremap <leader>rf :action ReformatCode<Bar>:action AutoIndentLines<Bar><CR>
@@ -107,9 +118,9 @@ noremap <leader>rr :action RenameElement<CR>
 
 """""""""" Find.
 " fp = find project
-noremap <leader>fp :action FindInPath<CR>
+nmap <leader>fp <Action>(FindInPath)
 " fw = find word
-noremap <leader>fw viw:action FindInPath<CR>
+nmap <leader>fw viw<Action>(FindInPath)
 """""""""" Find. End.
 
 noremap <leader><leader>l :action AceLineIndentsAction<CR>
@@ -117,6 +128,7 @@ noremap <leader><leader>w :action AceWordStartAction<CR>
 noremap <leader><leader>c :action AceTargetAction<CR>
 
 nmap gm :action ToggleBookmark<CR>
+nmap gM :action ToggleBookmarkWithMnemonic<CR>
 nmap gn :action GotoNextBookmark<CR>
 nmap gp :action GotoPreviousBookmark<CR>
 
@@ -145,18 +157,21 @@ noremap <leader>N :action NewElement<CR>
 nnoremap <leader>em :action ExtractMethod<CR>
 vnoremap <leader>em :action ExtractMethod<CR>
 noremap <leader>ec :action ExtractClass<CR>
+
 " Mnemonic 'introduce'
 noremap <leader>ic :action IntroduceConstant<CR>
 noremap <leader>if :action IntroduceField<CR>
 noremap <leader>ip :action IntroduceParameter<CR>
 noremap <leader>iv :action IntroduceVariable<CR>
 
+map <leader>x <Action>(EvaluateExpression)
+
 " Git
 "noremap <leader>gg: action Git.FileActions<CR>
 noremap <leader>ga :action Annotate<CR>
 noremap <leader>gb :action Git.Branches<CR>
 noremap <leader>gg :action Git.Menu<CR>
-noremap <leader>gh :action ActivateVersionControlToolWindow<CR>
+noremap <leader>gh :action Vcs.ShowTabbedFileHistory<CR>
 noremap <leader>gl :action Vcs.Show.Log<CR>
 noremap <leader>gu :action Vcs.UpdateProject<CR>
 

@@ -1,5 +1,7 @@
 return {
     "nvim-telescope/telescope.nvim",
     requires = { "nvim-lua/plenary.nvim" },
-    config = require("plugins.telescope.config"),
+    config = function()
+        require("plugins.telescope.config")
+    end,
 }

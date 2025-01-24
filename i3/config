@@ -17,8 +17,13 @@ set $mod Mod4
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
-font pango:DejaVu Sans Book 12
-# font pango:Ubuntu Mono 14
+
+# set configs for high dpi in .Xresources first!
+# font pango:JetBrains Mono 11.25
+# font pango:DejaVuSansMono NF 11
+# font pango:Ubuntu Sans, ExtraBold 11
+font pango:Ubuntu Sans, Medium 11
+# font pango:FontAwesome, Regular 11
 
 # Before i3 v4.8, we used to recommend this one as the default:
 # font -misc-fixed-medium-r-normal--13-120-75-75-C-70-iso10646-1
@@ -34,10 +39,13 @@ bindsym $mod+z workspace back_and_forth
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
+bindsym Ctrl+space exec --no-startup-id dunstctl close
+bindsym Ctrl+Shift+space exec --no-startup-id dunstctl close-all
+
 # start a terminal
 bindsym $mod+Return exec alacritty
 bindsym $mod+Shift+Return exec --no-startup-id alacritty -e zsh -ci ranger
-bindsym $mod+Shift+i exec --no-startup-id alacritty -e zsh -ci htop
+bindsym $mod+Shift+i exec --no-startup-id alacritty -e zsh -ci btop
 bindsym $mod+Shift+m workspace 8; exec --no-startup-id alacritty -e zsh -ci cmus
 
 # kill focused window
@@ -47,6 +55,8 @@ bindsym $mod+Shift+q kill
 # shipping a .desktop file. It is a wrapper around dmenu, so you need that
 # installed.
 # bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
+
+default_border none
 
 # change focus
 bindsym $mod+h focus left
@@ -140,12 +150,14 @@ bindsym $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
 bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
 
+set $rs 5 
+
 # resize window (you can also use the mouse for that)
 mode "resize" {
-        bindsym l resize shrink width 10 px or 10 ppt
-        bindsym k resize grow height 10 px or 10 ppt
-        bindsym j resize shrink height 10 px or 10 ppt
-        bindsym h resize grow width 10 px or 10 ppt
+        bindsym l resize grow width $rs px or $rs ppt
+        bindsym k resize grow height $rs px or $rs ppt
+        bindsym j resize shrink height $rs px or $rs ppt
+        bindsym h resize shrink width $rs px or $rs ppt
 
         bindsym Right resize shrink width 10 px or 10 ppt
         bindsym Up resize grow height 10 px or 10 ppt
@@ -165,19 +177,22 @@ bindsym $mod+r mode "resize"
 bar {
     # font pango:DejaVu Sans Mono, FontAwesome 12
     position top
-    status_command i3blocks -c ~/.config/i3/i3blocks.conf
-    # status_command i3status-rs ~/.config/i3status-rust/config.toml
+    status_command i3blocks -c ~/.config/i3blocks/config
     mode dock
     hidden_state show
     modifier $mod
 
     colors {
-		background $bg-color
-        separator #757575
-        #                   border             background         text
-		focused_workspace   $bg-color          $bg-color          $text-color
-		inactive_workspace  $inactive-bg-color $inactive-bg-color $inactive-text-color
-		urgent_workspace    $urgent-bg-color   $urgent-bg-color   $text-color
+        # bar background color
+        background $bg
+        # text color used for blocks that do not have a color specified.
+        statusline $lightgray
+        # workspaces section            
+        #                    border     backgr      text
+        focused_workspace    $blue      $blue       $bg
+        inactive_workspace   $darkgray  $darkgray   $lightgray
+        active_workspace     $darkgray  $darkgray   $lightgray
+        urgent_workspace     $red       $red        $bg
     }
 }
 # open app
@@ -191,9 +206,9 @@ bindsym $mod+n exec nautilus
 
 bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 5
 bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 5
-bindsym XF86AudioRaiseVolume exec --no-startup-id $HOME/dotfiles/scripts/volume '+5%' && pkill -RTMIN+10 i3blocks
-bindsym XF86AudioLowerVolume exec --no-startup-id $HOME/dotfiles/scripts/volume '-5%' && pkill -RTMIN+10 i3blocks 
-bindsym XF86AudioMute exec --no-startup-id amixer -D pulse set Master 1+ toggle && pkill -RTMIN+10 i3blocks
+bindsym XF86AudioRaiseVolume exec --no-startup-id wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ && pkill -RTMIN+10 i3blocks
+bindsym XF86AudioLowerVolume exec --no-startup-id wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- && pkill -RTMIN+10 i3blocks 
+bindsym XF86AudioMute exec --no-startup-id wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && pkill -RTMIN+10 i3blocks
 bindsym XF86ScreenSaver exec --no-startup-id $Locker
 bindsym XF86Sleep exec --no-startup-id $Locker && systemctl suspend
 bindsym XF86Battery exec --no-startup-id xset dpms force off
@@ -205,66 +220,66 @@ bindsym Print exec scrot -q 100 -e 'mv $f ~/Pictures'
 
 # decrease dimension for acceptable views of some programs
 # exec xrandr --dpi 120
+
 # set wallpaper
-exec_always feh --bg-scale ~/.config/i3/wallpaper.jpg
-# shift+shift CapsLock mapping
-exec_always "xkbcomp $HOME/dotfiles/xkb/my $DISPLAY"
-# my mail client
-# exec thunderbird
+exec_always feh --bg-scale ~/dotfiles/i3/wallpaper.jpg
+
 # network manager applet
 exec --no-startup-id nm-applet
+
+# bluetooth applet
+exec --no-startup-id blueman-applet
+
 # composite manager (ex: transparent backgound)
 exec --no-startup-id compton -f -D5
+
 # keyboard library for per-window keyboard layout 
 exec --no-startup-id kbdd
+
 # certs
 exec --no-startup-id gnome-keyring-daemon
+
 # unclutter makes the mouse invisible after a brief period
 exec --no-startup-id unclutter
-# fix VPN issue
-exec --no-startup-id sudo sh -c "echo 0 > /proc/sys/net/ipv6/conf/default/router_solicitations"
-# decrease pointstick speed
-# exec --no-startup-id xinput set-prop "DualPoint Stick" "libinput Accel Speed" -0.5
- 
-assign [class="Google-chrome"] 2
-assign [class="Firefox"] 2
+
+# shift+shift; CapsLock mapping
+exec_always "xkbcomp $HOME/dotfiles/xkb/my $DISPLAY"
+exec "xkbcomp $HOME/dotfiles/xkb/my $DISPLAY"
+
+assign [class="google-chrome"] 2
+assign [class="firefox"] 2
 assign [class="Insomnia"] 2
 assign [class="Thunderbird"] 3
+
 assign [class="Skype"] 4
 assign [class="Slack"] 4
 assign [class="zoom"] 4
 assign [class="Telegram"] 4
+
 assign [class="jetbrains-idea"] 10
 assign [class="jetbrains-clion"] 10
 assign [class="jetbrains-pycharm"] 10
 
-# scaratchpad ranger (ranger float)
-bindsym $mod+u [instance="dropdown"] scratchpad show; [instance="dropdown"] move position center
-for_window [instance="dropdown"] floating enable
-for_window [instance="dropdown"] resize set 1400 820
-for_window [instance="dropdown"] move scratchpad
-exec --no-startup-id alacritty -o window.opacity=0.8 -name dropdown
-
-# popup focus fix
-#for_window [class="^jetbrains-.+"][window_type=dialog] focus
-
 # Mod_system
 set $Locker i3lock
 
-bindsym $mod+q exec $HOME/.config/i3blocks-contrib/shutdown_menu/shutdown_menu
+bindsym $mod+q exec $HOME/work/apps/i3blocks/shutdown_menu/shutdown_menu
 
-# colors
-set $bg-color               #2f343f
-set $inactive-bg-color      #2f343f
-set $text-color             #f3f4f5
-set $inactive-text-color    #676e7d
-set $urgent-bg-color        #C44441
-set $unused                 #676E7D
+# gruvobox customized
+set $bg #282828
+set $red #cc241d
+set $green #98971a
+set $yellow #d79921
+set $blue #458588
+set $purple #b16286
+set $aqua #689d68
+set $lightgray #bdae93
+set $gray #a89984
+set $darkgray #1d2021
 
-# window colors
-#                       border              background          text                    indicator
-client.focused          $bg-color           $bg-color           $text-color             $bg-color         
-client.unfocused        $inactive-bg-color  $inactive-bg-color  $inactive-text-color    $inactive-bg-color
-client.focused_inactive $inactive-bg-color  $inactive-bg-color  $inactive-text-color    $inactive-bg-color
-client.placeholder      $inactive-bg-color  $inactive-bg-color  $inactive-text-color    $inactive-bg-color
-client.urgent           $urgent-bg-color    $urgent-bg-color    $text-color             $urgent-bg-color  
+# class                 border      backgr      text        indicator   child_border
+client.focused          $darkgray   $darkgray   $blue       $purple     $darkgray
+client.focused_inactive $darkgray   $darkgray   $lightgray  $purple     $darkgray
+client.unfocused        $bg         $bg         $gray       $purple     $darkgray
+client.urgent           $red        $red        $white      $red        $red
+

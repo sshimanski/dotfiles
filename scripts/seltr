@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-# install translate-shell from Google
+# install 'xsel' + 'translate-shell' from Google
 notify-send -t 5000 -u critical "$(xsel -o)" "$(xsel -o | trans -b :ru)"

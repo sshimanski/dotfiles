@@ -28,7 +28,7 @@ local config = {
     -- The command that starts the language server
     -- See: https://github.com/eclipse/eclipse.jdt.ls#running-from-the-command-line
     cmd = {
-        'java',
+        home .. '/.sdkman/candidates/java/17.0.7-oracle/bin/java',
         '-javaagent:' .. home .. '/.local/share/nvim/lsp_servers/jdtls/lombok.jar',
         '-Declipse.application=org.eclipse.jdt.ls.core.id1',
         '-Dosgi.bundles.defaultStartLevel=4',
@@ -39,7 +39,7 @@ local config = {
         '--add-modules=ALL-SYSTEM',
         '--add-opens', 'java.base/java.util=ALL-UNNAMED',
         '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
-        '-jar', home .. '/.local/share/nvim/lsp_servers/jdtls/plugins/org.eclipse.equinox.launcher_1.6.400.v20210924-0641.jar',
+        '-jar', home .. '/.local/share/nvim/lsp_servers/jdtls/plugins/org.eclipse.equinox.launcher_1.6.500.v20230717-2134.jar',
         '-configuration', home .. '/.local/share/nvim/lsp_servers/jdtls/config_linux',
         '-data', home .. '/.local/share/nvim/lsp_servers/jdtls/WORKSPACES/' .. project_name
     },
@@ -77,12 +77,12 @@ local config = {
                 runtimes = {
                     {
                         name = 'JavaSE-11',
-                        path = home .. '/.sdkman/candidates/java/11.0.2-open',
+                        path = home .. '/.sdkman/candidates/java/11.0.12-open',
                         default = true
                     },
                     {
                         name = 'JavaSE-17',
-                        path = home .. '/.sdkman/candidates/java/17.0.0-oracle',
+                        path = home .. '/.sdkman/candidates/java/17.0.7-oracle',
                         default = false
                     }
                 },

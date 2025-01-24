@@ -19,7 +19,9 @@ local plugins = {
     {
         "goolord/alpha-nvim",
         requires = { "kyazdani42/nvim-web-devicons" },
-        config = require'alpha'.setup(require'alpha.themes.startify'.config)
+        config = function()
+            require'alpha'.setup(require'alpha.themes.startify'.config)
+        end,
     },
 
     -- helper lib for other plugins
@@ -27,15 +29,20 @@ local plugins = {
     -- popups
     {"nvim-lua/popup.nvim"},
 
+    -- easily install and manage LSP servers, DAP servers, linters, and formatters.
+    {"williamboman/mason.nvim"},
+    {"williamboman/mason-lspconfig.nvim"},
     -- config for LSP clients
     {"neovim/nvim-lspconfig"},
-    -- easy install LSP servers
-    require("plugins.lspinstaller"),
-    -- deugging
+
+    -- debugging
     require("plugins.dap"),
     {
-        'rcarriga/nvim-dap-ui',
-        config = require("dapui").setup()
+        "rcarriga/nvim-dap-ui",
+        requires = {"nvim-neotest/nvim-nio"},
+        config = function()
+            require("dapui").setup()
+        end,
     },
 
     -- super cool lists and more
@@ -51,7 +58,9 @@ local plugins = {
     -- fancy icons (nerd fonts required)
     {
         "kyazdani42/nvim-web-devicons",
-        config = require("nvim-web-devicons").setup({})
+        config = function()
+            require("nvim-web-devicons").setup({})
+        end,
     },
 
     -- A completion engine plugin for neovim written in Lua. Completion sources are installed from external repositories and "sourced".
@@ -65,7 +74,10 @@ local plugins = {
     -- Hop (easy motion successor)
     {
         "phaazon/hop.nvim",
-        config =  require("hop").setup({})
+        config = function()
+            print("HOP CONFIG")
+            require("hop").setup({})
+        end,
     },
 
     -- Tim Pope helper plugins
@@ -79,17 +91,23 @@ local plugins = {
     -- java tools
     {"mfussenegger/nvim-jdtls"},
 
-    -- colorscheme
-    {"arcticicestudio/nord-vim"},
+    -- colorschemes
+    {"shaunsingh/nord.nvim"},
+    -- {"arcticicestudio/nord-vim"},
+    {"ellisonleao/gruvbox.nvim"},
 
     -- autosave
     {
         "Pocco81/auto-save.nvim",
-        config = require("auto-save").setup({})
+        config = function() 
+            require("auto-save").setup({})
+        end,
     },
     {
         "windwp/nvim-autopairs",
-        config = require("nvim-autopairs").setup({})
+        config = function() 
+            require("nvim-autopairs").setup({})
+        end,
     },
 
     -- fancy status line

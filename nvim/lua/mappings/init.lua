@@ -118,5 +118,19 @@ map("n", "<leader>tt", "<cmd>lua require('telescope.builtin').lsp_type_definitio
 -- ti = to Implementations
 map("n", "<leader>ti", "<cmd>lua require('telescope.builtin').lsp_implementations()<CR>")
 
-map("n", "<M-1>", "<cmd>lua require('nvim-tree').toggle()<CR>")
+map("n", "<M-1>", "<cmd>lua require('nvim-tree.api').tree.toggle()<CR>")
 map("i", "<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>")
+
+require("mason").setup()
+require("mason-lspconfig").setup()
+
+require("mason-lspconfig").setup_handlers({
+    function(server)
+        -- skip jdtls
+        if server == "jdtls" then
+            return
+        end
+
+        require("lspconfig")[server].setup({})
+    end}
+)

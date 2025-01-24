@@ -26,16 +26,6 @@ if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
 fi
 
-export BROWSER="google-chrome"
+export BROWSER="firefox"
 export READER="zathura"
 export EDITOR="nvim"
-
-# Groovy
-export GROOVY_HOME="$HOME/work/apps/groovy/groovy-3.0.0-alpha-3"
-# FZF
-export FZF_BASE="$HOME/work/apps/fzf"
-# Go
-export GO_HOME="$HOME/work/apps/go/go"
-export GOPATH="$HOME/go"
-
-export PATH="$PATH:$HOME/work/appimage:$HOME/dotfiles/scripts:$M2_HOME/bin:$GROOVY_HOME/bin:$HOME/.cargo/bin:$GO_HOME/bin:$GOPATH/bin:"

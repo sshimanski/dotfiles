@@ -1,4 +1,4 @@
-let configpath='/home/sshimanski/.cvimrc'
+let configpath='/home/administrator/.cvimrc'
 set localconfig
 set cncpcompletion
 set autohidecursor
@@ -34,4 +34,3 @@ let qmark h = ["https://github.com/1995eaton/chromium-vim"]
 let qmark e = ["https://translate.google.com/translate?sl=en&hl=ru"]
 let qmark r = ["https://translate.google.com/translate?sl=ru&hl=en"]
 let qmark b = ["http://www.bcse.by/ru/currencymarket/rates/0"]
-let qmark w = ["http://www.gismeteo.by/weather-brest-4912/month/"]
