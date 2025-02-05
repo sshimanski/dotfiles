@@ -1,0 +1,24 @@
+[core]
+    editor = nvim
+    pager = delta
+
+[user]
+	name = sshimanski
+	email = sshimanski@redcapcloud.com
+
+[interactive]
+    diffFilter = delta --color-only --features=interactive
+
+[delta]
+    navigate = true  # use n and N to move between diff sections
+    syntax-theme = gruvbox-dark 
+    side-by-side = true
+    features = decorations
+    line-numbers = true
+
+[merge]
+    conflictstyle = diff3
+    ; conflictstyle = zdiff3
+
+[diff]
+    colorMoved = default
