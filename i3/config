@@ -39,12 +39,12 @@ bindsym $mod+z workspace back_and_forth
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
-bindsym Ctrl+space exec --no-startup-id dunstctl close
-bindsym Ctrl+Shift+space exec --no-startup-id dunstctl close-all
+bindsym Ctrl+Shift+space exec --no-startup-id dunstctl close
+# bindsym Ctrl+Shift+space exec --no-startup-id dunstctl close-all
 
 # start a terminal
 bindsym $mod+Return exec alacritty
-bindsym $mod+Shift+Return exec --no-startup-id alacritty -e zsh -ci ranger
+bindsym $mod+Shift+Return exec --no-startup-id alacritty -e zsh -ci yazi
 bindsym $mod+Shift+i exec --no-startup-id alacritty -e zsh -ci btop
 bindsym $mod+Shift+m workspace 8; exec --no-startup-id alacritty -e zsh -ci cmus
 

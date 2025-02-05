@@ -113,18 +113,33 @@ source $HOME/.aliases
 
 # each time ranger starts RANGER_LEVEL is increased, so exit if we are in ranger already
 rg() {
-    if [ -z "$RANGER_LEVEL"  ]
+    if [ -z "$RANGER_LEVEL" ]
     then
         #ranger
         python3 ~/work/apps/ranger/ranger.py
     else
-        exit
+        exit 0
     fi
 }
+[ -n "$RANGER_LEVEL" ] && PS1="$PS1"'[rg] '
 
-[ -n "$RANGER_LEVEL"  ] && PS1="$PS1"'[rg] '
+function y() {
+    if [ -z "$YAZI_LEVEL" ]
+    then
+        local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+        yazi "$@" --cwd-file="$tmp"
+        if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+            builtin cd -- "$cwd"
+        fi
+        rm -f -- "$tmp"
+    else
+        exit 0
+    fi
+}
+[ -n "$YAZI_LEVEL" ] && PS1="$PS1"'[y] '
 
 export EDITOR="nvim"
+export PAGER="bat"
 
 export SDKMAN_DIR="/home/administrator/.sdkman"
 [[ -s "/home/administrator/.sdkman/bin/sdkman-init.sh" ]] && source "/home/administrator/.sdkman/bin/sdkman-init.sh"
@@ -153,8 +168,7 @@ export PYENV_ROOT="$HOME/.pyenv"
 eval "$(pyenv init -)"
 
 
-export BAT_THEME=gruvbox-dark
-
 # zprof
+
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
