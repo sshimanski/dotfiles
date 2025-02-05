@@ -108,6 +108,11 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+#
+export BROWSER="firefox"
+export READER="zathura"
+export EDITOR="nvim"
+export PAGER="bat"
 
 source $HOME/.aliases
 
@@ -137,9 +142,6 @@ function y() {
     fi
 }
 [ -n "$YAZI_LEVEL" ] && PS1="$PS1"'[y] '
-
-export EDITOR="nvim"
-export PAGER="bat"
 
 export SDKMAN_DIR="/home/administrator/.sdkman"
 [[ -s "/home/administrator/.sdkman/bin/sdkman-init.sh" ]] && source "/home/administrator/.sdkman/bin/sdkman-init.sh"
