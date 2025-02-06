@@ -14,32 +14,32 @@ packer.init({
 
 local plugins = {
     -- plugin manager
-    {"wbthomason/packer.nvim"},
+    { "wbthomason/packer.nvim" },
 
     {
         "goolord/alpha-nvim",
         requires = { "kyazdani42/nvim-web-devicons" },
         config = function()
-            require'alpha'.setup(require'alpha.themes.startify'.config)
+            require 'alpha'.setup(require 'alpha.themes.startify'.config)
         end,
     },
 
     -- helper lib for other plugins
-    {"nvim-lua/plenary.nvim"},
+    { "nvim-lua/plenary.nvim" },
     -- popups
-    {"nvim-lua/popup.nvim"},
+    { "nvim-lua/popup.nvim" },
 
     -- easily install and manage LSP servers, DAP servers, linters, and formatters.
-    {"williamboman/mason.nvim"},
-    {"williamboman/mason-lspconfig.nvim"},
+    { "williamboman/mason.nvim" },
+    { "williamboman/mason-lspconfig.nvim" },
     -- config for LSP clients
-    {"neovim/nvim-lspconfig"},
+    { "neovim/nvim-lspconfig" },
 
     -- debugging
     require("plugins.dap"),
     {
         "rcarriga/nvim-dap-ui",
-        requires = {"nvim-neotest/nvim-nio"},
+        requires = { "nvim-neotest/nvim-nio" },
         config = function()
             require("dapui").setup()
         end,
@@ -47,10 +47,10 @@ local plugins = {
 
     -- super cool lists and more
     require("plugins.telescope"),
-    {"nvim-telescope/telescope-fzf-native.nvim", run = "make"},
-    {"nvim-telescope/telescope-symbols.nvim"},
-    {"nvim-telescope/telescope-ui-select.nvim"},
-    {"tom-anders/telescope-vim-bookmarks.nvim"},
+    { "nvim-telescope/telescope-fzf-native.nvim", run = "make" },
+    { "nvim-telescope/telescope-symbols.nvim" },
+    { "nvim-telescope/telescope-ui-select.nvim" },
+    { "tom-anders/telescope-vim-bookmarks.nvim" },
 
     -- nvim interface for tree-sitter (parser/generator; syntax tree) + textobjects
     require("plugins.treesitter"),
@@ -66,46 +66,45 @@ local plugins = {
     -- A completion engine plugin for neovim written in Lua. Completion sources are installed from external repositories and "sourced".
     require("plugins.completion"),
 
-    {"L3MON4D3/LuaSnip"},
-    {"rafamadriz/friendly-snippets"},
+    { "L3MON4D3/LuaSnip" },
+    { "rafamadriz/friendly-snippets" },
 
     -- parentheses for neovim using tree-sitter
-    {"p00f/nvim-ts-rainbow"},
+    { "p00f/nvim-ts-rainbow" },
     -- Hop (easy motion successor)
     {
         "phaazon/hop.nvim",
         config = function()
-            print("HOP CONFIG")
             require("hop").setup({})
         end,
     },
 
     -- Tim Pope helper plugins
-    {"tpope/vim-repeat"},
-    {"tpope/vim-surround"},
-    {"tpope/vim-unimpaired"},
-    {"tpope/vim-commentary"},
+    { "tpope/vim-repeat" },
+    { "tpope/vim-surround" },
+    { "tpope/vim-unimpaired" },
+    { "tpope/vim-commentary" },
 
     -- rust tools
     require("plugins.rust-tools"),
     -- java tools
-    {"mfussenegger/nvim-jdtls"},
+    { "mfussenegger/nvim-jdtls" },
 
     -- colorschemes
-    {"shaunsingh/nord.nvim"},
+    { "shaunsingh/nord.nvim" },
     -- {"arcticicestudio/nord-vim"},
-    {"ellisonleao/gruvbox.nvim"},
+    { "ellisonleao/gruvbox.nvim" },
 
     -- autosave
     {
         "Pocco81/auto-save.nvim",
-        config = function() 
+        config = function()
             require("auto-save").setup({})
         end,
     },
     {
         "windwp/nvim-autopairs",
-        config = function() 
+        config = function()
             require("nvim-autopairs").setup({})
         end,
     },
@@ -116,12 +115,11 @@ local plugins = {
     -- git
     require("plugins.gitsigns"),
     require("plugins.neogit"),
-    {"sindrets/diffview.nvim"},
+    { "sindrets/diffview.nvim" },
 
     require("plugins.nvim-tree"),
 
-    {"plasticboy/vim-markdown"},
-    {"hashivim/vim-terraform"}
+    { "plasticboy/vim-markdown" }
 }
 
 -- one more comment

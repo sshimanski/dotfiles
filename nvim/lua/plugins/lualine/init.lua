@@ -5,4 +5,3 @@ return {
         require("plugins.lualine.config")
     end,
 }
-

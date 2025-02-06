@@ -1,10 +1,10 @@
 local map = function(mode, lhs, rhs, opts)
-	local options = { noremap = true }
-	if opts then
-		options = vim.tbl_extend("force", options, opts)
-	end
+    local options = { noremap = true }
+    if opts then
+        options = vim.tbl_extend("force", options, opts)
+    end
 
-	vim.api.nvim_set_keymap(mode, lhs, rhs, options)
+    vim.api.nvim_set_keymap(mode, lhs, rhs, options)
 end
 
 map("v", "J", ":m '>+1<CR>gv=gv")
@@ -132,5 +132,5 @@ require("mason-lspconfig").setup_handlers({
         end
 
         require("lspconfig")[server].setup({})
-    end}
+    end }
 )

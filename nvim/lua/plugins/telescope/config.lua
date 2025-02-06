@@ -12,7 +12,7 @@ require("telescope").setup({
                 preview_width = 0.65
             }
         },
-        path_display = {"smart"},
+        path_display = { "smart" },
         mappings = {
             i = {
                 ["<ESC>"] = actions.close,

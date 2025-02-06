@@ -1,6 +1,6 @@
 return {
     "NeogitOrg/neogit",
-    config = function() 
+    config = function()
         require("plugins.neogit.config")
     end,
     requires = {

@@ -26,7 +26,7 @@ show_file_or_dir_preview="if [ -d {} ]; then eza --tree --color=always --icons=a
 
 export FZF_CTRL_T_OPTS="--preview '$show_file_or_dir_preview'"
 export FZF_ALT_C_OPTS="--preview 'eza --tree --color=always --icons=always {} | head -200'"
-export _ZO_FZF_OPTS="--delimiter ' ' --reverse --preview 'eza --tree --icons=always --level=1 --color=always {2} | head -200' --preview-window=right,30%"
+export _ZO_FZF_OPTS="--delimiter ' ' --reverse --preview 'eza --tree --icons=always --level=1 --color=always {2} | head -200' --preview-window=right,40%"
 
 # Advanced customization of fzf options via _fzf_comprun function
 # - The first argument to the function is the name of the command.

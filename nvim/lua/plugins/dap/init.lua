@@ -1,6 +1,6 @@
 return {
     'mfussenegger/nvim-dap',
-    config = function() 
+    config = function()
         require("plugins.dap.config")
     end,
 }

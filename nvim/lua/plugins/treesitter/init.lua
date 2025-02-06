@@ -6,7 +6,7 @@ return {
         "nvim-treesitter/nvim-treesitter-textobjects",
         "David-Kunz/treesitter-unit",
     },
-    config = function() 
+    config = function()
         require("plugins.treesitter.config")
     end,
 }
