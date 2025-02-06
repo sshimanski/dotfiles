@@ -35,7 +35,8 @@ map("n", "<leader>sv", ":luafile ~/dotfiles/nvim/init.lua<CR>")
 map("n", "<leader>k", ":bd<CR>")
 
 map("n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>")
-map("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>")
+-- map("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>")
+map("n", "gd", "<cmd>lua require('telescope.builtin').lsp_definitions({})<CR>")
 
 -- rr = refactor: rename
 map("n", "<leader>rr", "<cmd>lua vim.lsp.buf.rename()<CR>")
@@ -120,17 +121,3 @@ map("n", "<leader>ti", "<cmd>lua require('telescope.builtin').lsp_implementation
 
 map("n", "<M-1>", "<cmd>lua require('nvim-tree.api').tree.toggle()<CR>")
 map("i", "<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>")
-
-require("mason").setup()
-require("mason-lspconfig").setup()
-
-require("mason-lspconfig").setup_handlers({
-    function(server)
-        -- skip jdtls
-        if server == "jdtls" then
-            return
-        end
-
-        require("lspconfig")[server].setup({})
-    end }
-)

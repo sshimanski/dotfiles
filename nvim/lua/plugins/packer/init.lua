@@ -122,10 +122,40 @@ local plugins = {
     { "plasticboy/vim-markdown" }
 }
 
--- one more comment
 -- do use plugins with configs
 packer.startup(function(use)
     for _, plugin in ipairs(plugins) do
         use(plugin)
     end
 end)
+
+require("mason").setup()
+require("mason-lspconfig").setup({
+    ensure_installed = {
+        "lua_ls",
+        "rust_analyzer",
+        "jdtls",
+        "gopls",
+    },
+    handlers = {
+        function(server_name) -- default handler (optional)
+            require("lspconfig")[server_name].setup({})
+        end,
+        ["jdtls"] = function()
+            -- skip
+        end,
+        ["lua_ls"] = function()
+            local lspconfig = require("lspconfig")
+            lspconfig.lua_ls.setup {
+                settings = {
+                    Lua = {
+                        runtime = { version = "Lua 5.1" },
+                        diagnostics = {
+                            globals = { "bit", "vim", "it", "describe", "before_each", "after_each" },
+                        }
+                    }
+                }
+            }
+        end,
+    }
+})
