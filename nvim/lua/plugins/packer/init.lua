@@ -149,7 +149,7 @@ require("mason-lspconfig").setup({
             lspconfig.lua_ls.setup {
                 settings = {
                     Lua = {
-                        runtime = { version = "Lua 5.1" },
+                        runtime = { version = "Lua 5.4" },
                         diagnostics = {
                             globals = { "bit", "vim", "it", "describe", "before_each", "after_each" },
                         }

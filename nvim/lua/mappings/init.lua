@@ -30,6 +30,7 @@ map("v", "<leader><leader>L", "<cmd>lua require('hop').hint_lines()<CR>")
 map("v", "<leader><leader>p", "<cmd>lua require('hop').hint_patterns()<CR>")
 map("v", "<leader><leader>w", "<cmd>lua require('hop').hint_words()<CR>")
 
+map("n", "<leader>cl", ":e ~/.local/state/nvim/lsp.log<CR>")
 map("n", "<leader>ev", "<cmd>lua require('utils').dotfiles()<CR>")
 map("n", "<leader>sv", ":luafile ~/dotfiles/nvim/init.lua<CR>")
 map("n", "<leader>k", ":bd<CR>")
