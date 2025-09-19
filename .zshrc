@@ -1,5 +1,5 @@
 # Uncomment below (also at the end of file) for profiling
-zmodload zsh/zprof
+# zmodload zsh/zprof
 
 
 # If you come from bash you might have to change your $PATH.
@@ -186,4 +186,4 @@ rfv() (
       --query "$*"
 )
 
-zprof
+# zprof
