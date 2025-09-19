@@ -178,7 +178,7 @@ noremap <leader>gu :action Vcs.UpdateProject<CR>
 " Common
 noremap <leader>c :action CheckinProject<CR>
 " overridden by <leader>hr
-" noremap <leader>h :action TypeHierarchy<CR>
+noremap <leader>H :action TypeHierarchy<CR>
 " noremap <leader>h :action HighlightUsagesInFile<CR>
 noremap <leader>u :action ShowUmlDiagramPopup<CR>
 noremap <leader>k :q<CR>

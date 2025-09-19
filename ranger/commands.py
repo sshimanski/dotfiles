@@ -125,7 +125,8 @@ class fzf_content_open(Command):
                 return
             fzf = self.fm.execute_command(
                 'rg --line-number "${1:-.}" | fzf --delimiter \':\' \
-                    --preview \'bat --color=always --highlight-line {2} {1}\' \
+                    --preview \'bat --style=full --color=always --highlight-line {2} {1}\' \
+                    --preview-window ~8,+{2}-5 \
                     | awk -F \':\' \'{print "+"$2" "$1}\'',
                 universal_newlines=True, stdout=subprocess.PIPE)
 

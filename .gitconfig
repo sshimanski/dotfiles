@@ -1,10 +1,11 @@
 [core]
     editor = nvim
     pager = delta
+    autocrlf = input
 
 [user]
-	name = sshimanski
-	email = sshimanski@redcapcloud.com
+    name = sshimanski
+    email = sshimanski@redcapcloud.com
 
 [interactive]
     diffFilter = delta --color-only --features=interactive
@@ -22,3 +23,6 @@
 
 [diff]
     colorMoved = default
+
+[alias]
+    parent = "!git show-branch | grep '*' | grep -v \"$(git rev-parse --abbrev-ref HEAD)\" | head -n1 | sed 's/.*\\[\\(.*\\)\\].*/\\1/' | sed 's/[\\^~].*//' #"

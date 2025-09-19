@@ -36,7 +36,7 @@ end
 
 M.dotfiles = function()
     require("telescope.builtin").find_files({
-        prompt_title = "Nvim Lua configs",
+        prompt_title = "Nvim LUA configs",
         cwd = '~/dotfiles/nvim',
         hidden = true,
     })

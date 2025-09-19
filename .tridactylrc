@@ -16,6 +16,7 @@ bind ,u reload
 
 " Ctrl-F should use the browser's native 'find' functionality.
 unbind <C-f>
+unbind <C-n>
 
 bind ]b tabnext_gt
 bind [b tabprev

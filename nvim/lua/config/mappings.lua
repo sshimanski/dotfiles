@@ -35,7 +35,9 @@ map("n", "<leader>ev", "<cmd>lua require('utils').dotfiles()<CR>")
 map("n", "<leader>sv", ":luafile ~/dotfiles/nvim/init.lua<CR>")
 map("n", "<leader>k", ":bd<CR>")
 
+
 map("n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>")
+-- map("n", "K", "<cmd>lua require('hover').hover()<CR>")
 -- map("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>")
 map("n", "gd", "<cmd>lua require('telescope.builtin').lsp_definitions({})<CR>")
 
@@ -73,7 +75,7 @@ map("n", "<leader>gc", "<cmd>lua require('telescope.builtin').git_commits()<CR>"
 -- ga = Git Diff
 map("n", "<leader>gd", "<cmd>lua require('gitsigns').preview_hunk({})<CR>")
 -- gg = Git Git
-map("n", "<leader>gg", ":Neogit<CR>")
+map("n", "<leader>gg", ":Gitsigns<CR>")
 -- gd = Git History (Buffer commits)
 map("n", "<leader>gh", "<cmd>lua require('telescope.builtin').git_bcommits()<CR>")
 -- gs = Git Status
@@ -96,6 +98,8 @@ map("v", "<leader>la", "<cmd>lua vim.lsp.buf.range_code_action()<CR>")
 map("n", "<leader>lb", "<cmd>lua require('telescope.builtin').buffers()<CR>")
 -- ld = List Dir (current working dir)
 map("n", "<leader>ld", "<cmd>lua require('telescope.builtin').find_files()<CR>")
+-- ld = List classes
+map("n", "<leader>lc", "<cmd>lua require('telescope.builtin').find_files({search_file = '*.java'})<CR>")
 -- le = List Errors
 map("n", "<leader>le", "<cmd>lua require('telescope.builtin').diagnostics()<CR>")
 -- lf = List Files

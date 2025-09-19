@@ -1,12 +1,12 @@
 # Uncomment below (also at the end of file) for profiling
-# zmodload zsh/zprof
+zmodload zsh/zprof
 
 
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH=/home/administrator/.oh-my-zsh
+export ZSH=$HOME/.oh-my-zsh
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
@@ -56,30 +56,27 @@ COMPLETION_WAITING_DOTS="true"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-    colored-man-pages 
-    common-aliases 
-    copypath
-    copyfile 
-    docker 
-    docker-compose 
-    git 
-    git-extras 
-    gradle 
-    rust 
-    sdk 
-    ssh-agent 
-    tig 
-    vi-mode 
-    zsh-autosuggestions
-    zsh-completions
-    zoxide
-    fzf-tab
-    mvn
-    themes
+    # Essential plugins first (loaded early for better UX)
+    git vi-mode zoxide fzf-tab zsh-autosuggestions zsh-syntax-highlighting
+    
+    # Commonly used plugins
+    colored-man-pages common-aliases copyfile copypath
+    
+    # Language/framework specific plugins (lazy loaded when possible)
+    docker docker-compose git-extras gradle mvn nvm rust sdk ssh-agent themes tig you-should-use
 )
 
-zstyle :omz:plugins:ssh-agent identities id_rsa nphase.github.com
+# NVM required for VIM
+# zstyle ':omz:plugins:nvm' lazy yes
+# zstyle ':omz:plugins:nvm' lazy-cmd npm npx node prettier typescript tsc
+#
+zstyle ':omz:plugins:ssh-agent' identities id_rsa nphase.github.com
 
+# init zsh-completions plugin - right way
+fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
+fpath+=$HOME/.zsh-complete
+
+# should be AFTER fpath changes!
 source $ZSH/oh-my-zsh.sh
 
 # export MANPATH="/usr/local/man:$MANPATH"
@@ -143,8 +140,8 @@ function y() {
 }
 [ -n "$YAZI_LEVEL" ] && PS1="$PS1"'[y] '
 
-export SDKMAN_DIR="/home/administrator/.sdkman"
-[[ -s "/home/administrator/.sdkman/bin/sdkman-init.sh" ]] && source "/home/administrator/.sdkman/bin/sdkman-init.sh"
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]] && source "$SDKMAN_DIR/bin/sdkman-init.sh"
 
 timezsh() {
   shell=${1-$SHELL}
@@ -156,21 +153,37 @@ export PATH=$PATH:/usr/local/go/bin
 export PATH=$PATH:$HOME/go/bin
 
 
-# [[ $commands[kubectl] ]] && source <(kubectl completion zsh)
-
-
-#[N]ode [V]ersion [M]anager - VERY SLOW
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-
 export PYENV_ROOT="$HOME/.pyenv"
 [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
+eval "$(pyenv init --path)"
 
+# Lazy loading for pyenv
+pyenv() {
+    unset -f pyenv
+    eval "$(pyenv init --path)"
+    pyenv "$@"
+}
 
-# zprof
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh 
 
+# ripgrep->fzf->vim [QUERY]
+rfv() (
+  RELOAD='reload:rg --column --color=always --smart-case {q} || :'
+  OPENER='if [[ $FZF_SELECT_COUNT -eq 0 ]]; then
+            nvim {1} +{2}     # No selection. Open the current line in Vim.
+          else
+            nvim +cw -q {+f}  # Build quickfix list for the selected items.
+          fi'
+  fzf --disabled --ansi --multi \
+      --bind "start:$RELOAD" --bind "change:$RELOAD" \
+      --bind "enter:become:$OPENER" \
+      --bind "ctrl-o:execute:$OPENER" \
+      --bind 'alt-a:select-all,alt-d:deselect-all,ctrl-/:toggle-preview' \
+      --delimiter : \
+      --preview 'bat --style=full --color=always --highlight-line {2} {1}' \
+      --preview-window '~4,+{2}+4/3,<80(up)' \
+      --header 'CTRL-O: to open in vim; CTRL-/ toggle preview; ALT-A: select all; ALT-D deselect all' \
+      --query "$*"
+)
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+zprof
