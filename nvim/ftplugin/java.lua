@@ -1,16 +1,17 @@
 local home = os.getenv('HOME')
-local mason_jdtls = '/.local/share/nvim/mason/packages/jdtls'
 
-local root_dir = require('jdtls.setup').find_root({'.git', 'mvnw', 'gradlew'})
+local jdtls_home = home .. '/.local/share/nvim/mason/packages/jdtls'
+local launcher = 'org.eclipse.equinox.launcher_1.7.0.v20250519-0528.jar'
+
+local root_dir = require('jdtls.setup').find_root({ '.git', 'mvnw', 'gradlew' })
 local project_name = vim.fn.fnamemodify(root_dir, ':t')
-local map = require('utils').buf_set_keymap
 
 local on_attach = function(_, bufnr)
-    map(bufnr, 'n', '<leader>di', "<Cmd>lua require'jdtls'.organize_imports()<CR>")
+    local map = require('utils').buf_set_keymap
 
-    -- TODO: dap
-    map(bufnr, 'n', 'gdt', "<Cmd>lua require'jdtls'.test_class()<CR>")
-    map(bufnr, 'n', 'gdn', "<Cmd>lua require'jdtls'.test_nearest_method()<CR>")
+    require('jdtls').jol_path = home .. '/work/apps/jol/jol-cli/target/jol-cli.jar'
+
+    map(bufnr, 'n', '<leader>ri', "<Cmd>lua require('jdtls').organize_imports()<CR>")
 
     map(bufnr, 'v', '<leader>ic', "<Esc><Cmd>lua require('jdtls').extract_constant(true)<CR>")
     map(bufnr, 'n', '<leader>ic', "<Cmd>lua require('jdtls').extract_constant()<CR>")
@@ -18,31 +19,34 @@ local on_attach = function(_, bufnr)
     map(bufnr, 'v', '<leader>iv', "<Esc><Cmd>lua require('jdtls').extract_variable(true)<CR>")
     map(bufnr, 'n', '<leader>iv', "<Cmd>lua require('jdtls').extract_variable()<CR>")
 
-    map(bufnr, 'v', '<leader>im', "<Esc><Cmd>lua require('jdtls').extract_method(true)<CR>")
+    map(bufnr, 'v', '<leader>em', "<Esc><Cmd>lua require('jdtls').extract_method(true)<CR>")
 
     -- TODO: dap
     require('jdtls').setup_dap({ hotcodereplace = 'auto' })
+    -- map(bufnr, 'n', '<leader>dc', "<Cmd>lua require('jdtls').test_class()<CR>")
+    -- map(bufnr, 'n', '<leader>dm', "<Cmd>lua require('jdtls').test_nearest_method()<CR>")
 end
 
 -- See `:help vim.lsp.start_client` for an overview of the supported `config` options.
 local config = {
-    -- The command that starts the language server
+
+    -- The command that starts the language server (bypassing 'jdtls' wrapper in $PATH)
     -- See: https://github.com/eclipse/eclipse.jdt.ls#running-from-the-command-line
     cmd = {
-        -- home .. '/.sdkman/candidates/java/17.0.7-oracle/bin/java',
+        -- The language server requires a runtime environment of Java 21 (at a minimum) to run.
         home .. '/.sdkman/candidates/java/21.0.2-open/bin/java',
-        '-javaagent:' .. home .. mason_jdtls .. '/lombok.jar',
+        '-javaagent:' .. jdtls_home .. '/lombok.jar',
         '-Declipse.application=org.eclipse.jdt.ls.core.id1',
         '-Dosgi.bundles.defaultStartLevel=4',
         '-Declipse.product=org.eclipse.jdt.ls.core.product',
         '-Dlog.protocol=true',
         '-Dlog.level=ALL',
-        '-Xms1g',
+        '-Xms1G',
         '--add-modules=ALL-SYSTEM',
         '--add-opens', 'java.base/java.util=ALL-UNNAMED',
         '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
-        '-jar', home .. mason_jdtls .. '/plugins/org.eclipse.equinox.launcher_1.6.900.v20240613-2009.jar',
-        '-configuration', home .. mason_jdtls .. '/config_linux',
+        '-jar', jdtls_home .. '/plugins/' .. launcher,
+        '-configuration', jdtls_home .. '/config_linux',
         '-data', home .. '/.local/share/nvim/WORKSPACES/' .. project_name
     },
 
@@ -84,13 +88,19 @@ local config = {
                     },
                     {
                         name = 'JavaSE-17',
-                        path = home .. '/.sdkman/candidates/java/17.0.7-oracle',
+                        path = home .. '/.sdkman/candidates/java/17.0.12-oracle',
+                        default = false
+                    },
+                    {
+                        name = 'JavaSE-21',
+                        path = home .. '/.sdkman/candidates/java/21.0.2-open',
                         default = false
                     }
                 },
             },
         },
     },
+
     on_attach = on_attach,
 }
 -- This starts a new client & server,

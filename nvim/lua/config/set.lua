@@ -3,8 +3,6 @@ local global = vim.g
 local fnc = vim.fn
 local api = vim.api
 
-global.mapleader = ","
-
 set.backspace = { "indent", "eol", "start" }
 -- vim.opt.cc = "80"
 set.clipboard = "unnamedplus"

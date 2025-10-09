@@ -4,8 +4,10 @@ local map = function(mode, lhs, rhs, opts)
         options = vim.tbl_extend("force", options, opts)
     end
 
-    vim.api.nvim_set_keymap(mode, lhs, rhs, options)
+    vim.keymap.set(mode, lhs, rhs, options)
 end
+
+vim.diagnostic.config({ jump = { float = true } })
 
 map("v", "J", ":m '>+1<CR>gv=gv")
 map("v", "K", ":m '<-2<CR>gv=gv")
@@ -18,18 +20,20 @@ map("x", "<leader>p", "_dP")
 -- traversing windows with Alt+Tab
 map("n", "<M-Tab>", "<C-w>w")
 
+-- Hop
 map("n", "<leader><leader>c", "<cmd>lua require('hop').hint_char1()<CR>")
 map("n", "<leader><leader>l", "<cmd>lua require('hop').hint_lines_skip_whitespace()<CR>")
 map("n", "<leader><leader>L", "<cmd>lua require('hop').hint_lines()<CR>")
 map("n", "<leader><leader>p", "<cmd>lua require('hop').hint_patterns()<CR>")
 map("n", "<leader><leader>w", "<cmd>lua require('hop').hint_words()<CR>")
 
-map("v", "<leader><leader>c", "<cmd>lua require('hop').hint_char1()<CR>")
 map("v", "<leader><leader>l", "<cmd>lua require('hop').hint_lines_skip_whitespaces()<CR>")
 map("v", "<leader><leader>L", "<cmd>lua require('hop').hint_lines()<CR>")
 map("v", "<leader><leader>p", "<cmd>lua require('hop').hint_patterns()<CR>")
 map("v", "<leader><leader>w", "<cmd>lua require('hop').hint_words()<CR>")
+---
 
+map("n", "<leader>L", ":Lazy<CR>")
 map("n", "<leader>cl", ":e ~/.local/state/nvim/lsp.log<CR>")
 map("n", "<leader>ev", "<cmd>lua require('utils').dotfiles()<CR>")
 map("n", "<leader>sv", ":luafile ~/dotfiles/nvim/init.lua<CR>")
@@ -37,8 +41,6 @@ map("n", "<leader>k", ":bd<CR>")
 
 
 map("n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>")
--- map("n", "K", "<cmd>lua require('hover').hover()<CR>")
--- map("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>")
 map("n", "gd", "<cmd>lua require('telescope.builtin').lsp_definitions({})<CR>")
 
 -- rr = refactor: rename
@@ -53,33 +55,32 @@ map("n", "<leader>dl", "<cmd>lua vim.lsp.buf.list_workspace_folders()<CR>")
 
 
 -- Debugger
-map("n", "<F9>", '<Cmd>:lua require"dap".continue()<CR>')
-map("n", "<F7>", '<Cmd>lua require"dap".step_into()<CR>')
-map("n", "<F8>", '<Cmd>lua require"dap".step_over()<CR>')
-map("n", "<S-F8>", '<Cmd>lua require"dap".step_out()<CR>')
+map("n", "<F9>", "<Cmd>lua require('dap').continue()<CR>", { desc = 'Debug: continue' })
+map("n", "<F7>", "<Cmd>lua require('dap').step_into()<CR>", { desc = 'Debug: step into' })
+map("n", "<F8>", "<Cmd>lua require('dap').step_over()<CR>", { desc = 'Debug: step over' })
+map("n", "<S-F8>", "<Cmd>lua require('dap').step_out()<CR>", { desc = 'Debug: step out' })
 -- db = debug breakpoint
-map("n", "<leader>db", '<Cmd>lua require"dap".toggle_breakpoint()<CR>')
-map("n", "<Leader>dB", "<Cmd>lua require'dap'.set_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>")
--- db = debug repl
-map("n", "<leader>dr", '<Cmd>lua require"dap".repl.toggle()<CR>')
--- db = debug debug
-map("n", "<leader>dd", '<Cmd>lua require"dapui".toggle()<CR>')
+map("n", "<leader>db", "<Cmd>lua require('dap').toggle_breakpoint()<CR>", { desc = 'Debug: toggle breakpoint' })
+map("n", "<Leader>dB", "<Cmd>lua require('dap').set_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>",
+    { desc = 'Debug: conditional breakpoint' })
+-- dr = debug repl
+map("n", "<leader>dr", "<Cmd>lua require('dap').repl.toggle()<CR>", { desc = 'Debug: toggle REPL' })
+-- dd = debug UI
+map("n", "<leader>dd", "<Cmd>lua require('dapui').toggle()<CR>", { desc = 'Debug: toggle UI' })
+-- dc = debug commands
+map("n", "<leader>dc", "<Cmd>lua require('telescope').extensions.dap.commands()<CR>", { desc = 'Debug: list commands' })
 
 
--- ga = Git Annotate (blame)
-map("n", "<leader>ga", "<cmd>lua require('gitsigns').blame_line({})<CR>")
 -- ga = Git branches
-map("n", "<leader>gb", "<cmd>lua require('telescope.builtin').git_branches({})<CR>")
+map("n", "<leader>gb", "<cmd>lua require('telescope.builtin').git_branches({})<CR>", { desc = 'Git: branches' })
 -- gc = Git Commits
-map("n", "<leader>gc", "<cmd>lua require('telescope.builtin').git_commits()<CR>")
--- ga = Git Diff
-map("n", "<leader>gd", "<cmd>lua require('gitsigns').preview_hunk({})<CR>")
+map("n", "<leader>gc", "<cmd>lua require('telescope.builtin').git_commits()<CR>", { desc = 'Git: commits' })
 -- gg = Git Git
-map("n", "<leader>gg", ":Gitsigns<CR>")
--- gd = Git History (Buffer commits)
-map("n", "<leader>gh", "<cmd>lua require('telescope.builtin').git_bcommits()<CR>")
+map("n", "<leader>gg", ":Gitsigns<CR>", { desc = "Git: menu" })
+-- gd = Git History ([B]uffer commits)
+map("n", "<leader>gh", "<cmd>lua require('telescope.builtin').git_bcommits()<CR>", { desc = 'Git: history' })
 -- gs = Git Status
-map("n", "<leader>gs", "<cmd>lua require('telescope.builtin').git_status()<CR>")
+map("n", "<leader>gs", "<cmd>lua require('telescope.builtin').git_status()<CR>", { desc = 'Git: status' })
 
 -- !!!
 map("n", "<leader>b", "<cmd>lua require('telescope.builtin').builtin()<CR>")
@@ -98,14 +99,16 @@ map("v", "<leader>la", "<cmd>lua vim.lsp.buf.range_code_action()<CR>")
 map("n", "<leader>lb", "<cmd>lua require('telescope.builtin').buffers()<CR>")
 -- ld = List Dir (current working dir)
 map("n", "<leader>ld", "<cmd>lua require('telescope.builtin').find_files()<CR>")
--- ld = List classes
-map("n", "<leader>lc", "<cmd>lua require('telescope.builtin').find_files({search_file = '*.java'})<CR>")
+-- lc = List classes
+map("n", "<leader>lc", "<cmd>lua require('telescope.builtin').find_files({search_file = '*.java', prompt_title = 'Java Classes'})<CR>")
 -- le = List Errors
 map("n", "<leader>le", "<cmd>lua require('telescope.builtin').diagnostics()<CR>")
 -- lf = List Files
 map("n", "<leader>lf", "<cmd>lua require('utils').project_files()<CR>")
 -- lh = list help
 map("n", "<leader>lh", "<cmd>lua require('telescope.builtin').help_tags()<CR>")
+-- lk = list keymaps
+map("n", "<leader>lk", "<cmd>lua require('telescope.builtin').keymaps()<CR>")
 -- lm = list marks
 map("n", "<leader>lm", "<cmd>lua require('telescope.builtin').marks()<CR>")
 -- lr = List Recent
@@ -116,6 +119,8 @@ map("n", "<leader>lR", "<cmd>lua require('telescope.builtin').registers()<CR>")
 map("n", "<leader>ls", "<cmd>lua require('telescope.builtin').lsp_document_symbols()<CR>")
 -- lw = List Workspace
 map("n", "<leader>lw", "<cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols()<CR>")
+-- l: = List command history
+map("n", "<leader>:", "<cmd>lua require('telescope.builtin').command_history()<CR>")
 
 -- tu = to Usages
 map("n", "<leader>tu", "<cmd>lua require('telescope.builtin').lsp_references()<CR>")
@@ -125,4 +130,5 @@ map("n", "<leader>tt", "<cmd>lua require('telescope.builtin').lsp_type_definitio
 map("n", "<leader>ti", "<cmd>lua require('telescope.builtin').lsp_implementations()<CR>")
 
 map("n", "<M-1>", "<cmd>lua require('nvim-tree.api').tree.toggle()<CR>")
+
 map("i", "<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>")

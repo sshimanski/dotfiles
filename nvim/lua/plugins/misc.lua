@@ -30,15 +30,12 @@ return {
         end,
     },
 
-    -- {
-    --     "lewis6991/hover.nvim",
-    --     config = function()
-    --         require("hover").setup({
-    --             init = function()
-    --                 -- Require providers
-    --                 require("hover.providers.lsp")
-    --             end
-    --         })
-    --     end,
-    -- },
+    -- helper lib for other plugins
+    { "nvim-lua/plenary.nvim" },
+
+    -- popups
+    { "nvim-lua/popup.nvim" },
+
+    -- just for fun
+    { "eandrju/cellular-automaton.nvim" },
 }

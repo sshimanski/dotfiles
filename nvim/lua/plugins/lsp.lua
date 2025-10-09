@@ -44,14 +44,19 @@ return {
             cmp_lsp.default_capabilities()
         )
 
-        require("fidget").setup({})
+        require("fidget").setup({
+            window = {
+                winblend = 90
+            }
+        })
         require("mason").setup()
         require("mason-lspconfig").setup({
             ensure_installed = {
-                "lua_ls",
-                "rust_analyzer",
-                "jdtls",
                 "gopls",
+                "jdtls",
+                "lua_ls",
+                "pylsp",
+                "rust_analyzer",
             },
             handlers = {
                 function(server_name) -- default handler (optional)
@@ -60,7 +65,7 @@ return {
                     })
                 end,
                 ["jdtls"] = function()
-                    -- skip
+                    -- skip (configured with ftplugin)
                 end,
                 ["lua_ls"] = function()
                     local lspconfig = require("lspconfig")

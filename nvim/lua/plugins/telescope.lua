@@ -40,6 +40,9 @@ return {
                     prompt_prefix = "  ",
                     hidden = true,
                 },
+                diagnostics = {
+                    previewer = false
+                },
                 buffers = {
                     prompt_prefix = " ﬘ ",
                     -- theme = "dropdown",

@@ -62,8 +62,9 @@ noremap ]b gT
 " unimpaired legacy
 nmap ]m <Action>(MethodDown)
 nmap [m <Action>(MethodUp)
-nmap ]l <Action>(GotoNextError)<Action>(ShowErrorDescription)
-nmap [l <Action>(GotoPreviousError)<Action>(ShowErrorDescription)
+" d - diagnostic
+nmap ]d <Action>(GotoNextError)<Action>(ShowErrorDescription)
+nmap [d <Action>(GotoPreviousError)<Action>(ShowErrorDescription)
 
 " camelcase words: ] - forward, [ - backward
 noremap [w [b
@@ -73,13 +74,14 @@ nmap ]c <Action>(VcsShowNextChangeMarker)<Action>(Vcs.ShowDiffWithLocal)
 nnoremap [<Space> O<ESC>j 0 w
 nnoremap ]<Space> o<ESC>k 0 w
 
-nnoremap yoh :nohlsearch<CR>
-nmap yob <Action>(ToggleLineBreakpoint)
+nmap <leader>db <Action>(ToggleLineBreakpoint)
+nmap yoh :nohlsearch<CR>
 nmap yop <Action>(TogglePresentationMode)
 nmap yow <Action>(EditorToggleShowWhitespaces)
 nmap yol <Action>(EditorToggleShowLineNumbers)
 nmap yoz <Action>(ToggleZenMode)
 
+nmap <C-w>d <Action>(ShowErrorDescription)
 nmap <C-S-o> <Action>(OverrideMethods)
 nmap <C-S-i> <Action>(ImplementMethods)
 nmap <C-S-j> <Action>(NextIdentifierReloaded)
@@ -91,6 +93,12 @@ imap <C-k> <C-O><Action>(ParameterInfo) i
 
 " hr = hunk reset
 nmap <leader>hr <Action>(Vcs.RollbackChangedLines)
+" hp = hunk preview (popup)
+nmap <leader>hp <Action>(Vcs.ShowDiffWithLocal)
+" hD = hunk Diff (side by side window)
+nmap <leader>hD <Action>(Vcs.ShowDiffChangedLines)
+" hB = hunk Blame (All file)
+noremap <leader>hB :action Annotate<CR>
 
 " nvim: Telescope
 " noremap <leader>la :action QuickActions<CR>
@@ -168,7 +176,6 @@ map <leader>x <Action>(EvaluateExpression)
 
 " Git
 "noremap <leader>gg: action Git.FileActions<CR>
-noremap <leader>ga :action Annotate<CR>
 noremap <leader>gb :action Git.Branches<CR>
 noremap <leader>gg :action Git.Menu<CR>
 noremap <leader>gh :action Vcs.ShowTabbedFileHistory<CR>
@@ -177,7 +184,6 @@ noremap <leader>gu :action Vcs.UpdateProject<CR>
 
 " Common
 noremap <leader>c :action CheckinProject<CR>
-" overridden by <leader>hr
 noremap <leader>H :action TypeHierarchy<CR>
 " noremap <leader>h :action HighlightUsagesInFile<CR>
 noremap <leader>u :action ShowUmlDiagramPopup<CR>

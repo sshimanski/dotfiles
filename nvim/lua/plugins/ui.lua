@@ -1,7 +1,7 @@
 return {
+    -- Themes
     { "folke/tokyonight.nvim" },
     { "shaunsingh/nord.nvim" },
-    { "arcticicestudio/nord-vim" },
     {
         "ellisonleao/gruvbox.nvim",
         lazy = false,    -- make sure we load this during startup if it is your main colorscheme
