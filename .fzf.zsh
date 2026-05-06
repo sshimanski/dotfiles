@@ -32,11 +32,13 @@ export FZF_ALT_C_OPTS="
     --preview 'eza --tree --color=always --icons=always {} | head -200'
 "
 
+# config for zoxide
 export _ZO_FZF_OPTS="
+    --no-multi
     --delimiter ' ' 
-    --reverse 
     --preview 'eza --tree --icons=always --level=1 --color=always {2} | head -200' 
-    --preview-window=right,40%"
+    --preview-window='right:40%:wrap'
+    "
 
 # Use fd (https://github.com/sharkdp/fd) for listing path candidates.
 # - The first argument to the function ($1) is the base path to start traversal

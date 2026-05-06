@@ -38,4 +38,11 @@ return {
 
     -- just for fun
     { "eandrju/cellular-automaton.nvim" },
+    -- 1. Красивый рендеринг прямо в Neovim (заголовки, таблицы, списки)
+    {
+        'MeanderingProgrammer/render-markdown.nvim',
+        dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' },
+        ft = { "markdown" },
+        opts = {},
+    },
 }

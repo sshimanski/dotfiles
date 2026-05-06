@@ -21,7 +21,7 @@ ZSH_THEME="robbyrussell"
 # HYPHEN_INSENSITIVE="true"
 
 # Uncomment the following line to disable bi-weekly auto-update checks.
-# DISABLE_AUTO_UPDATE="true"
+DISABLE_AUTO_UPDATE="true"
 
 # Uncomment the following line to change how often to auto-update (in days).
 export UPDATE_ZSH_DAYS=5
@@ -56,20 +56,23 @@ COMPLETION_WAITING_DOTS="true"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-    # Essential plugins first (loaded early for better UX)
-    git vi-mode zoxide fzf-tab zsh-autosuggestions zsh-syntax-highlighting
+    # fzf-tab should be before zsh-autosuggestions and zsh-syntax-highlighting
+    git vi-mode zoxide fzf-tab zsh-autosuggestions
     
     # Commonly used plugins
     colored-man-pages common-aliases copyfile copypath
     
     # Language/framework specific plugins (lazy loaded when possible)
     docker docker-compose git-extras gradle mvn nvm rust sdk ssh-agent themes tig you-should-use
+
+    # Should be last one
+    zsh-syntax-highlighting
 )
 
 # NVM required for VIM
 # zstyle ':omz:plugins:nvm' lazy yes
 # zstyle ':omz:plugins:nvm' lazy-cmd npm npx node prettier typescript tsc
-#
+
 zstyle ':omz:plugins:ssh-agent' identities id_rsa nphase.github.com
 
 # init zsh-completions plugin - right way
@@ -106,7 +109,7 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 #
-export BROWSER="firefox"
+export BROWSER="google-chrome"
 export READER="zathura"
 export EDITOR="nvim"
 export PAGER="bat"
@@ -117,31 +120,23 @@ source $HOME/.aliases
 rg() {
     if [ -z "$RANGER_LEVEL" ]
     then
-        #ranger
-        python3 ~/work/apps/ranger/ranger.py
+        local temp_file="$(mktemp -t "ranger_cd.XXXXXXXXXX")"
+        python3 ~/work/apps/ranger/ranger.py --choosedir="$temp_file" -- "$@"
+        if [ -f "$temp_file" ]; then
+            local chosen_dir="$(cat "$temp_file")"
+            [ -n "$chosen_dir" ] && [ "$chosen_dir" != "$PWD" ] && cd "$chosen_dir"
+            rm -f "$temp_file"
+        fi
     else
         exit 0
     fi
 }
 [ -n "$RANGER_LEVEL" ] && PS1="$PS1"'[rg] '
 
-function y() {
-    if [ -z "$YAZI_LEVEL" ]
-    then
-        local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
-        yazi "$@" --cwd-file="$tmp"
-        if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-            builtin cd -- "$cwd"
-        fi
-        rm -f -- "$tmp"
-    else
-        exit 0
-    fi
-}
-[ -n "$YAZI_LEVEL" ] && PS1="$PS1"'[y] '
 
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]] && source "$SDKMAN_DIR/bin/sdkman-init.sh"
+
 
 timezsh() {
   shell=${1-$SHELL}
@@ -150,7 +145,7 @@ timezsh() {
 
 
 export PATH=$PATH:/usr/local/go/bin
-export PATH=$PATH:$HOME/go/bin
+export PATH=$PATH:$HOME/go/bin:$HOME/.local/bin/
 
 
 export PYENV_ROOT="$HOME/.pyenv"
@@ -164,26 +159,40 @@ pyenv() {
     pyenv "$@"
 }
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh 
 
-# ripgrep->fzf->vim [QUERY]
-rfv() (
-  RELOAD='reload:rg --column --color=always --smart-case {q} || :'
-  OPENER='if [[ $FZF_SELECT_COUNT -eq 0 ]]; then
-            nvim {1} +{2}     # No selection. Open the current line in Vim.
-          else
-            nvim +cw -q {+f}  # Build quickfix list for the selected items.
-          fi'
-  fzf --disabled --ansi --multi \
-      --bind "start:$RELOAD" --bind "change:$RELOAD" \
-      --bind "enter:become:$OPENER" \
-      --bind "ctrl-o:execute:$OPENER" \
-      --bind 'alt-a:select-all,alt-d:deselect-all,ctrl-/:toggle-preview' \
-      --delimiter : \
-      --preview 'bat --style=full --color=always --highlight-line {2} {1}' \
-      --preview-window '~4,+{2}+4/3,<80(up)' \
-      --header 'CTRL-O: to open in vim; CTRL-/ toggle preview; ALT-A: select all; ALT-D deselect all' \
-      --query "$*"
-)
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh 
+[ -f ~/.claude.zsh ] && source ~/.claude.zsh 
+
+# jdtls for claude
+export PATH="$HOME/.local/share/nvim/mason/bin:$PATH"
+
+kp() {
+  # Локальная переменная с базовой командой и нужными флагами
+  local cmd="procs --color always"
+  local pid
+
+  # Вызываем fzf, прокидывая цвета через --ansi
+  pid=$(fzf --ansi \
+            --query "$1" \
+            --layout=reverse \
+            --header-lines=1 \
+            --info=inline \
+            --ghost 'Enter process...' \
+            --header='[ENTER] Kill | [CTRL-R] Reload' \
+            --preview "$cmd --no-header --only command {1}" \
+            --preview-window="right:40%:wrap" \
+            --bind "start:reload(echo '')" \
+            --bind "change:reload(if [ -n {q} ]; then $cmd {q}; else echo ''; fi)" \
+            --bind "ctrl-r:reload($cmd {q} || :)" \
+            | awk '{print $1}'
+        )
+
+  if [ -n "$pid" ]; then
+    # 15 (SIGTERM), override with : kp "" 9
+    kill -${2:-15} "$pid" && echo "Process $pid terminated."
+  fi
+}
+
+export _JAVA_AWT_WM_NONREPARENTING=1
 
 # zprof

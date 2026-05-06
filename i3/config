@@ -44,9 +44,14 @@ bindsym Ctrl+Shift+space exec --no-startup-id dunstctl close
 
 # start a terminal
 bindsym $mod+Return exec alacritty
-bindsym $mod+Shift+Return exec --no-startup-id alacritty -e zsh -ci yazi
-bindsym $mod+Shift+i exec --no-startup-id alacritty -e zsh -ci btop
+bindsym $mod+Shift+Return exec --no-startup-id alacritty -e zsh -ci ranger
+bindsym $mod+Shift+i exec --no-startup-id alacritty -e bash -ci btop
 bindsym $mod+Shift+m workspace 8; exec --no-startup-id alacritty -e zsh -ci cmus
+
+bindsym $mod+y exec --no-startup-id alacritty --title 'fzf-menu' -e bash -ifc 'i3-dmenu-desktop --dmenu=fzf'
+for_window [title="fzf-menu"] floating enable
+for_window [floating] move position center
+for_window [class="^jetbrains-.*" window_type="dialog"] move position center
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -242,9 +247,8 @@ exec --no-startup-id gnome-keyring-daemon
 # unclutter makes the mouse invisible after a brief period
 exec --no-startup-id unclutter
 
-# shift+shift; CapsLock mapping
-exec_always "xkbcomp $HOME/dotfiles/xkb/my $DISPLAY"
-exec "xkbcomp $HOME/dotfiles/xkb/my $DISPLAY"
+# CapsLock mapping with delay - to let X apply own configs and then rewrite
+exec_always "sleep 3 && xkbcomp $HOME/dotfiles/xkb/my $DISPLAY"
 
 assign [class="google-chrome"] 2
 assign [class="firefox"] 2
