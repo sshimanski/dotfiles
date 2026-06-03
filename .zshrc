@@ -133,6 +133,19 @@ rg() {
 }
 [ -n "$RANGER_LEVEL" ] && PS1="$PS1"'[rg] '
 
+function y() {
+    if [ -z "$YAZI_LEVEL" ]
+    then
+        local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+        command yazi "$@" --cwd-file="$tmp"
+        IFS= read -r -d '' cwd < "$tmp"
+        [ "$cwd" != "$PWD" ] && [ -d "$cwd" ] && builtin cd -- "$cwd"
+        command rm -f -- "$tmp"
+    else
+        exit 0
+    fi
+}
+[ -n "$YAZI_LEVEL" ] && PS1="$PS1"'[y] '
 
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]] && source "$SDKMAN_DIR/bin/sdkman-init.sh"
@@ -161,17 +174,16 @@ pyenv() {
 
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh 
+[ -f ~/.fzf.custom.zsh ] && source ~/.fzf.custom.zsh 
 [ -f ~/.claude.zsh ] && source ~/.claude.zsh 
 
-# jdtls for claude
+# CLAUDE: jdtls-lsp -> OS jdtls command
 export PATH="$HOME/.local/share/nvim/mason/bin:$PATH"
 
 kp() {
-  # Локальная переменная с базовой командой и нужными флагами
   local cmd="procs --color always"
   local pid
 
-  # Вызываем fzf, прокидывая цвета через --ansi
   pid=$(fzf --ansi \
             --query "$1" \
             --layout=reverse \

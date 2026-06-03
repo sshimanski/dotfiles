@@ -2,10 +2,10 @@
 " !!!!! CTRL+ALT+SHIFT+INSERT - scratch file to experiments
 " !!!!! Ctrl+Shift+F7   - show where exception get caused
 
-set laststatus=2
+" set laststatus=2
 set hlsearch
 set ignorecase
-set incsearch
+" set incsearch
 set showcmd
 set showmode
 set smartcase
@@ -183,7 +183,8 @@ noremap <leader>gl :action Vcs.Show.Log<CR>
 noremap <leader>gu :action Vcs.UpdateProject<CR>
 
 " Common
-noremap <leader>c :action CheckinProject<CR>
+nnoremap <leader>cl :action CopyReference<CR>
+
 noremap <leader>H :action TypeHierarchy<CR>
 " noremap <leader>h :action HighlightUsagesInFile<CR>
 noremap <leader>u :action ShowUmlDiagramPopup<CR>

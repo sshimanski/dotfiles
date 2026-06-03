@@ -1,12 +1,3 @@
-# Setup fzf
-# ---------
-if [[ ! "$PATH" == */home/administrator/work/apps/fzf/bin* ]]; then
-  PATH="${PATH:+${PATH}:}/home/administrator/work/apps/fzf/bin"
-fi
-
-# Set up fzf key bindings and fuzzy completion
-source <(fzf --zsh)
-
 show_file_or_dir_preview="
     if [ -d {} ]; then 
         eza --tree --color=always --icons=always {} | head -200; 

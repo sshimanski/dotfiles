@@ -265,6 +265,7 @@ assign [class="jetbrains-clion"] 10
 assign [class="jetbrains-pycharm"] 10
 
 for_window[class="gnome-calculator"] floating enabled
+for_window[class="app.hiddify.com"] floating enabled
 
 # Mod_system
 set $Locker i3lock

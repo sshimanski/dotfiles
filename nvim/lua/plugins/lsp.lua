@@ -55,7 +55,8 @@ return {
                 "gopls",
                 "jdtls",
                 "lua_ls",
-                "pylsp",
+                "pyright",
+                "vtsls",
                 "rust_analyzer",
             },
             handlers = {
