@@ -1,104 +1,130 @@
 return {
     "nvim-treesitter/nvim-treesitter",
-    run = ":TSUpdate",
+    branch = "main",
+    build = ":TSUpdate",
     dependencies = {
-        "nvim-treesitter/nvim-treesitter-refactor",
-        "nvim-treesitter/nvim-treesitter-textobjects",
+        -- refactor plugin dropped: incompatible with `main`, abandoned upstream.
+        -- smart_rename / usage-navigation now handled by the LSP keymaps below.
+        { "nvim-treesitter/nvim-treesitter-textobjects", branch = "main" },
         "David-Kunz/treesitter-unit",
     },
+    -- run config on every relevant filetype, plus once at startup
+    lazy = false,
     config = function()
-        require("nvim-treesitter.configs").setup({
-            ensure_installed = 'all', -- all
+        -- ── core (main branch: no more `configs.setup` module system) ──
+        local ts = require("nvim-treesitter")
+        ts.setup()
 
-            highlight = {
-                enable = true
+        -- main-branch `install()` is NOT idempotent like the old
+        -- `ensure_installed='all'`: calling it with every parser re-spawns
+        -- ~300 downloads on each startup. Install only the missing ones from
+        -- a curated list (parsers we actually use).
+        local ensure = {
+            "lua", "vim", "vimdoc", "query", "bash", "markdown",
+            "markdown_inline", "json", "yaml", "toml",
+            "java", "go", "gomod", "python", "rust",
+            "javascript", "typescript", "tsx", "html", "css",
+            "gitcommit", "gitignore", "diff", "dockerfile", "sql", "xml",
+        }
+        local installed = ts.get_installed()
+        local missing = vim.tbl_filter(function(lang)
+            return not vim.tbl_contains(installed, lang)
+        end, ensure)
+        if #missing > 0 then
+            ts.install(missing)
+        end
+
+        -- ── textobjects (main branch API) ──
+        require("nvim-treesitter-textobjects").setup({
+            select = {
+                lookahead = true,
             },
-            -- 15/05/2025 - conflicting with treesitter => disable it
-            rainbow = {
-                enable = false,
-                extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
-                max_file_lines = nil, -- Do not enable for files with more than n lines, int
-            },
-            autopairs = {
-                enable = true
-            },
-            indent = {
-                enable = true
-            },
-            refactor = {
-                enable = true,
-                highlight_definitions = { enable = true },
-                smart_rename = {
-                    enable = true,
-                    keymaps = {
-                        smart_rename = "<Leader>dR",
-                    },
-                },
-                navigation = {
-                    enable = true,
-                    keymaps = {
-                        goto_next_usage = "<C-j>",
-                        goto_previous_usage = "<C-k>",
-                    },
-                },
-            },
-            textobjects = {
-                enable = true,
-                select = {
-                    enable = true,
-
-                    -- Automatically jump forward to textobj, similar to targets.vim
-                    lookahead = true,
-
-                    keymaps = {
-                        -- You can use the capture groups defined in textobjects.scm
-                        ["ab"] = "@block.outer",
-                        ["ib"] = "@block.inner",
-
-                        ["ac"] = "@class.outer",
-                        ["ic"] = "@class.inner",
-
-                        ["af"] = "@function.outer",
-                        ["if"] = "@function.inner",
-
-                        ["al"] = "@loop.outer",
-                        ["il"] = "@loop.inner",
-
-                        -- i = invocation
-                        ["ai"] = "@call.outer",
-                        ["ii"] = "@call.inner",
-                    },
-                },
-                swap = {
-                    enable = true,
-                    swap_next = {
-                        ["C-L"] = "@parameter.inner",
-                    },
-                    swap_previous = {
-                        ["C-H"] = "@parameter.inner",
-                    },
-                },
-                move = {
-                    enable = true,
-                    set_jumps = true, -- whether to set jumps in the jumplist
-                    goto_next_start = {
-                        ["]m"] = "@function.outer",
-                        ["]]"] = "@class.outer",
-                    },
-                    goto_next_end = {
-                        ["]M"] = "@function.outer",
-                        ["]["] = "@class.outer",
-                    },
-                    goto_previous_start = {
-                        ["[m"] = "@function.outer",
-                        ["[["] = "@class.outer",
-                    },
-                    goto_previous_end = {
-                        ["[M"] = "@function.outer",
-                        ["[]"] = "@class.outer",
-                    },
-                },
+            move = {
+                set_jumps = true,
             },
         })
+
+        -- ── highlight + indent: enabled per-buffer on FileType ──
+        -- auto-installs the parser on demand if missing, then enables it.
+        vim.api.nvim_create_autocmd("FileType", {
+            callback = function(args)
+                local buf = args.buf
+                local ft = vim.bo[buf].filetype
+                local lang = vim.treesitter.language.get_lang(ft)
+                if not lang then
+                    return
+                end
+
+                local function enable()
+                    if not vim.api.nvim_buf_is_valid(buf) then
+                        return
+                    end
+                    pcall(vim.treesitter.start, buf, lang)
+                    vim.bo[buf].indentexpr =
+                        "v:lua.require'nvim-treesitter'.indentexpr()"
+                end
+
+                if vim.tbl_contains(ts.get_installed(), lang) then
+                    enable()
+                elseif vim.tbl_contains(ts.get_available(), lang) then
+                    -- parser exists upstream but not installed: fetch it,
+                    -- then enable once the async install finishes.
+                    ts.install(lang):await(function()
+                        vim.schedule(enable)
+                    end)
+                end
+            end,
+        })
+
+        -- ── keymaps ────────────────────────────────────────────────
+        local map = vim.keymap.set
+        local select = require("nvim-treesitter-textobjects.select")
+        local swap = require("nvim-treesitter-textobjects.swap")
+        local move = require("nvim-treesitter-textobjects.move")
+
+        -- select textobjects (visual + operator-pending)
+        local sel = {
+            ["ab"] = "@block.outer",
+            ["ib"] = "@block.inner",
+            ["ac"] = "@class.outer",
+            ["ic"] = "@class.inner",
+            ["af"] = "@function.outer",
+            ["if"] = "@function.inner",
+            ["al"] = "@loop.outer",
+            ["il"] = "@loop.inner",
+            ["ai"] = "@call.outer", -- i = invocation
+            ["ii"] = "@call.inner",
+        }
+        for lhs, query in pairs(sel) do
+            map({ "x", "o" }, lhs, function()
+                select.select_textobject(query, "textobjects")
+            end)
+        end
+
+        -- swap parameters
+        map("n", "<C-l>", function()
+            swap.swap_next("@parameter.inner")
+        end)
+        map("n", "<C-h>", function()
+            swap.swap_previous("@parameter.inner")
+        end)
+
+        -- movement
+        local function mv(fn, query)
+            return function()
+                fn(query, "textobjects")
+            end
+        end
+        map({ "n", "x", "o" }, "]m", mv(move.goto_next_start, "@function.outer"))
+        map({ "n", "x", "o" }, "]]", mv(move.goto_next_start, "@class.outer"))
+        map({ "n", "x", "o" }, "]M", mv(move.goto_next_end, "@function.outer"))
+        map({ "n", "x", "o" }, "][", mv(move.goto_next_end, "@class.outer"))
+        map({ "n", "x", "o" }, "[m", mv(move.goto_previous_start, "@function.outer"))
+        map({ "n", "x", "o" }, "[[", mv(move.goto_previous_start, "@class.outer"))
+        map({ "n", "x", "o" }, "[M", mv(move.goto_previous_end, "@function.outer"))
+        map({ "n", "x", "o" }, "[]", mv(move.goto_previous_end, "@class.outer"))
+
+        -- old refactor module (smart_rename / goto_usage) dropped:
+        -- use built-in `grn` (rename) and `grr` (references) from nvim 0.11+
     end,
 }

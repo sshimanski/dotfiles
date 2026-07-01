@@ -11,7 +11,8 @@ export ZSH=$HOME/.oh-my-zsh
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-ZSH_THEME="robbyrussell"
+# Disabled: prompt is now handled by starship (see eval at end of file).
+ZSH_THEME=""
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
@@ -70,8 +71,8 @@ plugins=(
 )
 
 # NVM required for VIM
-# zstyle ':omz:plugins:nvm' lazy yes
-# zstyle ':omz:plugins:nvm' lazy-cmd npm npx node prettier typescript tsc
+zstyle ':omz:plugins:nvm' lazy yes
+zstyle ':omz:plugins:nvm' lazy-cmd npm npx node prettier typescript tsc
 
 zstyle ':omz:plugins:ssh-agent' identities id_rsa nphase.github.com
 
@@ -113,6 +114,7 @@ export BROWSER="google-chrome"
 export READER="zathura"
 export EDITOR="nvim"
 export PAGER="bat"
+export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 
 source $HOME/.aliases
 
@@ -131,7 +133,6 @@ rg() {
         exit 0
     fi
 }
-[ -n "$RANGER_LEVEL" ] && PS1="$PS1"'[rg] '
 
 function y() {
     if [ -z "$YAZI_LEVEL" ]
@@ -145,7 +146,6 @@ function y() {
         exit 0
     fi
 }
-[ -n "$YAZI_LEVEL" ] && PS1="$PS1"'[y] '
 
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]] && source "$SDKMAN_DIR/bin/sdkman-init.sh"
@@ -163,14 +163,7 @@ export PATH=$PATH:$HOME/go/bin:$HOME/.local/bin/
 
 export PYENV_ROOT="$HOME/.pyenv"
 [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init --path)"
-
-# Lazy loading for pyenv
-pyenv() {
-    unset -f pyenv
-    eval "$(pyenv init --path)"
-    pyenv "$@"
-}
+command -v pyenv >/dev/null && eval "$(pyenv init --path)"
 
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh 
@@ -206,5 +199,7 @@ kp() {
 }
 
 export _JAVA_AWT_WM_NONREPARENTING=1
+
+eval "$(starship init zsh)"
 
 # zprof

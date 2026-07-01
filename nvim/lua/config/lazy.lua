@@ -33,4 +33,17 @@ require("lazy").setup({
     install = { colorscheme = { "gruvbox" } },
     -- automatically check for plugin updates
     checker = { enabled = false },
+    -- faster startup: disable unused built-in runtime plugins
+    performance = {
+        rtp = {
+            disabled_plugins = {
+                "gzip",
+                "tarPlugin",
+                "tohtml",
+                "tutor",
+                "zipPlugin",
+                "netrwPlugin", -- using nvim-tree / telescope file-browser
+            },
+        },
+    },
 })

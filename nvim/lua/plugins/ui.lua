@@ -1,42 +1,31 @@
 return {
-    -- Themes
-    { "folke/tokyonight.nvim" },
-    { "shaunsingh/nord.nvim" },
+    -- Themes (alternates: lazy, loaded only if selected)
+    { "folke/tokyonight.nvim", lazy = true },
+    { "shaunsingh/nord.nvim",  lazy = true },
     {
         "ellisonleao/gruvbox.nvim",
-        lazy = false,    -- make sure we load this during startup if it is your main colorscheme
-        priority = 1000, -- make sure to load this before all the other start plugins
-        config = function()
-            -- load the colorscheme here
-            vim.cmd([[
-            colorscheme gruvbox
-
-            highlight Normal guibg=none
-            highlight NonText guibg=none
-            highlight Normal ctermbg=none
-            highlight NonText ctermbg=none
-            ]])
+        lazy = false,    -- main colorscheme: load at startup
+        priority = 1000, -- before all other start plugins
+        opts = {
+            transparent_mode = true, -- no bg (replaces manual highlight overrides)
+        },
+        config = function(_, opts)
+            require("gruvbox").setup(opts)
+            vim.cmd.colorscheme("gruvbox")
         end,
     },
 
-    -- greeter (startup page)
-    {
-        "goolord/alpha-nvim",
-        dependencies = { "nvim-tree/nvim-web-devicons" },
-        config = function()
-            local startify = require("alpha.themes.startify")
-            startify.file_icons.provider = "devicons"
-            require('alpha').setup(startify.config)
-        end,
-    },
+    -- greeter: now provided by snacks.dashboard (plugins/snacks.lua)
 
     {
         "nvim-lualine/lualine.nvim",
         dependencies = { "nvim-tree/nvim-web-devicons" },
         opts = {
             options = {
-                theme = "gruvbox"
-            }
+                theme = "gruvbox",
+                globalstatus = true, -- single statusline for all splits
+            },
+            extensions = { "nvim-tree", "toggleterm", "lazy", "mason" },
         },
     }
 }

@@ -11,7 +11,8 @@ set.cursorline = true
 set.encoding = "utf-8" -- Set default encoding to UTF-8
 set.expandtab = true   -- Use spaces instead of tabs
 set.foldenable = false
-set.foldmethod = "indent"
+set.foldmethod = "expr"
+set.foldexpr = "v:lua.vim.treesitter.foldexpr()" -- treesitter-based folds
 set.formatoptions = "l"
 set.hidden = true        -- Enable background buffers
 set.hlsearch = true      -- Highlight found searches
@@ -43,11 +44,13 @@ set.undodir = fnc.stdpath("data") .. "/undo"
 set.undofile = true
 set.wrap = true
 
-set.syntax = 'on'
+-- (removed `syntax=on`: redundant, treesitter handles highlighting; nvim
+-- keeps default syntax as fallback for filetypes without a parser)
 
-api.nvim_exec([[
-    augroup HighlightOnYank
-        autocmd!
-        autocmd TextYankPost * lua vim.highlight.on_yank { higroup = 'IncSearch', timeout = 150, on_visual = true }
-    augroup END
-]], false)
+-- highlight yanked text (vim.hl + autocmd API; nvim_exec/vim.highlight are deprecated)
+api.nvim_create_autocmd("TextYankPost", {
+    group = api.nvim_create_augroup("HighlightOnYank", { clear = true }),
+    callback = function()
+        vim.hl.on_yank({ higroup = "IncSearch", timeout = 150 })
+    end,
+})

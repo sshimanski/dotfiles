@@ -1,9 +1,18 @@
 local home = os.getenv('HOME')
-
+local java_root = home .. '/.sdkman/candidates/java/21.0.11-tem'
 local jdtls_home = home .. '/.local/share/nvim/mason/packages/jdtls'
-local launcher = 'org.eclipse.equinox.launcher_1.7.0.v20250519-0528.jar'
 
-local root_dir = require('jdtls.setup').find_root({ '.git', 'mvnw', 'gradlew' })
+-- resolve launcher by glob: its version changes on every mason jdtls update
+local launcher = vim.fn.glob(jdtls_home .. '/plugins/org.eclipse.equinox.launcher_*.jar')
+
+-- guard against nil root: a missing root produced project_name "v:null",
+-- a bogus -data dir and malformed file URIs -> jdtls StackOverflowError.
+local root_dir = require('jdtls.setup').find_root({
+    '.git', 'mvnw', 'gradlew', 'pom.xml', 'build.gradle', 'settings.gradle',
+})
+if not root_dir or root_dir == '' then
+    root_dir = vim.fn.getcwd()
+end
 local project_name = vim.fn.fnamemodify(root_dir, ':t')
 
 local on_attach = function(_, bufnr)
@@ -34,7 +43,7 @@ local config = {
     -- See: https://github.com/eclipse/eclipse.jdt.ls#running-from-the-command-line
     cmd = {
         -- The language server requires a runtime environment of Java 21 (at a minimum) to run.
-        home .. '/.sdkman/candidates/java/21.0.2-open/bin/java',
+        java_root .. '/bin/java',
         '-javaagent:' .. jdtls_home .. '/lombok.jar',
         '-Declipse.application=org.eclipse.jdt.ls.core.id1',
         '-Dosgi.bundles.defaultStartLevel=4',
@@ -42,10 +51,14 @@ local config = {
         '-Dlog.protocol=true',
         '-Dlog.level=ALL',
         '-Xms1G',
+        -- bigger thread stack: lombok's EclipseWorkspaceBasedFileResolver
+        -- recursion overflows the default ~512K stack (StackOverflowError on
+        -- textDocument/definition). 16m gives it room.
+        '-Xss16m',
         '--add-modules=ALL-SYSTEM',
         '--add-opens', 'java.base/java.util=ALL-UNNAMED',
         '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
-        '-jar', jdtls_home .. '/plugins/' .. launcher,
+        '-jar', launcher,
         '-configuration', jdtls_home .. '/config_linux',
         '-data', home .. '/.local/share/nvim/WORKSPACES/' .. project_name
     },
@@ -62,6 +75,9 @@ local config = {
         java = {
             signatureHelp = { enabled = true },
             contentProvider = { preferred = 'fernflower' },
+            -- CodeLens shown above declarations; run with `grx`
+            referencesCodeLens = { enabled = true },
+            implementationsCodeLens = { enabled = true },
             completion = {
                 favoriteStaticMembers = {
                     'org.hamcrest.MatcherAssert.assertThat',
@@ -93,7 +109,7 @@ local config = {
                     },
                     {
                         name = 'JavaSE-21',
-                        path = home .. '/.sdkman/candidates/java/21.0.2-open',
+                        path = java_root,
                         default = false
                     }
                 },

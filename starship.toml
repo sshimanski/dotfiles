@@ -1,0 +1,69 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# One blank line between prompts, keep it readable in a busy terminal.
+add_newline = true
+
+# ❯ in green if last command succeeded, red if it failed.
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+vimcmd_symbol = "[❮](bold green)"
+
+[directory]
+truncation_length = 4
+truncate_to_repo = true
+style = "bold cyan"
+
+[git_branch]
+symbol = " "
+style = "bold purple"
+
+[git_status]
+style = "bold yellow"
+
+[cmd_duration]
+min_time = 2_000
+format = "took [$duration](bold yellow) "
+
+[jobs]
+symbol = "✦ "
+style = "bold blue"
+
+[nodejs]
+symbol = " "
+format = "via [$symbol($version )]($style)"
+
+[golang]
+symbol = " "
+format = "via [$symbol($version )]($style)"
+
+[rust]
+symbol = " "
+format = "via [$symbol($version )]($style)"
+
+[python]
+symbol = " "
+format = "via [$symbol($version )(\\($virtualenv\\) )]($style)"
+
+[java]
+symbol = " "
+format = "via [$symbol($version )]($style)"
+
+[docker_context]
+symbol = " "
+format = "via [$symbol$context]($style) "
+only_with_files = true
+
+[env_var.RANGER_LEVEL]
+format = "[\\[rg\\]]($style) "
+style = "bold green"
+
+[env_var.YAZI_LEVEL]
+format = "[\\[yz\\]]($style) "
+style = "bold green"
+
+[package]
+disabled = true
+
+[time]
+disabled = true

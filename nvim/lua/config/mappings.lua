@@ -9,126 +9,105 @@ end
 
 vim.diagnostic.config({ jump = { float = true } })
 
-map("v", "J", ":m '>+1<CR>gv=gv")
-map("v", "K", ":m '<-2<CR>gv=gv")
+-- ── editing / movement ──────────────────────────────────────────────
+map("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
+map("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
+map("n", "Y", "yg_", { desc = "Yank to line end" })
+map("n", "n", "nzzzv", { desc = "Next search (centered)" })
+map("n", "N", "Nzzzv", { desc = "Prev search (centered)" })
+map("x", "<leader>p", "_dP", { desc = "Paste (keep register)" })
+map("n", "<M-Tab>", "<C-w>w", { desc = "Cycle windows" })
 
-map("n", "Y", "yg_")
--- centering window when hit n/N
-map("n", "n", "nzzzv")
-map("n", "N", "Nzzzv")
-map("x", "<leader>p", "_dP")
--- traversing windows with Alt+Tab
-map("n", "<M-Tab>", "<C-w>w")
+-- motion: flash.nvim — `s` jump, `S` treesitter (keys defined in plugins/misc.lua)
 
--- Hop
-map("n", "<leader><leader>c", "<cmd>lua require('hop').hint_char1()<CR>")
-map("n", "<leader><leader>l", "<cmd>lua require('hop').hint_lines_skip_whitespace()<CR>")
-map("n", "<leader><leader>L", "<cmd>lua require('hop').hint_lines()<CR>")
-map("n", "<leader><leader>p", "<cmd>lua require('hop').hint_patterns()<CR>")
-map("n", "<leader><leader>w", "<cmd>lua require('hop').hint_words()<CR>")
+-- ── config / files ──────────────────────────────────────────────────
+map("n", "<leader>L", ":Lazy<CR>", { desc = "Lazy plugin manager" })
+map("n", "<leader>cl", ":e ~/.local/state/nvim/lsp.log<CR>", { desc = "Open LSP log" })
+map("n", "<leader>ev", "<cmd>lua require('utils').dotfiles()<CR>", { desc = "Edit dotfiles" })
+map("n", "<leader>sv", ":luafile ~/dotfiles/nvim/init.lua<CR>", { desc = "Reload init.lua" })
+-- <leader>k = close buffer -> now Snacks.bufdelete (plugins/snacks.lua)
 
-map("v", "<leader><leader>l", "<cmd>lua require('hop').hint_lines_skip_whitespaces()<CR>")
-map("v", "<leader><leader>L", "<cmd>lua require('hop').hint_lines()<CR>")
-map("v", "<leader><leader>p", "<cmd>lua require('hop').hint_patterns()<CR>")
-map("v", "<leader><leader>w", "<cmd>lua require('hop').hint_words()<CR>")
----
+-- K (hover) removed: nvim 0.11+ sets buffer-local K = vim.lsp.buf.hover() OOB
+--
+-- Telescope on the built-in LSP keys (buffer-local, same semantics as the
+-- native maps but with a fuzzy picker). grn/gra stay native (no telescope eqv).
+vim.api.nvim_create_autocmd("LspAttach", {
+    callback = function(args)
+        local tb = require("telescope.builtin")
+        local function bmap(lhs, fn, desc)
+            vim.keymap.set("n", lhs, fn, { buffer = args.buf, desc = desc })
+        end
+        bmap("gd", tb.lsp_definitions, "Goto definition")        -- enhances native gd
+        bmap("grr", tb.lsp_references, "References")             -- overrides native grr
+        bmap("gri", tb.lsp_implementations, "Implementations")   -- overrides native gri
+        bmap("grt", tb.lsp_type_definitions, "Type definition")  -- overrides native grt
+        bmap("gO", tb.lsp_document_symbols, "Document symbols")  -- overrides native gO
 
-map("n", "<leader>L", ":Lazy<CR>")
-map("n", "<leader>cl", ":e ~/.local/state/nvim/lsp.log<CR>")
-map("n", "<leader>ev", "<cmd>lua require('utils').dotfiles()<CR>")
-map("n", "<leader>sv", ":luafile ~/dotfiles/nvim/init.lua<CR>")
-map("n", "<leader>k", ":bd<CR>")
+        -- CodeLens: enable auto-managed lenses so `grx` (codelens.run) works.
+        -- vim.lsp.codelens.enable() handles refresh internally (0.11+).
+        local client = vim.lsp.get_client_by_id(args.data.client_id)
+        if client and client:supports_method("textDocument/codeLens") then
+            vim.lsp.codelens.enable(true, { bufnr = args.buf })
+        end
+    end,
+})
 
+-- rename removed: use built-in `grn` (0.11+)
+-- <leader>rf format now owned by conform.nvim (plugins/conform.lua, n+v)
+-- visual range-format also via `gq` (LSP formatexpr, 0.11+)
 
-map("n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>")
-map("n", "gd", "<cmd>lua require('telescope.builtin').lsp_definitions({})<CR>")
+map("n", "<leader>dl", "<cmd>lua vim.lsp.buf.list_workspace_folders()<CR>", { desc = "LSP: workspace folders" })
 
--- rr = refactor: rename
-map("n", "<leader>rr", "<cmd>lua vim.lsp.buf.rename()<CR>")
--- rf = refactor: format
-map("n", "<leader>rf", "<cmd>lua vim.lsp.buf.format({async = true})<CR>")
-map("v", "<leader>rf", "<cmd>lua vim.lsp.buf.range_formatting()<CR>")
-
--- TODO
--- dl = do list
-map("n", "<leader>dl", "<cmd>lua vim.lsp.buf.list_workspace_folders()<CR>")
-
-
--- Debugger
+-- ── Debugger (DAP) ──────────────────────────────────────────────────
 map("n", "<F9>", "<Cmd>lua require('dap').continue()<CR>", { desc = 'Debug: continue' })
 map("n", "<F7>", "<Cmd>lua require('dap').step_into()<CR>", { desc = 'Debug: step into' })
 map("n", "<F8>", "<Cmd>lua require('dap').step_over()<CR>", { desc = 'Debug: step over' })
 map("n", "<S-F8>", "<Cmd>lua require('dap').step_out()<CR>", { desc = 'Debug: step out' })
--- db = debug breakpoint
 map("n", "<leader>db", "<Cmd>lua require('dap').toggle_breakpoint()<CR>", { desc = 'Debug: toggle breakpoint' })
 map("n", "<Leader>dB", "<Cmd>lua require('dap').set_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>",
     { desc = 'Debug: conditional breakpoint' })
--- dr = debug repl
 map("n", "<leader>dr", "<Cmd>lua require('dap').repl.toggle()<CR>", { desc = 'Debug: toggle REPL' })
--- dd = debug UI
 map("n", "<leader>dd", "<Cmd>lua require('dapui').toggle()<CR>", { desc = 'Debug: toggle UI' })
--- dc = debug commands
-map("n", "<leader>dc", "<Cmd>lua require('telescope').extensions.dap.commands()<CR>", { desc = 'Debug: list commands' })
+map("n", "<leader>dc", "<Cmd>lua require('telescope').extensions.dap.commands()<CR>", { desc = 'Debug: commands' })
+map("n", "<leader>dC", "<Cmd>lua require('telescope').extensions.dap.configurations()<CR>", { desc = 'Debug: configurations' })
+map("n", "<leader>dp", "<Cmd>lua require('telescope').extensions.dap.list_breakpoints()<CR>", { desc = 'Debug: list breakpoints' })
+map("n", "<leader>df", "<Cmd>lua require('telescope').extensions.dap.frames()<CR>", { desc = 'Debug: frames' })
+map("n", "<leader>dv", "<Cmd>lua require('telescope').extensions.dap.variables()<CR>", { desc = 'Debug: variables' })
 
-
--- ga = Git branches
+-- ── Git ─────────────────────────────────────────────────────────────
 map("n", "<leader>gb", "<cmd>lua require('telescope.builtin').git_branches({})<CR>", { desc = 'Git: branches' })
--- gc = Git Commits
 map("n", "<leader>gc", "<cmd>lua require('telescope.builtin').git_commits()<CR>", { desc = 'Git: commits' })
--- gg = Git Git
 map("n", "<leader>gg", ":Gitsigns<CR>", { desc = "Git: menu" })
--- gd = Git History ([B]uffer commits)
-map("n", "<leader>gh", "<cmd>lua require('telescope.builtin').git_bcommits()<CR>", { desc = 'Git: history' })
--- gs = Git Status
+map("n", "<leader>gh", "<cmd>lua require('telescope.builtin').git_bcommits()<CR>", { desc = 'Git: buffer history' })
 map("n", "<leader>gs", "<cmd>lua require('telescope.builtin').git_status()<CR>", { desc = 'Git: status' })
 
--- !!!
-map("n", "<leader>b", "<cmd>lua require('telescope.builtin').builtin()<CR>")
+-- ── Find (f*) ───────────────────────────────────────────────────────
+map("n", "<leader>b", "<cmd>lua require('telescope.builtin').builtin()<CR>", { desc = "Telescope: builtins" })
+map("n", "<leader>fb", "<cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<CR>", { desc = "Find: in buffer" })
+map("n", "<leader>fp", "<cmd>lua require('telescope').extensions.live_grep_args.live_grep_args()<CR>", { desc = "Find: grep (with args)" })
+map("n", "<leader>fw", "<cmd>lua require('telescope.builtin').grep_string { search = vim.fn.expand('<cword>') }<CR>", { desc = "Find: word under cursor" })
+map("n", "<leader>ff", "<cmd>lua require('telescope').extensions.frecency.frecency({ workspace = 'CWD' })<CR>", { desc = "Find: frecency files" })
+map("n", "<leader>fe", "<cmd>lua require('telescope').extensions.file_browser.file_browser({ path = '%:p:h', select_buffer = true })<CR>", { desc = "Find: file browser" })
+map("n", "<leader>fz", "<cmd>lua require('telescope').extensions.zoxide.list()<CR>", { desc = "Find: zoxide dirs" })
+map("n", "<leader>ll", "<cmd>lua require('telescope.builtin').resume()<CR>", { desc = "List: resume last picker" })
+map("n", "<leader>u", "<cmd>lua require('telescope').extensions.undo.undo()<CR>", { desc = "Undo history" })
 
--- fb = find Buffer
-map("n", "<leader>fb", "<cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<CR>")
--- fp = find Project
-map("n", "<leader>fp", "<cmd>lua require('telescope.builtin').live_grep()<CR>")
--- fw = find Word
-map("n", "<leader>fw", "<cmd>lua require('telescope.builtin').grep_string { search = vim.fn.expand('<cword>') }<CR>")
+-- ── List (l*) ───────────────────────────────────────────────────────
+map("n", "<leader>lb", "<cmd>lua require('telescope.builtin').buffers()<CR>", { desc = "List: buffers" })
+map("n", "<leader>ld", "<cmd>lua require('telescope.builtin').find_files()<CR>", { desc = "List: files (cwd)" })
+map("n", "<leader>lc", "<cmd>lua require('telescope.builtin').find_files({search_file = '*.java', prompt_title = 'Java Classes'})<CR>", { desc = "List: java classes" })
+map("n", "<leader>le", "<cmd>lua require('telescope.builtin').diagnostics()<CR>", { desc = "List: diagnostics" })
+map("n", "<leader>lf", "<cmd>lua require('utils').project_files()<CR>", { desc = "List: project files" })
+map("n", "<leader>lh", "<cmd>lua require('telescope.builtin').help_tags()<CR>", { desc = "List: help tags" })
+map("n", "<leader>lk", "<cmd>lua require('telescope.builtin').keymaps()<CR>", { desc = "List: keymaps" })
+map("n", "<leader>lm", "<cmd>lua require('telescope.builtin').marks()<CR>", { desc = "List: marks" })
+map("n", "<leader>lr", "<cmd>lua require('telescope.builtin').oldfiles()<CR>", { desc = "List: recent files" })
+map("n", "<leader>lR", "<cmd>lua require('telescope.builtin').registers()<CR>", { desc = "List: registers" })
+map("n", "<leader>lw", "<cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols()<CR>", { desc = "List: workspace symbols" })
+map("n", "<leader>:", "<cmd>lua require('telescope.builtin').command_history()<CR>", { desc = "List: command history" })
 
--- la = List Actions
-map("n", "<leader>la", "<cmd>lua vim.lsp.buf.code_action()<CR>")
-map("v", "<leader>la", "<cmd>lua vim.lsp.buf.range_code_action()<CR>")
--- lb = List Buffers
-map("n", "<leader>lb", "<cmd>lua require('telescope.builtin').buffers()<CR>")
--- ld = List Dir (current working dir)
-map("n", "<leader>ld", "<cmd>lua require('telescope.builtin').find_files()<CR>")
--- lc = List classes
-map("n", "<leader>lc", "<cmd>lua require('telescope.builtin').find_files({search_file = '*.java', prompt_title = 'Java Classes'})<CR>")
--- le = List Errors
-map("n", "<leader>le", "<cmd>lua require('telescope.builtin').diagnostics()<CR>")
--- lf = List Files
-map("n", "<leader>lf", "<cmd>lua require('utils').project_files()<CR>")
--- lh = list help
-map("n", "<leader>lh", "<cmd>lua require('telescope.builtin').help_tags()<CR>")
--- lk = list keymaps
-map("n", "<leader>lk", "<cmd>lua require('telescope.builtin').keymaps()<CR>")
--- lm = list marks
-map("n", "<leader>lm", "<cmd>lua require('telescope.builtin').marks()<CR>")
--- lr = List Recent
-map("n", "<leader>lr", "<cmd>lua require('telescope.builtin').oldfiles()<CR>")
--- lr = List Registers
-map("n", "<leader>lR", "<cmd>lua require('telescope.builtin').registers()<CR>")
--- ls = List Symbols; (Ctrl-l) - to filter symbols
-map("n", "<leader>ls", "<cmd>lua require('telescope.builtin').lsp_document_symbols()<CR>")
--- lw = List Workspace
-map("n", "<leader>lw", "<cmd>lua require('telescope.builtin').lsp_dynamic_workspace_symbols()<CR>")
--- l: = List command history
-map("n", "<leader>:", "<cmd>lua require('telescope.builtin').command_history()<CR>")
+-- <leader>tu/tt/ti removed -> built-in `grr`/`grt`/`gri` (telescope, see LspAttach)
 
--- tu = to Usages
-map("n", "<leader>tu", "<cmd>lua require('telescope.builtin').lsp_references()<CR>")
--- tt = to Type
-map("n", "<leader>tt", "<cmd>lua require('telescope.builtin').lsp_type_definitions()<CR>")
--- ti = to Implementations
-map("n", "<leader>ti", "<cmd>lua require('telescope.builtin').lsp_implementations()<CR>")
+map("n", "<M-1>", "<cmd>lua require('nvim-tree.api').tree.toggle()<CR>", { desc = "Toggle file tree" })
 
-map("n", "<M-1>", "<cmd>lua require('nvim-tree.api').tree.toggle()<CR>")
-
-map("i", "<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>")
+-- signature help removed: use built-in insert-mode `<C-s>` (0.11+)

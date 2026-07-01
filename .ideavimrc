@@ -5,14 +5,14 @@
 " set laststatus=2
 set hlsearch
 set ignorecase
-" set incsearch
+set incsearch
 set showcmd
 set showmode
 set smartcase
 " set rnu
 set nu
+set scrolloff=5
 set NERDTree
-set ideajoin
 
 let mapleader=","
 nnoremap ' `
@@ -31,10 +31,20 @@ set exchange
 set ideajoin
 " Enable highliting yanked text
 set highlightedyank
+" Argument text object: ia / aa (great for Java method args)
+set argtextobj
+" Entire-buffer text object: ae / ie
+set textobj-entire
+" matchit: % jumps if/end, tags, brackets
+set matchit
+" which-key popup (install 'IdeaVim-which-key' plugin from Marketplace)
+set which-key
+set notimeout
 
 nnoremap <Space> <nop>
 nnoremap <leader>ev :e ~/.ideavimrc<CR>
 nnoremap <leader>sv :source ~/.ideavimrc<CR>
+" edit Idea
 nmap <leader>ei <Action>(ShowSettings)
 
 map <leader>y "+y
@@ -42,14 +52,16 @@ map <leader>Y "+yg_
 map <leader>p "*p
 map <leader>P a<space><esc>p
 
-" Do not overwrite unnamed register with x and s
+" Do not overwrite unnamed register with x
 nnoremap x "_x
-nnoremap s "_s
+" s = flash-style jump (AceJump char mode), matches nvim flash `s`.
+" (substitute char: use `cl`. n+x only, so surround ds/cs/ys stay intact)
+nmap s <Action>(AceTargetAction)
+xmap s <Action>(AceTargetAction)
 
 noremap Y yg_
 nnoremap n nzzzv
 nnoremap N Nzzzv
-" nnoremap gd gdzz
 nnoremap vv ggVG
 nnoremap gd gdzz
 
@@ -66,9 +78,21 @@ nmap [m <Action>(MethodUp)
 nmap ]d <Action>(GotoNextError)<Action>(ShowErrorDescription)
 nmap [d <Action>(GotoPreviousError)<Action>(ShowErrorDescription)
 
-" camelcase words: ] - forward, [ - backward
-noremap [w [b
-noremap ]w [w
+" LSP nav: match nvim built-in `gr*` cluster (Go Refactor)
+" gd already mapped below (gdzz). grn=name, grr=refs, gri=impl, grt=type,
+" gra=action, gO=outline. K=hover, <C-s>=signature.
+nmap gO  <Action>(FileStructurePopup)
+nmap gra <Action>(ShowIntentionActions)
+nmap gri <Action>(GotoImplementation)
+nmap grn <Action>(RenameElement)
+nmap grr <Action>(ShowUsages)
+nmap grR <Action>(FindUsages)
+nmap grs <Action>(GotoSuperMethod)
+nmap grt <Action>(GotoTypeDeclaration)
+nmap grT <Action>(GotoTest)
+nmap grx <Action>(RunClass)
+nmap K   <Action>(QuickJavaDoc)
+
 nmap [c <Action>(VcsShowPrevChangeMarker)<Action>(Vcs.ShowDiffWithLocal)
 nmap ]c <Action>(VcsShowNextChangeMarker)<Action>(Vcs.ShowDiffWithLocal)
 nnoremap [<Space> O<ESC>j 0 w
@@ -89,10 +113,12 @@ nmap <C-S-k> <Action>(PreviousIdentifierReloaded)
 nmap <C-S-h> <Action>(MoveElementLeft)
 nmap <C-S-l> <Action>(MoveElementRight)
 
-imap <C-k> <C-O><Action>(ParameterInfo) i
+" signature help: match nvim built-in insert-mode <C-s>
+imap <C-s> <Action>(ParameterInfo)
 
 " hr = hunk reset
 nmap <leader>hr <Action>(Vcs.RollbackChangedLines)
+nmap <leader>hR <Action>(ChangesView.Revert)
 " hp = hunk preview (popup)
 nmap <leader>hp <Action>(Vcs.ShowDiffWithLocal)
 " hD = hunk Diff (side by side window)
@@ -101,8 +127,7 @@ nmap <leader>hD <Action>(Vcs.ShowDiffChangedLines)
 noremap <leader>hB :action Annotate<CR>
 
 " nvim: Telescope
-" noremap <leader>la :action QuickActions<CR>
-nmap <leader>la <Action>(Refactorings.QuickListPopupAction)
+" not able to search in switcher
 nmap <leader>lb <Action>(RecentFiles)
 nmap <leader>lf <Action>(GotoFile)
 nmap <leader>lc <Action>(GotoClass)
@@ -110,18 +135,17 @@ nmap <leader>ll <Action>(RecentLocations)
 nmap <leader>lm <Action>(ShowBookmarks)
 nmap <leader>lp <Action>(ManageRecentProjects)
 nmap <leader>lr <Action>(RecentChangedFiles)
-nmap <leader>ls <Action>(FileStructurePopup)
+nmap <leader>le <Action>(ActivateProblemsViewToolWindow)
 
 """""""""" Refactor.
 " refactor: menu
 noremap <leader>rm :action RefactoringMenu<CR>
-" refactor: format
-noremap <leader>rf :action ReformatCode<CR><Bar>:action AutoIndentLines<Bar>:action OptimizeImports<CR>
-vnoremap <leader>rf :action ReformatCode<Bar>:action AutoIndentLines<Bar><CR>
+" format (grf = Go Refactor Format)
+noremap grf :action ReformatCode<CR><Bar>:action AutoIndentLines<Bar>:action OptimizeImports<CR>
+vnoremap grf :action ReformatCode<Bar>:action AutoIndentLines<Bar><CR>
 " refactor: inline
 noremap <leader>ri :action Inline<CR>
-" refactor: rename
-noremap <leader>rr :action RenameElement<CR>
+" rename removed -> built-in `grn`
 """""""""" Refactor. End.
 
 """""""""" Find.
@@ -133,7 +157,7 @@ nmap <leader>fw viw<Action>(FindInPath)
 
 noremap <leader><leader>l :action AceLineIndentsAction<CR>
 noremap <leader><leader>w :action AceWordStartAction<CR>
-noremap <leader><leader>c :action AceTargetAction<CR>
+" <leader><leader>c removed -> duplicate of `s` (AceTargetAction)
 
 nmap gm :action ToggleBookmark<CR>
 nmap gM :action ToggleBookmarkWithMnemonic<CR>
@@ -142,15 +166,6 @@ nmap gp :action GotoPreviousBookmark<CR>
 
 " maximize working area
 noremap <C--> :action HideAllWindows<CR>
-
-" Mnemonic: 'to'
-nnoremap <leader>tt :action GotoTypeDeclaration<CR>
-nnoremap <leader>ti :action GotoImplementation<CR>
-nnoremap <leader>tu :action ShowUsages<CR>
-nnoremap <leader>tU :action FindUsages<CR>
-nnoremap <leader>ts :action GotoSuperMethod<CR>
-
-nnoremap tt :action GotoTest<CR>
 
 " to 'class'
 nnoremap [[ gg<BAR>:action MethodDown<CR><BAR>zt
@@ -193,7 +208,10 @@ noremap <leader>m :action Move<CR>
 noremap <leader>G :action Generate<CR>
 vnoremap <leader>s :action SurroundWithLiveTemplate<CR>
 
-noremap \t :action ChooseDebugConfiguration<CR>
+vmap an <Action>(EditorSelectWord)
+vmap in <Action>(EditorUnSelectWord)
+
+" \t removed -> was duplicate of \d (ChooseDebugConfiguration)
 noremap \d :action ChooseDebugConfiguration<CR>
 noremap \r :action ChooseRunConfiguration<CR>
 noremap \s :action Stop<CR>
