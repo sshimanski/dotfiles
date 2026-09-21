@@ -1,0 +1,316 @@
+#!/usr/bin/env bash
+#
+# pwrsave — maximise battery runtime on the MSI GF63 Thin 11UC (i7-11800H, Ubuntu 24.04, i3).
+# Target profile: browser + internet, nothing else.
+#
+#   sudo pwrsave        stop everything that is not needed for browsing
+#        pwrsave -s     what is draining the battery right now (no root)
+#
+# There is no undo and no state file: every unit is stopped, never disabled, so
+# a reboot brings the machine back exactly as it was. Reboot IS the undo.
+#
+# One non-unit exception: the bluetooth radio is rfkill-blocked. That is kernel
+# state, not a unit — it clears on reboot only while systemd-rfkill is masked,
+# which the Undo section checks at runtime rather than assuming.
+#
+# The one thing that outlives a reboot is /etc/tlp.d/99-pwrsave.conf. It only
+# takes effect on battery, so it costs nothing plugged in. Remove with:
+#   sudo rm /etc/tlp.d/99-pwrsave.conf && sudo tlp start
+
+set -uo pipefail
+
+TLP_DROPIN=/etc/tlp.d/99-pwrsave.conf
+BAT=/sys/class/power_supply/BAT1
+DGPU=/sys/bus/pci/devices/0000:01:00.0/power
+
+# Safe to stop for a browsing session. Deliberately absent: gdm (kills the
+# session), NetworkManager, wpa_supplicant, systemd-resolved, dbus, polkit,
+# logind, upower, thermald (thermal limits), earlyoom, systemd-oomd.
+SYS_UNITS=(
+  docker.socket docker.service containerd.service
+  cups.service cups.socket cups-browsed.service
+  smbd.service nmbd.service
+  avahi-daemon.service avahi-daemon.socket
+  ModemManager.service
+  fwupd.service
+  kerneloops.service
+  unattended-upgrades.service
+  udisks2.service
+  colord.service
+  switcheroo-control.service
+  accounts-daemon.service
+  rsyslog.service
+  cron.service
+  snapd.service snapd.socket
+  packagekit.service
+)
+
+# Persistent=yes timers fire the moment the laptop comes up, to catch up on the
+# slot they missed while it was off. By then the service is already churning, so
+# stopping the timer alone is too late.
+CATCHUP_SERVICES=(
+  apt-daily.service apt-daily-upgrade.service
+  man-db.service fwupd-refresh.service motd-news.service
+  logrotate.service e2scrub_all.service fstrim.service
+  update-notifier-download.service update-notifier-motd.service
+  plocate-updatedb.service apt-news.service esm-cache.service
+  dpkg-db-backup.service anacron.service
+)
+
+USER_UNITS=(
+  mpd.service
+  filter-chain.service
+  obex.service
+  gvfs-mtp-volume-monitor.service
+  gvfs-gphoto2-volume-monitor.service
+  gvfs-afc-volume-monitor.service
+  gvfs-goa-volume-monitor.service
+  gvfs-udisks2-volume-monitor.service
+  at-spi-dbus-bus.service
+)
+
+DESKTOP_USER=${SUDO_USER:-$USER}
+DESKTOP_UID=$(id -u "$DESKTOP_USER")
+
+# sudo scrubs DISPLAY and XAUTHORITY, and under gdm the cookie lives at
+# /run/user/UID/gdm/Xauthority, not ~/.Xauthority. Read both off the running i3.
+i3_env() { tr '\0' '\n' < "/proc/$(pgrep -x i3 | head -1)/environ" 2>/dev/null |
+             sed -n "s/^$1=//p" | head -1; }
+X_DISPLAY=$(i3_env DISPLAY);      : "${X_DISPLAY:=${DISPLAY:-:0}}"
+X_AUTHORITY=$(i3_env XAUTHORITY); : "${X_AUTHORITY:=${XAUTHORITY:-/run/user/$DESKTOP_UID/gdm/Xauthority}}"
+
+msg()   { printf '  %s\n' "$*"; }
+head_() { printf '\n\033[1m%s\033[0m\n' "$*"; }
+
+as_user() {
+  local -a e=(
+    XDG_RUNTIME_DIR="/run/user/$DESKTOP_UID"
+    DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$DESKTOP_UID/bus"
+  )
+  if [[ $EUID -eq $DESKTOP_UID ]]; then env "${e[@]}" "$@"
+  else runuser -u "$DESKTOP_USER" -- env "${e[@]}" "$@"; fi
+}
+
+as_user_docker() {
+  if [[ $EUID -eq $DESKTOP_UID ]]; then docker "$@"
+  else runuser -u "$DESKTOP_USER" -- docker "$@"; fi
+}
+
+xset_() { as_user env DISPLAY="$X_DISPLAY" XAUTHORITY="$X_AUTHORITY" xset "$@"; }
+
+# Right after a cold boot half the units are still "activating"; is-active
+# --quiet only succeeds on "active", so they would slip past and start up behind
+# our back a minute later.
+is_up() {
+  local out
+  if [[ ${1:-} == --user ]]; then shift; out=$(as_user systemctl --user is-active "$@" 2>/dev/null)
+  else out=$(systemctl is-active "$@" 2>/dev/null); fi
+  case "$out" in active|activating|reloading) return 0 ;; *) return 1 ;; esac
+}
+
+# --- bluetooth ---------------------------------------------------------------
+
+# Stopping bluetooth.service alone achieves nothing here. org.bluez is D-Bus
+# activated (/usr/share/dbus-1/system-services/org.bluez.service ->
+# dbus-org.bluez.service) and blueman-applet talks to it within seconds, so
+# systemd starts bluetoothd right back. It never touched the radio either:
+# killing the daemon leaves the controller powered. Only rfkill powers it down.
+bt_blocked() { [[ $(rfkill -n -o SOFT list bluetooth 2>/dev/null | head -1) == blocked ]]; }
+
+bt_off() {
+  rfkill block bluetooth >/dev/null 2>&1
+  systemctl stop blueman-mechanism.service >/dev/null 2>&1
+  systemctl stop bluetooth.service >/dev/null 2>&1
+  if bt_blocked; then
+    msg "radio blocked via rfkill"
+    msg "bluetoothd may reappear (blueman re-activates it over D-Bus) — that is"
+    msg "an idle daemon with a dead radio, it costs nothing"
+  else
+    msg "rfkill block failed — radio still on"
+  fi
+}
+
+# --- battery -----------------------------------------------------------------
+
+# No power_now on this battery: watts = current_now(uA) * voltage_now(uV) / 1e12.
+bat_watts() {
+  local c v
+  c=$(< "$BAT/current_now") || return 1
+  v=$(< "$BAT/voltage_now") || return 1
+  c=${c#-}                      # some ACPI report it negative while discharging
+  [[ $c -eq 0 ]] && return 1
+  awk -v c="$c" -v v="$v" 'BEGIN { printf "%.1f", (c * v) / 1e12 }'
+}
+
+bat_wh_left() {
+  awk -v c="$(< "$BAT/charge_now")" -v v="$(< "$BAT/voltage_min_design")" \
+    'BEGIN { printf "%.1f", (c * v) / 1e12 }'
+}
+
+bat_report() {
+  local w wh; wh=$(bat_wh_left)
+  head_ "Battery"
+  msg "$(< "$BAT/capacity")%  ($(< "$BAT/status"))  ~${wh} Wh left"
+  awk -v f="$(< "$BAT/charge_full")" -v d="$(< "$BAT/charge_full_design")" \
+    'BEGIN { printf "  health: %.0f%% of design (%.2f/%.2f Ah)\n", f/d*100, f/1e6, d/1e6 }'
+  if w=$(bat_watts); then
+    msg "draw:   ${w} W"
+    awk -v wh="$wh" -v w="$w" 'BEGIN { printf "  left:   ~%.1f h at this draw\n", wh/w }'
+  else
+    msg "draw:   n/a (on AC — unplug to measure)"
+  fi
+}
+
+# --- status ------------------------------------------------------------------
+
+do_status() {
+  bat_report
+
+  head_ "Top CPU (this is what actually costs watts)"
+  ps -eo pcpu,comm --sort=-pcpu --no-headers | head -8 |
+    awk '$1 > 1 { printf "  %5s%%  %s\n", $1, $2 }'
+
+  head_ "Docker"
+  if as_user_docker ps --format '{{.Names}}' 2>/dev/null | grep -q .; then
+    as_user_docker ps --format '{{.Names}}\t{{.Status}}' 2>/dev/null |
+      awk -F'\t' '{ printf "  %-24s %s\n", $1, $2 }'
+  else
+    msg "no running containers"
+  fi
+
+  head_ "Still up"
+  local u n=0
+  for u in "${SYS_UNITS[@]}";  do is_up "$u"        && { msg "$u"; n=$((n+1)); }; done
+  for u in "${USER_UNITS[@]}"; do is_up --user "$u" && { msg "(user) $u"; n=$((n+1)); }; done
+  msg "-- $n unit(s), $(systemctl list-units --type=timer --state=active --no-legend 2>/dev/null | wc -l) active timer(s)"
+
+  head_ "Knobs"
+  msg "governor:  $(< /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor)   epp: $(< /sys/devices/system/cpu/cpu0/cpufreq/energy_performance_preference)"
+  msg "turbo:     $([[ $(< /sys/devices/system/cpu/intel_pstate/no_turbo) == 1 ]] && echo off || echo on)"
+  msg "backlight: $(as_user brightnessctl -m 2>/dev/null | cut -d, -f4)"
+  msg "tlp:       mode $(tlp-stat -s 2>/dev/null | awk -F'= ' '/^Mode/ { print $2 }')  dropin $([[ -f $TLP_DROPIN ]] && echo yes || echo no)"
+  msg "wifi ps:   $(iw dev wlo1 get power_save 2>/dev/null | awk '{ print $3 }')"
+  msg "dGPU:      $(< "$DGPU/runtime_status") (pm=$(< "$DGPU/control"))"
+  msg "bluetooth: radio $(bt_blocked && echo blocked || echo on)   bluetoothd $(systemctl is-active bluetooth.service 2>/dev/null)"
+}
+
+# --- go ----------------------------------------------------------------------
+
+write_tlp_dropin() {
+  # TLP re-applies its whole profile on every AC/BAT transition, so the CPU,
+  # wifi, USB, PCIe, disk and audio knobs have to live in its config — a manual
+  # sysfs write would be reverted the next time the cable moves.
+  cat > "$TLP_DROPIN" <<'EOF'
+# written by pwrsave — battery-first overrides, loaded after /etc/tlp.conf
+# no CPU_MAX_PERF cap on purpose: it defeats race-to-idle when browsing
+CPU_ENERGY_PERF_POLICY_ON_BAT=power
+CPU_SCALING_GOVERNOR_ON_BAT=powersave
+CPU_BOOST_ON_BAT=0
+CPU_HWP_DYN_BOOST_ON_BAT=0
+
+WIFI_PWR_ON_BAT=on
+WOL_DISABLE=Y
+
+RUNTIME_PM_ON_BAT=auto
+USB_AUTOSUSPEND=1
+PCIE_ASPM_ON_BAT=powersupersave
+SOUND_POWER_SAVE_ON_BAT=1
+
+DISK_APM_LEVEL_ON_BAT="128 128"
+DISK_IOSCHED="none none"
+NMI_WATCHDOG=0
+EOF
+}
+
+do_go() {
+  if [[ $EUID -ne 0 ]]; then
+    echo "needs root: sudo $0" >&2; exit 1
+  fi
+  local u n
+
+  head_ "Docker"
+  local running; running=$(as_user_docker ps -q 2>/dev/null)
+  if [[ -n $running ]]; then
+    msg "stopping: $(as_user_docker ps --format '{{.Names}}' 2>/dev/null | tr '\n' ' ')"
+    as_user_docker stop $running >/dev/null 2>&1
+  else
+    msg "no running containers"
+  fi
+
+  head_ "Bluetooth"
+  bt_off
+
+  head_ "System units"
+  for u in "${SYS_UNITS[@]}"; do
+    is_up "$u" && systemctl stop "$u" >/dev/null 2>&1 && msg "stopped $u"
+  done
+
+  head_ "Timers"
+  # Every active timer, not a hardcoded list — nothing on a timer is needed for
+  # a browsing session, and the reboot puts them all back.
+  n=0
+  while read -r u; do
+    [[ -n $u ]] && systemctl stop "$u" >/dev/null 2>&1 && n=$((n+1))
+  done < <(systemctl list-units --type=timer --state=active --no-legend 2>/dev/null | awk '{print $1}')
+  msg "stopped $n timer(s)"
+
+  n=0
+  for u in "${CATCHUP_SERVICES[@]}"; do
+    is_up "$u" && systemctl stop "$u" >/dev/null 2>&1 && n=$((n+1))
+  done
+  [[ $n -gt 0 ]] && msg "killed $n post-boot catch-up job(s) already running"
+
+  head_ "User units"
+  for u in "${USER_UNITS[@]}"; do
+    is_up --user "$u" && as_user systemctl --user stop "$u" >/dev/null 2>&1 && msg "stopped $u"
+  done
+
+  head_ "TLP"
+  write_tlp_dropin
+  tlp bat >/dev/null 2>&1 && msg "battery profile applied (survives reboot, only acts on battery)"
+
+  head_ "Screen"
+  # i3 does not blank the panel on its own; the display is the largest
+  # continuous load after the CPU. xset settings die with the X session.
+  xset_ dpms 120 180 240 && xset_ s 120 120 && msg "blank after 2 min, off after 4"
+  as_user brightnessctl -q set 15% && msg "backlight 15% (Fn keys to change)"
+
+  head_ "Left running on purpose"
+  msg "VPN (hiddify/tun0), NetworkManager, pipewire, thermald, oom protection"
+
+  # No driver is bound to the dGPU (prime-select=intel, nvidia not loaded), so
+  # PCI runtime PM probably cannot reach D3. Try, then check — do not claim it.
+  head_ "dGPU (RTX 3050)"
+  [[ -w $DGPU/control ]] && echo auto > "$DGPU/control" 2>/dev/null
+  if [[ $(< "$DGPU/runtime_status") == suspended ]]; then
+    msg "suspended — powered down"
+  else
+    msg "still $(< "$DGPU/runtime_status") — no driver bound, runtime PM cannot reach D3."
+    msg "Real fix is BIOS (disable MSHybrid) or nvidia with"
+    msg "NVreg_DynamicPowerManagement=0x02 — out of scope for a shell script."
+  fi
+
+  head_ "Biggest drain left is yours to close"
+  ps -eo pcpu,pid,comm --sort=-pcpu --no-headers | head -6 |
+    awk '$1 > 15 { printf "  %5s%%  pid %-7s %s\n", $1, $2, $3 }'
+  msg "Close the IDE / node / extra chrome above — they cost more watts"
+  msg "than everything this script just did."
+
+  bat_report
+  head_ "Undo"
+  msg "reboot"
+  msg "bluetooth back without a reboot:  sudo rfkill unblock bluetooth"
+  if [[ $(systemctl is-enabled systemd-rfkill.service 2>/dev/null) == masked ]]; then
+    msg "(systemd-rfkill is masked, so a reboot clears the block on its own)"
+  else
+    msg "(systemd-rfkill restores rfkill state, so a reboot will NOT clear it)"
+  fi
+  msg "if the tray still shows bluetooth off afterwards, blueman is remembering"
+  msg "the adapter state — toggle it once from the blueman tray icon"
+}
+
+case "${1:-go}" in
+  -s|--status|status) do_status ;;
+  go)                 do_go ;;
+  *) sed -n '3,12p' "$0" | sed 's/^# \?//'; exit 1 ;;
+esac

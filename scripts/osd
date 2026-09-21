@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+# On-screen display for volume and brightness.
+#
+# Performs the wpctl/brightnessctl call itself, then shows the resulting level
+# as a dunst progress bar. dunstrc already has progress_bar enabled; the
+# [osd] rule there strips the appname header and shortens the timeout.
+#
+# usage: osd vol up|down|mute
+#        osd bright up|down
+
+set -euo pipefail
+
+SINK=@DEFAULT_AUDIO_SINK@
+STEP=5
+
+# $1 summary, $2 value 0..100, $3 icon name
+show() {
+    dunstify -a osd -u low \
+        -h string:x-dunst-stack-tag:osd \
+        -h "int:value:$2" \
+        -i "$3" \
+        "$1 $2%"
+}
+
+volume_percent() {
+    # "Volume: 0.45" or "Volume: 0.45 [MUTED]"
+    wpctl get-volume "$SINK" | awk '{printf "%d", $2 * 100 + 0.5}'
+}
+
+muted() {
+    wpctl get-volume "$SINK" | grep -q MUTED
+}
+
+case "${1:-}" in
+    vol)
+        case "${2:-}" in
+            up)   wpctl set-volume -l 1.0 "$SINK" "${STEP}%+" ;;
+            down) wpctl set-volume "$SINK" "${STEP}%-" ;;
+            mute) wpctl set-mute "$SINK" toggle ;;
+            *)    echo "usage: osd vol up|down|mute" >&2; exit 2 ;;
+        esac
+        if muted; then
+            show "Muted" 0 audio-volume-muted
+        else
+            pct=$(volume_percent)
+            show "Volume" "$pct" audio-volume-high
+        fi
+        ;;
+    bright)
+        case "${2:-}" in
+            up)   brightnessctl -q set "${STEP}%+" ;;
+            down) brightnessctl -q set "${STEP}%-" ;;
+            *)    echo "usage: osd bright up|down" >&2; exit 2 ;;
+        esac
+        pct=$(brightnessctl -m | cut -d, -f4 | tr -d '%')
+        show "Brightness" "$pct" display-brightness
+        ;;
+    *)
+        echo "usage: osd vol|bright ..." >&2
+        exit 2
+        ;;
+esac

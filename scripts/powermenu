@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# Power menu: one row of icon tiles in rofi, wired to systemd and i3.
+# Bound to $mod+q.
+
+set -uo pipefail
+
+THEME="$HOME/dotfiles/rofi/powermenu.rasi"
+ICON_FONT="DejaVuSansM Nerd Font 26"
+LABEL_FONT="Ubuntu Sans Medium 10"
+
+# Two lines per tile: glyph over label. Needs -markup-rows, and a row
+# separator other than newline.
+tile() { printf '<span font="%s">%s</span>\n<span font="%s">%s</span>' \
+    "$ICON_FONT" "$1" "$LABEL_FONT" "$2"; }
+
+lock=$(tile      $'' Lock)
+logout=$(tile    $'' Logout)
+suspend=$(tile   $'' Suspend)
+hibernate=$(tile $'' Hibernate)
+reboot=$(tile    $'' Reboot)
+poweroff=$(tile  $'' Shutdown)
+
+mesg="$(whoami)@$(hostname) · up $(uptime -p | sed 's/^up //')"
+
+chosen=$(printf '%s;%s;%s;%s;%s;%s' \
+    "$lock" "$logout" "$suspend" "$hibernate" "$reboot" "$poweroff" \
+    | rofi -dmenu -sep ';' -markup-rows -no-custom \
+           -theme "$THEME" -mesg "$mesg" -p power) || exit 0
+
+[ -z "$chosen" ] && exit 0
+
+case "$chosen" in
+    "$lock")      loginctl lock-session ;;
+    "$logout")    i3-msg exit ;;
+    "$suspend")   systemctl suspend ;;
+    "$hibernate") systemctl hibernate ;;
+    "$reboot")    systemctl reboot ;;
+    "$poweroff")  systemctl poweroff ;;
+esac
