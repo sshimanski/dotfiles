@@ -12,14 +12,16 @@
 
 [delta]
     navigate = true  # use n and N to move between diff sections
-    syntax-theme = gruvbox-dark 
+    syntax-theme = gruvbox-dark
     side-by-side = true
-    features = decorations
     line-numbers = true
+    line-numbers-left-format = "{nm:^4}"
+    line-numbers-right-format = "{np:^4}"
+    hunk-header-decoration-style = omit
+    file-decoration-style = omit
 
 [merge]
-    conflictstyle = diff3
-    ; conflictstyle = zdiff3
+    conflictstyle = zdiff3
 
 [diff]
     colorMoved = default
