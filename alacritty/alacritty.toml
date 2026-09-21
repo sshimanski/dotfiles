@@ -1,0 +1,56 @@
+[general]
+# Absolute path on purpose: this file is a symlink into ~/dotfiles, and a
+# relative import would be resolved against the link target, not ~/.config.
+import = ["/home/administrator/.config/alacritty/themes/themes/gruvbox_dark.toml"]
+
+[font]
+size = 11
+
+[font.normal]
+family = "DejaVuSansM Nerd Font"
+style = "Regular"
+
+[font.bold]
+family = "DejaVuSansM Nerd Font"
+style = "Bold"
+
+[font.italic]
+family = "DejaVuSansM Nerd Font"
+style = "Italic"
+
+[selection]
+save_to_clipboard = true
+
+[window]
+dynamic_title = true
+opacity = 0.86
+
+[[keyboard.bindings]]
+key = "Return"
+mods = "Shift"
+chars = "\u001B\r"
+
+# Clipboard and scrollback search on a non-Latin layout. The stock
+# Ctrl+Shift+C/V/F/B bindings match the *logical* key, so with the Russian group
+# active they see Cyrillic letters and never fire. An integer `key` is an evdev
+# scancode — a physical position, identical in every layout. Additive: the stock
+# bindings keep working on the Latin group.
+[[keyboard.bindings]]
+key = 46    # KEY_C
+mods = "Control|Shift"
+action = "Copy"
+
+[[keyboard.bindings]]
+key = 47    # KEY_V
+mods = "Control|Shift"
+action = "Paste"
+
+[[keyboard.bindings]]
+key = 33    # KEY_F
+mods = "Control|Shift"
+action = "SearchForward"
+
+[[keyboard.bindings]]
+key = 48    # KEY_B
+mods = "Control|Shift"
+action = "SearchBackward"
