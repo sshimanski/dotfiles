@@ -492,4 +492,14 @@
 #    appname = "some_volume_notifiers"
 #    set_stack_tag = "volume"
 #
+# --- OSD popups from scripts/osd (volume / brightness) ---
+# The global format prints "<b>%a:</b>" — useless for an OSD, so drop it and
+# keep just the summary plus the progress bar.
+[osd]
+    appname = osd
+    format = "<b>%s</b>"
+    timeout = 2
+    history_ignore = yes
+    highlight = "#dab997"
+
 # vim: ft=cfg

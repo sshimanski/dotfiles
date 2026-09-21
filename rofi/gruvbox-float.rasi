@@ -1,0 +1,127 @@
+/**
+ * Gruvbox Material — floating centered launcher.
+ *
+ * Replaces the old fullscreen + transparency:"screenshot" approach: picom is
+ * running, so the window uses real compositor alpha and can be rounded
+ * (rofi has no i3 titlebar above it, unlike normal windows).
+ */
+
+* {
+    bg0:     #282828EB;  /* window body, ~92% alpha */
+    bg1:     #32302FFF;  /* input bar */
+    bg3:     #504945FF;  /* border */
+    fg0:     #D4BE98FF;
+    fg1:     #A89984FF;  /* secondary text */
+    accent:  #7DAEA3FF;
+    active:  #E78A4EFF;
+    urgent:  #EA6962FF;
+    dark:    #282828FF;
+
+    background-color: transparent;
+    text-color:       @fg0;
+}
+
+window {
+    transparency:     "real";
+    location:         center;
+    anchor:           center;
+    width:            58%;
+    border:           2px;
+    border-color:     @bg3;
+    border-radius:    6px;
+    background-color: @bg0;
+    padding:          0;
+    children:         [ mainbox ];
+}
+
+mainbox {
+    padding:  16px;
+    spacing:  14px;
+    children: [ inputbar, message, listview ];
+}
+
+inputbar {
+    background-color: @bg1;
+    border-radius:    4px;
+    padding:          12px 16px;
+    spacing:          12px;
+    children:         [ prompt, entry ];
+}
+
+prompt {
+    /* the glyph comes from config.rasi (display-*); Ubuntu Sans has no
+       Nerd Font range, so name the icon font here explicitly. */
+    font:           "DejaVuSansM Nerd Font 13";
+    text-color:     @accent;
+    vertical-align: 0.5;
+}
+
+entry {
+    placeholder:       "type to search";
+    placeholder-color: @fg1;
+    vertical-align:    0.5;
+    cursor:            text;
+}
+
+listview {
+    /* fixed-height keeps the panel the same size when the filter matches
+       nothing — without it the window collapses to a single line. */
+    lines:        12;
+    columns:      1;
+    scrollbar:    false;
+    fixed-height: true;
+    spacing:      4px;
+}
+
+element {
+    padding:          9px 12px;
+    spacing:          12px;
+    border-radius:    4px;
+    background-color: transparent;
+    text-color:       @fg0;
+    cursor:           pointer;
+}
+
+element selected.normal {
+    background-color: @accent;
+    text-color:       @dark;
+}
+
+element normal.active,
+element alternate.active { text-color: @active; }
+
+element selected.active {
+    background-color: @active;
+    text-color:       @dark;
+}
+
+element normal.urgent,
+element alternate.urgent { text-color: @urgent; }
+
+element selected.urgent {
+    background-color: @urgent;
+    text-color:       @dark;
+}
+
+element-icon {
+    size:             26px;
+    vertical-align:   0.5;
+    background-color: transparent;
+}
+
+element-text {
+    vertical-align:   0.5;
+    background-color: transparent;
+    text-color:       inherit;
+}
+
+message {
+    background-color: @bg1;
+    border-radius:    4px;
+    padding:          10px 14px;
+}
+
+textbox {
+    text-color:       @fg0;
+    background-color: transparent;
+}

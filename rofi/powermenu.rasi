@@ -1,0 +1,77 @@
+/**
+ * Power menu — a row of icon tiles, driven by scripts/powermenu.
+ * Separate from the launcher theme: no input bar, fixed pixel width.
+ */
+
+* {
+    bg0:    #282828F0;
+    bg1:    #32302FFF;
+    bg3:    #504945FF;
+    fg0:    #D4BE98FF;
+    fg1:    #A89984FF;
+    accent: #7DAEA3FF;
+    dark:   #282828FF;
+
+    background-color: transparent;
+    text-color:       @fg0;
+}
+
+window {
+    transparency:     "real";
+    location:         center;
+    anchor:           center;
+    width:            680px;
+    border:           2px;
+    border-color:     @bg3;
+    border-radius:    6px;
+    background-color: @bg0;
+    padding:          0;
+    children:         [ mainbox ];
+}
+
+mainbox {
+    padding:  24px;
+    spacing:  18px;
+    children: [ message, listview ];
+}
+
+message {
+    background-color: transparent;
+    padding:          0;
+}
+
+textbox {
+    background-color: transparent;
+    text-color:       @fg1;
+    horizontal-align: 0.5;
+    font:             "Ubuntu Sans Medium 11";
+}
+
+listview {
+    columns:      6;
+    lines:        1;
+    spacing:      14px;
+    fixed-height: true;
+    scrollbar:    false;
+}
+
+element {
+    background-color: @bg1;
+    text-color:       @fg0;
+    border-radius:    4px;
+    padding:          16px 0;
+    cursor:           pointer;
+    children:         [ element-text ];
+}
+
+element-text {
+    background-color: transparent;
+    text-color:       inherit;
+    horizontal-align: 0.5;
+    vertical-align:   0.5;
+}
+
+element selected.normal {
+    background-color: @accent;
+    text-color:       @dark;
+}

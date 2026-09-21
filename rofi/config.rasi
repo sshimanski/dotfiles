@@ -1,0 +1,31 @@
+configuration {
+//    sidebar-mode:  true;
+//    hide-scrollbar: true;
+//    kb-cancel: "Escape";
+//    combi-modi: "window,drun";
+//    show: "combi";
+      //font: "JetBrains Mono, 14";
+     font: "Ubuntu Sans Medium 13";
+//    line-margin: 10;
+//
+    display-ssh:    "";
+    display-run:    "";
+    display-drun:   "";
+    display-window: "";
+    display-combi:  "";
+
+    show-icons:     true;
+    // combi prefixes every row with the mode glyph; all drun rows carry
+    // the same one, so it is noise.
+    combi-display-format: "{text}";
+    // rofi is dark while GTK is light: pin the dark icon variant here,
+    // otherwise monochrome icons come out dark-on-dark.
+    icon-theme:     "Gruvbox-Plus-Dark";
+}
+
+
+@theme "~/.config/rofi/gruvbox-float.rasi"
+//@theme "~/.config/rofi/nord.rasi"
+//@theme "/usr/share/rofi/themes/gruvbox-dark.rasi"
+//@theme "/home/administrator/.local/share/rofi/themes/nord-oneline.rasi"
+//@theme "/home/administrator/.local/share/rofi/themes/spotlight-dark.rasi"
