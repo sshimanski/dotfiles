@@ -1,14 +1,19 @@
 local home = os.getenv('HOME')
 local java_root = home .. '/.sdkman/candidates/java/21.0.11-tem'
 local jdtls_home = home .. '/.local/share/nvim/mason/packages/jdtls'
+local jol_jar = home .. '/.local/share/jol/jol-cli.jar'
 
 -- resolve launcher by glob: its version changes on every mason jdtls update
 local launcher = vim.fn.glob(jdtls_home .. '/plugins/org.eclipse.equinox.launcher_*.jar')
 
 -- guard against nil root: a missing root produced project_name "v:null",
 -- a bogus -data dir and malformed file URIs -> jdtls StackOverflowError.
+-- pom.xml/build.gradle/settings.gradle deliberately excluded: multi-module
+-- Maven/Gradle repos have these at every submodule level, so find_root would
+-- stop at the nearest submodule instead of the repo root, splitting one
+-- reactor into N separate jdtls workspaces (duplicate imports/indexes).
 local root_dir = require('jdtls.setup').find_root({
-    '.git', 'mvnw', 'gradlew', 'pom.xml', 'build.gradle', 'settings.gradle',
+    '.git', 'mvnw', 'gradlew',
 })
 if not root_dir or root_dir == '' then
     root_dir = vim.fn.getcwd()
@@ -18,7 +23,14 @@ local project_name = vim.fn.fnamemodify(root_dir, ':t')
 local on_attach = function(_, bufnr)
     local map = require('utils').buf_set_keymap
 
-    require('jdtls').jol_path = home .. '/work/apps/jol/jol-cli/target/jol-cli.jar'
+    -- :JdtJol needs the jol-cli fat jar; fetch it once with
+    --   curl -sSLo ~/.local/share/jol/jol-cli.jar \
+    --     https://repo1.maven.org/maven2/org/openjdk/jol/jol-cli/0.17/jol-cli-0.17-full.jar
+    -- Left unset when absent, so jdtls reports "jol_path must be set"
+    -- instead of failing on a path that is not there.
+    if vim.fn.filereadable(jol_jar) == 1 then
+        require('jdtls').jol_path = jol_jar
+    end
 
     map(bufnr, 'n', '<leader>ri', "<Cmd>lua require('jdtls').organize_imports()<CR>")
 

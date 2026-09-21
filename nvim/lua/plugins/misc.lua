@@ -1,6 +1,6 @@
 return {
-    -- Tim Pope helper plugins
-    { "tpope/vim-unimpaired" },
+    -- vim-unimpaired dropped: nvim 0.11 ships the same bracket mappings
+    -- ([q ]q, [l ]l, [t ]t, [a ]a, [b ]b, [<Space> ]<Space>) -- :h news-0.11
     -- vim-commentary dropped: nvim 0.10+ has built-in `gc`/`gcc` commenting
     -- vim-surround/vim-repeat dropped -> nvim-surround (lua, built-in dot-repeat)
     {
@@ -27,7 +27,7 @@ return {
     },
     {
         'HiPhish/rainbow-delimiters.nvim',
-        submodules = false, -- Важно для корректной сборки в lazy.nvim
+        submodules = false, -- required for a correct lazy.nvim build
         config = function()
             local rainbow_delimiters = require('rainbow-delimiters')
 
@@ -73,7 +73,7 @@ return {
 
     -- just for fun (lazy: only on command)
     { "eandrju/cellular-automaton.nvim", cmd = "CellularAutomaton" },
-    -- 1. Красивый рендеринг прямо в Neovim (заголовки, таблицы, списки)
+    -- pretty in-buffer rendering (headings, tables, lists)
     {
         'MeanderingProgrammer/render-markdown.nvim',
         dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' },
