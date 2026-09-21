@@ -1,0 +1,9 @@
+[Unit]
+Description=Re-apply the package power limit when powercap.conf changes
+
+[Path]
+PathChanged=/home/administrator/dotfiles/powercap/powercap.conf
+Unit=cpu-powercap.service
+
+[Install]
+WantedBy=multi-user.target

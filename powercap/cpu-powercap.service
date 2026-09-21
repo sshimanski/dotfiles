@@ -1,0 +1,15 @@
+[Unit]
+Description=Package power limit (PL1) from dotfiles
+Documentation=file:/home/administrator/dotfiles/powercap/powercap.conf
+# suspend.target completes on resume, so listing it here is what re-applies the
+# limit after sleep - the firmware restores its own values across S3.
+After=multi-user.target suspend.target hibernate.target hybrid-sleep.target
+ConditionPathExists=/sys/class/powercap/intel-rapl:0/constraint_0_power_limit_uw
+
+[Service]
+Type=oneshot
+RemainAfterExit=no
+ExecStart=/home/administrator/dotfiles/powercap/apply-powercap
+
+[Install]
+WantedBy=multi-user.target suspend.target hibernate.target hybrid-sleep.target

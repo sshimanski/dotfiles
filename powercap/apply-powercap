@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# Write the PL1 values from powercap.conf into the RAPL package domain.
+# Runs as root from cpu-powercap.service; nothing here is interactive.
+set -uo pipefail
+
+CONF=${1:-/home/administrator/dotfiles/powercap/powercap.conf}
+RAPL=/sys/class/powercap/intel-rapl:0
+
+[[ -r $CONF ]] || { echo "powercap: $CONF not readable" >&2; exit 1; }
+
+# Parsed with grep, never sourced: the file is user-writable and this is root.
+val() { grep -oP "^\s*$1\s*=\s*\K[0-9]+" "$CONF" 2>/dev/null | head -1; }
+
+w=$(val WATTS); s=$(val WINDOW_S); b=$(val WATTS_BURST)
+[[ -n ${w:-} && -n ${s:-} ]] || { echo "powercap: WATTS/WINDOW_S missing in $CONF" >&2; exit 1; }
+
+# Clamped, because the file is hand-edited: under 15 W the machine crawls, over
+# 65 W is past what this cooling system can do anyway.
+(( w < 15 )) && w=15; (( w > 65 )) && w=65
+(( s <  1 )) && s=1;  (( s > 60 )) && s=60
+
+# PL2 below PL1 is meaningless - the burst ceiling cannot sit under the sustained
+# one - and above 80 W is past anything this chassis will ever dissipate.
+if [[ -n ${b:-} ]]; then
+  (( b < w )) && b=$w; (( b > 80 )) && b=80
+fi
+
+# thermald rewrites constraint_0 within ~14 s of every write, measured, which
+# silently undoes everything below. It is disabled on this machine; say so loudly
+# if it ever comes back, because the symptom otherwise looks like the limit
+# "not working".
+if systemctl is-active --quiet thermald 2>/dev/null; then
+  echo "powercap: WARNING thermald is running and will revert this limit" >&2
+fi
+
+echo $((w * 1000000)) > "$RAPL/constraint_0_power_limit_uw" || exit 1
+echo $((s * 1000000)) > "$RAPL/constraint_0_time_window_us" || exit 1
+
+# Not every platform lets PL2 be written; a refusal is reported, never fatal, so
+# the sustained limit above still stands.
+if [[ -n ${b:-} ]]; then
+  echo $((b * 1000000)) > "$RAPL/constraint_1_power_limit_uw" ||
+    echo "powercap: PL2 not writable on this platform" >&2
+fi
+
+# The window is rounded to a hardware-representable value, so report the readback
+# rather than what was asked for.
+printf 'powercap: PL1 %s W / %s s, PL2 %s W -> %s uW, %s us, %s uW\n' \
+  "$w" "$s" "${b:-unset}" \
+  "$(< "$RAPL/constraint_0_power_limit_uw")" "$(< "$RAPL/constraint_0_time_window_us")" \
+  "$(< "$RAPL/constraint_1_power_limit_uw")"
