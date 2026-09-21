@@ -22,7 +22,7 @@ set $mod Mod4
 # font pango:JetBrains Mono 11.25
 # font pango:DejaVuSansMono NF 11
 # font pango:Ubuntu Sans, ExtraBold 11
-font pango:Ubuntu Sans, Medium 11
+font pango:Ubuntu Sans, Medium 9.5
 # font pango:FontAwesome, Regular 11
 
 # Before i3 v4.8, we used to recommend this one as the default:
@@ -46,7 +46,7 @@ bindsym Ctrl+Shift+space exec --no-startup-id dunstctl close
 bindsym $mod+Return exec alacritty
 bindsym $mod+Shift+Return exec --no-startup-id alacritty -e zsh -ci ranger
 bindsym $mod+Shift+i exec --no-startup-id alacritty -e bash -ci btop
-bindsym $mod+Shift+m workspace 8; exec --no-startup-id alacritty -e zsh -ci cmus
+bindsym $mod+Shift+m workspace 9; exec --no-startup-id alacritty -e zsh -ci ncmpcpp
 
 bindsym $mod+y exec --no-startup-id alacritty --title 'fzf-menu' -e bash -ifc 'i3-dmenu-desktop --dmenu=fzf'
 for_window [title="fzf-menu"] floating enable
@@ -61,7 +61,9 @@ bindsym $mod+Shift+q kill
 # installed.
 # bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
 
-default_border none
+default_border normal 1
+for_window [all] title_window_icon padding 3
+default_floating_border normal 1
 
 # change focus
 bindsym $mod+h focus left
@@ -175,31 +177,8 @@ mode "resize" {
 }
 bindsym $mod+r mode "resize"
 
-# Start i3bar to display a workspace bar (plus the system information i3status
-# finds out, if available)
-
-
-bar {
-    # font pango:DejaVu Sans Mono, FontAwesome 12
-    position top
-    status_command i3blocks -c ~/.config/i3blocks/config
-    mode dock
-    hidden_state show
-    modifier $mod
-
-    colors {
-        # bar background color
-        background $bg
-        # text color used for blocks that do not have a color specified.
-        statusline $lightgray
-        # workspaces section            
-        #                    border     backgr      text
-        focused_workspace    $blue      $blue       $bg
-        inactive_workspace   $darkgray  $darkgray   $lightgray
-        active_workspace     $darkgray  $darkgray   $lightgray
-        urgent_workspace     $red       $red        $bg
-    }
-}
+# --- status bar ---
+exec_always --no-startup-id ~/dotfiles/polybar/launch.sh
 # open app
 bindsym $mod+Tab exec "rofi -show window"
 # app switcher
@@ -209,16 +188,18 @@ bindsym $mod+t exec $HOME/dotfiles/scripts/seltr
 bindsym $mod+p exec $HOME/dotfiles/scripts/clptr
 bindsym $mod+n exec nautilus
 
-bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 5
-bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 5
-bindsym XF86AudioRaiseVolume exec --no-startup-id wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ && pkill -RTMIN+10 i3blocks
-bindsym XF86AudioLowerVolume exec --no-startup-id wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- && pkill -RTMIN+10 i3blocks 
-bindsym XF86AudioMute exec --no-startup-id wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && pkill -RTMIN+10 i3blocks
-bindsym XF86ScreenSaver exec --no-startup-id $Locker
-bindsym XF86Sleep exec --no-startup-id $Locker && systemctl suspend
+# volume/brightness go through scripts/osd: same wpctl/brightnessctl call
+# plus a dunst progress-bar popup.
+bindsym XF86MonBrightnessUp exec --no-startup-id $HOME/dotfiles/scripts/osd bright up
+bindsym XF86MonBrightnessDown exec --no-startup-id $HOME/dotfiles/scripts/osd bright down
+bindsym XF86AudioRaiseVolume exec --no-startup-id $HOME/dotfiles/scripts/osd vol up
+bindsym XF86AudioLowerVolume exec --no-startup-id $HOME/dotfiles/scripts/osd vol down
+bindsym XF86AudioMute exec --no-startup-id $HOME/dotfiles/scripts/osd vol mute
+bindsym XF86ScreenSaver exec --no-startup-id loginctl lock-session
+bindsym XF86Sleep exec --no-startup-id systemctl suspend
 bindsym XF86Battery exec --no-startup-id xset dpms force off
 
-bindsym Print exec scrot -q 100 -e 'mv $f ~/Pictures'
+bindsym Print exec flameshot gui -p ~/Pictures
 
 # turn off graphic card
 # exec --no-startup-id gksudo ~/work/scripts/cards.sh
@@ -227,7 +208,7 @@ bindsym Print exec scrot -q 100 -e 'mv $f ~/Pictures'
 # exec xrandr --dpi 120
 
 # set wallpaper
-exec_always feh --bg-scale ~/dotfiles/i3/wallpaper.jpg
+exec_always feh --bg-fill ~/dotfiles/i3/wallpaper.jpg
 
 # network manager applet
 exec --no-startup-id nm-applet
@@ -236,10 +217,20 @@ exec --no-startup-id nm-applet
 exec --no-startup-id blueman-applet
 
 # composite manager (ex: transparent backgound)
-exec --no-startup-id compton -f -D5
+# exec_always, not exec: a crashed picom must come back on $mod+Shift+r,
+# otherwise alacritty's opacity silently stops working.
+exec_always --no-startup-id picom -b
 
-# keyboard library for per-window keyboard layout 
-exec --no-startup-id kbdd
+# screen lock: the X idle timer arms the screensaver, xss-lock turns that — and
+# logind's Lock / PrepareForSleep signals — into a real i3lock. pkill first:
+# exec_always would otherwise stack a second instance on every reload.
+exec_always --no-startup-id xset s 600 610
+exec_always --no-startup-id "pkill -x xss-lock; exec xss-lock --transfer-sleep-lock -- i3lock -n -c 1d2021"
+
+# kbdd (per-window keyboard layout) is started below, in the xkbcomp chain, not
+# here: it reads the XKB group names once at startup and caches them. Started
+# against the one-group keymap X boots with, it has no name for group 2, so the
+# polybar indicator goes blank every time Russian is active.
 
 # certs
 exec --no-startup-id gnome-keyring-daemon
@@ -247,8 +238,11 @@ exec --no-startup-id gnome-keyring-daemon
 # unclutter makes the mouse invisible after a brief period
 exec --no-startup-id unclutter
 
-# CapsLock mapping with delay - to let X apply own configs and then rewrite
-exec_always "sleep 3 && xkbcomp $HOME/dotfiles/xkb/my $DISPLAY"
+# CapsLock mapping with delay - to let X apply own configs and then rewrite.
+# kbdd is started in the same chain, after the keymap, and only when it cannot
+# name the second group — so an i3 reload does not needlessly drop its
+# per-window layout map.
+exec_always "sleep 3 && xkbcomp $HOME/dotfiles/xkb/my $DISPLAY; dbus-send --print-reply --reply-timeout=2000 --dest=ru.gentoo.KbddService /ru/gentoo/KbddService ru.gentoo.kbdd.getLayoutName uint32:1 >/dev/null 2>&1 || { pkill -x kbdd; while pgrep -x kbdd >/dev/null; do sleep 0.2; done; kbdd; }"
 
 assign [class="google-chrome"] 2
 assign [class="firefox"] 2
@@ -268,9 +262,7 @@ for_window[class="gnome-calculator"] floating enabled
 for_window[class="app.hiddify.com"] floating enabled
 
 # Mod_system
-set $Locker i3lock
-
-bindsym $mod+q exec $HOME/work/apps/i3blocks/shutdown_menu/shutdown_menu
+bindsym $mod+q exec --no-startup-id $HOME/dotfiles/scripts/powermenu
 
 # gruvobox customized
 set $bg #282828
@@ -283,10 +275,11 @@ set $aqua #689d68
 set $lightgray #bdae93
 set $gray #a89984
 set $darkgray #1d2021
+set $white #ebdbb2
 
 # class                 border      backgr      text        indicator   child_border
-client.focused          $darkgray   $darkgray   $blue       $purple     $darkgray
+client.focused          $darkgray   $darkgray   $blue       $blue       $darkgray
 client.focused_inactive $darkgray   $darkgray   $lightgray  $purple     $darkgray
-client.unfocused        $bg         $bg         $gray       $purple     $darkgray
+client.unfocused        $bg         $bg         $gray       $purple     $bg
 client.urgent           $red        $red        $white      $red        $red
 
