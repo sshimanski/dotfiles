@@ -30,27 +30,9 @@ key = "Return"
 mods = "Shift"
 chars = "\u001B\r"
 
-# Clipboard and scrollback search on a non-Latin layout. The stock
-# Ctrl+Shift+C/V/F/B bindings match the *logical* key, so with the Russian group
-# active they see Cyrillic letters and never fire. An integer `key` is an evdev
-# scancode — a physical position, identical in every layout. Additive: the stock
-# bindings keep working on the Latin group.
-[[keyboard.bindings]]
-key = 46    # KEY_C
-mods = "Control|Shift"
-action = "Copy"
-
-[[keyboard.bindings]]
-key = 47    # KEY_V
-mods = "Control|Shift"
-action = "Paste"
-
-[[keyboard.bindings]]
-key = 33    # KEY_F
-mods = "Control|Shift"
-action = "SearchForward"
-
-[[keyboard.bindings]]
-key = 48    # KEY_B
-mods = "Control|Shift"
-action = "SearchBackward"
+# Clipboard and scrollback search: no custom bindings needed.
+# Alacritty 0.17 matches Ctrl+Shift+C/V/F/B by physical position, so the stock
+# bindings fire on the Russian group too. The scancode bindings that used to sit
+# here were additive, not a replacement: both they and the stock binding matched
+# the same press and every action ran twice (verified — one Ctrl+Shift+V pasted
+# the clipboard twice on both groups).
