@@ -24,17 +24,11 @@ ZSH_THEME=""
 # Uncomment the following line to disable bi-weekly auto-update checks.
 DISABLE_AUTO_UPDATE="true"
 
-# Uncomment the following line to change how often to auto-update (in days).
-export UPDATE_ZSH_DAYS=5
-
 # Uncomment the following line to disable colors in ls.
 # DISABLE_LS_COLORS="true"
 
 # Uncomment the following line to disable auto-setting terminal title.
 DISABLE_AUTO_TITLE="true"
-
-# Uncomment the following line to enable command auto-correction.
-ENABLE_CORRECTION="true"
 
 # Uncomment the following line to display red dots whilst waiting for completion.
 COMPLETION_WAITING_DOTS="true"
@@ -49,6 +43,11 @@ COMPLETION_WAITING_DOTS="true"
 # The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
 # HIST_STAMPS="mm/dd/yyyy"
 
+# omz defaults SAVEHIST (10000) below HISTSIZE (50000), which trims
+# ~/.zsh_history on rewrite despite share_history being on. Keep them equal.
+HISTSIZE=50000
+SAVEHIST=50000
+
 # Would you like to use another custom folder than $ZSH/custom?
 # ZSH_CUSTOM=/path/to/new-custom-folder
 
@@ -61,10 +60,10 @@ plugins=(
     git vi-mode zoxide fzf-tab zsh-autosuggestions
     
     # Commonly used plugins
-    colored-man-pages common-aliases copyfile copypath
-    
+    colored-man-pages common-aliases copyfile copypath eza
+
     # Language/framework specific plugins (lazy loaded when possible)
-    docker docker-compose git-extras gradle mvn nvm rust sdk ssh-agent themes tig you-should-use
+    docker docker-compose gh git-extras gradle kind kubectl mvn nvm rust sdk ssh-agent tig you-should-use
 
     # Should be last one
     zsh-syntax-highlighting
@@ -82,6 +81,29 @@ fpath+=$HOME/.zsh-complete
 
 # should be AFTER fpath changes!
 source $ZSH/oh-my-zsh.sh
+
+# Make the mvn plugin's whole alias set (mvnci, mvncist, mvnct, ...) run
+# through mvnd instead of plain mvn, keeping the mvnw-in-project override.
+# mvnd availability is checked at call time (not at shell startup), since
+# sdkman-init.sh (which puts mvnd on PATH) is sourced later in this file.
+# Falls back to plain mvn if mvnd isn't installed/on PATH.
+mvn-or-mvnw() {
+    local dir="$PWD"
+    while [[ ! -x "$dir/mvnw" && "$dir" != / ]]; do
+        dir="${dir:h}"
+    done
+
+    if [[ -x "$dir/mvnw" ]]; then
+        "$dir/mvnw" "$@"
+        return $?
+    fi
+
+    if command -v mvnd >/dev/null 2>&1; then
+        command mvnd "$@"
+    else
+        command mvn "$@"
+    fi
+}
 
 # export MANPATH="/usr/local/man:$MANPATH"
 
@@ -119,7 +141,7 @@ export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 source $HOME/.aliases
 
 # each time ranger starts RANGER_LEVEL is increased, so exit if we are in ranger already
-rg() {
+rn() {
     if [ -z "$RANGER_LEVEL" ]
     then
         local temp_file="$(mktemp -t "ranger_cd.XXXXXXXXXX")"
@@ -129,19 +151,6 @@ rg() {
             [ -n "$chosen_dir" ] && [ "$chosen_dir" != "$PWD" ] && cd "$chosen_dir"
             rm -f "$temp_file"
         fi
-    else
-        exit 0
-    fi
-}
-
-function y() {
-    if [ -z "$YAZI_LEVEL" ]
-    then
-        local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
-        command yazi "$@" --cwd-file="$tmp"
-        IFS= read -r -d '' cwd < "$tmp"
-        [ "$cwd" != "$PWD" ] && [ -d "$cwd" ] && builtin cd -- "$cwd"
-        command rm -f -- "$tmp"
     else
         exit 0
     fi
@@ -157,8 +166,7 @@ timezsh() {
 }
 
 
-export PATH=$PATH:/usr/local/go/bin
-export PATH=$PATH:$HOME/go/bin:$HOME/.local/bin/
+export PATH="$HOME/.local/share/bob/nvim-bin:$HOME/go/bin:$HOME/.local/bin:/usr/local/go/bin:$PATH"
 
 
 export PYENV_ROOT="$HOME/.pyenv"
@@ -172,31 +180,6 @@ command -v pyenv >/dev/null && eval "$(pyenv init --path)"
 
 # CLAUDE: jdtls-lsp -> OS jdtls command
 export PATH="$HOME/.local/share/nvim/mason/bin:$PATH"
-
-kp() {
-  local cmd="procs --color always"
-  local pid
-
-  pid=$(fzf --ansi \
-            --query "$1" \
-            --layout=reverse \
-            --header-lines=1 \
-            --info=inline \
-            --ghost 'Enter process...' \
-            --header='[ENTER] Kill | [CTRL-R] Reload' \
-            --preview "$cmd --no-header --only command {1}" \
-            --preview-window="right:40%:wrap" \
-            --bind "start:reload(echo '')" \
-            --bind "change:reload(if [ -n {q} ]; then $cmd {q}; else echo ''; fi)" \
-            --bind "ctrl-r:reload($cmd {q} || :)" \
-            | awk '{print $1}'
-        )
-
-  if [ -n "$pid" ]; then
-    # 15 (SIGTERM), override with : kp "" 9
-    kill -${2:-15} "$pid" && echo "Process $pid terminated."
-  fi
-}
 
 export _JAVA_AWT_WM_NONREPARENTING=1
 

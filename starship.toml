@@ -1,7 +1,6 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
-# One blank line between prompts, keep it readable in a busy terminal.
-add_newline = true
+add_newline = false
 
 # ❯ in green if last command succeeded, red if it failed.
 [character]
@@ -30,36 +29,44 @@ symbol = "✦ "
 style = "bold blue"
 
 [nodejs]
-symbol = " "
-format = "via [$symbol($version )]($style)"
+symbol = " "
+format = "| [$symbol($version )]($style)"
 
 [golang]
-symbol = " "
-format = "via [$symbol($version )]($style)"
+symbol = " "
+format = "| [$symbol($version )]($style)"
 
 [rust]
-symbol = " "
-format = "via [$symbol($version )]($style)"
+symbol = " "
+format = "| [$symbol($version )]($style)"
 
 [python]
-symbol = " "
-format = "via [$symbol($version )(\\($virtualenv\\) )]($style)"
+symbol = " "
+format = "| [$symbol($version )(\\($virtualenv\\) )]($style)"
 
 [java]
-symbol = " "
-format = "via [$symbol($version )]($style)"
+symbol = " "
+format = "| [$symbol($version )]($style)"
+
+[kotlin]
+symbol = " "
+format = "| [$symbol($version )]($style)"
+
+[gradle]
+symbol = " "
+format = "| [$symbol($version )]($style)"
+
+[maven]
+symbol = " "
+format = "| [$symbol$version]($style) "
 
 [docker_context]
-symbol = " "
-format = "via [$symbol$context]($style) "
+symbol = " "
+format = "| [$symbol$context]($style) "
 only_with_files = true
 
 [env_var.RANGER_LEVEL]
-format = "[\\[rg\\]]($style) "
-style = "bold green"
-
-[env_var.YAZI_LEVEL]
-format = "[\\[yz\\]]($style) "
+format = "[\\[rn\\]]($style) "
 style = "bold green"
 
 [package]
