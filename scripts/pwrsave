@@ -16,12 +16,17 @@
 # The one thing that outlives a reboot is /etc/tlp.d/99-pwrsave.conf. It only
 # takes effect on battery, so it costs nothing plugged in. Remove with:
 #   sudo rm /etc/tlp.d/99-pwrsave.conf && sudo tlp start
+#
+# Not written here: /etc/tlp.d/98-local.conf, installed from the dotfiles repo,
+# carries the AC-side settings (CPU cap, runtime PM). Read before changing knobs.
 
 set -uo pipefail
 
 TLP_DROPIN=/etc/tlp.d/99-pwrsave.conf
 BAT=/sys/class/power_supply/BAT1
-DGPU=/sys/bus/pci/devices/0000:01:00.0/power
+DGPU_DEV=/sys/bus/pci/devices/0000:01:00.0
+DGPU=$DGPU_DEV/power
+DGPU_PORT=/sys/bus/pci/devices/0000:00:01.0
 
 # Safe to stop for a browsing session. Deliberately absent: gdm (kills the
 # session), NetworkManager, wpa_supplicant, systemd-resolved, dbus, polkit,
@@ -187,10 +192,11 @@ do_status() {
   head_ "Knobs"
   msg "governor:  $(< /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor)   epp: $(< /sys/devices/system/cpu/cpu0/cpufreq/energy_performance_preference)"
   msg "turbo:     $([[ $(< /sys/devices/system/cpu/intel_pstate/no_turbo) == 1 ]] && echo off || echo on)"
+  msg "PL1:       $(( $(< /sys/class/powercap/intel-rapl:0/constraint_0_power_limit_uw) / 1000000 ))W / $(( $(< /sys/class/powercap/intel-rapl:0/constraint_0_time_window_us) / 1000000 ))s   thermald $(systemctl is-active thermald 2>/dev/null)"
   msg "backlight: $(as_user brightnessctl -m 2>/dev/null | cut -d, -f4)"
   msg "tlp:       mode $(tlp-stat -s 2>/dev/null | awk -F'= ' '/^Mode/ { print $2 }')  dropin $([[ -f $TLP_DROPIN ]] && echo yes || echo no)"
   msg "wifi ps:   $(iw dev wlo1 get power_save 2>/dev/null | awk '{ print $3 }')"
-  msg "dGPU:      $(< "$DGPU/runtime_status") (pm=$(< "$DGPU/control"))"
+  msg "dGPU:      $(< "$DGPU/runtime_status") $(< "$DGPU_DEV/power_state") (pm=$(< "$DGPU/control"), port $(< "$DGPU_PORT/power/control"))"
   msg "bluetooth: radio $(bt_blocked && echo blocked || echo on)   bluetoothd $(systemctl is-active bluetooth.service 2>/dev/null)"
 }
 
@@ -278,16 +284,21 @@ do_go() {
   head_ "Left running on purpose"
   msg "VPN (hiddify/tun0), NetworkManager, pipewire, thermald, oom protection"
 
-  # No driver is bound to the dGPU (prime-select=intel, nvidia not loaded), so
-  # PCI runtime PM probably cannot reach D3. Try, then check — do not claim it.
+  # Nothing left to switch: prime-select is on-demand, the nvidia driver owns the
+  # card with fine-grained RTD3 (NVreg_DynamicPowerManagement=0x02), and TLP keeps
+  # runtime PM on auto for both profiles. Report only — and report the D-state,
+  # since runtime_status says "suspended" at D3hot too, with the rail still live.
+  # Never call nvidia-smi here: touching the driver wakes the card into D0, so the
+  # measurement would destroy what it measures.
   head_ "dGPU (RTX 3050)"
-  [[ -w $DGPU/control ]] && echo auto > "$DGPU/control" 2>/dev/null
   if [[ $(< "$DGPU/runtime_status") == suspended ]]; then
-    msg "suspended — powered down"
+    msg "suspended, $(< "$DGPU_DEV/power_state") — video memory off"
+    [[ $(< "$DGPU_DEV/power_state") != D3cold ]] &&
+      msg "not D3cold: parent port $(basename "$DGPU_PORT") is on pm=$(< "$DGPU_PORT/power/control")"
   else
-    msg "still $(< "$DGPU/runtime_status") — no driver bound, runtime PM cannot reach D3."
-    msg "Real fix is BIOS (disable MSHybrid) or nvidia with"
-    msg "NVreg_DynamicPowerManagement=0x02 — out of scope for a shell script."
+    msg "awake: $(< "$DGPU/runtime_status") (pm=$(< "$DGPU/control")) — something holds it."
+    msg "Check RUNTIME_PM_ON_AC=auto in /etc/tlp.d/98-local.conf, then what has"
+    msg "/dev/nvidia* open (fuser -v /dev/nvidia*)."
   fi
 
   head_ "Biggest drain left is yours to close"

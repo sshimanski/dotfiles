@@ -36,6 +36,8 @@ links=(
     ".config/gtk-3.0/settings.ini    gtk-3.0/settings.ini"
     ".config/gtk-4.0/settings.ini    gtk-4.0/settings.ini"
     ".config/tridactyl/tridactylrc   .tridactylrc"
+    ".config/fontconfig/fonts.conf    fontconfig/fonts.conf"
+    ".local/bin/pwrsave               scripts/pwrsave"
 )
 
 ok=0; fixed=0; conflict=0; missing=0
