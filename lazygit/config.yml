@@ -1,6 +1,13 @@
+gui:
+  border: 'rounded'
+  nerdFontsVersion: '3'
+  sidePanelWidth: 0.25
+
 git:
+  diffContextSize: 8
+  ignoreWhitespaceInDiffView: true
   pagers:
     - colorArg: always
       pager: delta --dark --paging=never
-      useConfig: false
+      useConfig: true
 promptToReturnFromSubprocess: false

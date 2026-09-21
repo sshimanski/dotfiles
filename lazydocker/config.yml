@@ -1,4 +1,12 @@
+gui:
+  border: 'rounded'
+  sidePanelWidth: 0.25
+  returnImmediately: true
+
 logs:
   timestamps: true
   since: ''
   tail: '500'
+
+stats:
+  maxDuration: 10m
