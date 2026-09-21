@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+# Report the effective UI scale of every component and flag drift.
+#
+# Single source of truth: Xft.dpi in ~/.Xresources, merged at login by
+# /etc/X11/Xsession.d/30x11-common_xresources. Most clients read it directly.
+# Two of them cannot and carry a copy of the number; this script checks those
+# copies still agree. Run it after any toolkit or IDE major upgrade.
+set -u
+
+dpi=$(xrdb -query 2>/dev/null | awk '/^Xft\.dpi:/ {print $2}')
+if [ -z "${dpi:-}" ]; then
+    echo "Xft.dpi unset - every Xft client silently falls back to 96"
+    exit 1
+fi
+scale=$(awk -v d="$dpi" 'BEGIN { printf "%.4g", d / 96 }')
+printf 'source   Xft.dpi = %s  ->  scale %s\n\n' "$dpi" "$scale"
+
+rc=0
+row() { printf '  %-10s %-9s %s\n' "$1" "$2" "$3"; }
+
+echo 'reads Xft.dpi directly, nothing to keep in sync:'
+for c in i3 rofi dunst alacritty gtk chrome firefox; do
+    row "$c" "$scale" 'follows'
+done
+
+echo
+echo 'carries its own copy of the number:'
+
+pb=$(awk -F= '/^dpi[[:space:]]*=/ { gsub(/[[:space:]]/, "", $2); print $2 }' \
+     "$HOME/dotfiles/polybar/config.ini" 2>/dev/null)
+if [ "${pb:-}" = "$dpi" ]; then
+    row polybar "$pb" 'ok'
+else
+    row polybar "${pb:-unset}" "DRIFT - expected $dpi"; rc=1
+fi
+
+# Only the newest config dir matters; older ones belong to uninstalled builds
+# that predate the JRE-managed default and never needed the flag.
+vm=$(ls -d "$HOME"/.config/JetBrains/IntelliJIdea*/idea64.vmoptions 2>/dev/null \
+     | sort -V | tail -1)
+for vm in ${vm:-}; do
+    ide=${vm%/idea64.vmoptions}; ide=${ide##*/}
+    got=$(awk -F= '/^-Dsun\.java2d\.uiScale=/ { print $2 }' "$vm")
+    if [ "${got:-}" = "$scale" ]; then
+        row "$ide" "$got" 'ok'
+    else
+        row "$ide" "${got:-unset}" "DRIFT - expected $scale"; rc=1
+    fi
+done
+
+echo
+if [ "$rc" -eq 0 ]; then
+    echo 'all consistent'
+else
+    echo 'drift found - see DRIFT rows above'
+fi
+exit "$rc"

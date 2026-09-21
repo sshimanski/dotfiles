@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+# Restore the symlinks that wire $HOME to this repo.
+#
+# Reports by default and changes nothing; pass --apply to act. Existing real
+# files are never touched - they are reported as CONFLICT so the decision to
+# delete them stays manual.
+#
+# This is a recovery aid, not a machine installer: it assumes the packages and
+# themes are already there and only re-creates the links that point here.
+set -u
+
+repo=$(cd -- "$(dirname -- "$0")/.." && pwd -P)
+apply=0
+[ "${1:-}" = "--apply" ] && apply=1
+
+# link <path relative to $HOME>  <path inside the repo>
+links=(
+    ".zshrc                          .zshrc"
+    ".gitconfig                      .gitconfig"
+    ".Xresources                     .Xresources"
+    ".fzf.custom.zsh                 .fzf.custom.zsh"
+    ".ideavimrc                      .ideavimrc"
+    ".tridactylrc                    .tridactylrc"
+    ".m2/mvnd.properties             maven/mvnd.properties"
+    ".config/nvim                    nvim"
+    ".config/ranger                  ranger"
+    ".config/rofi                    rofi"
+    ".config/picom                   picom"
+    ".config/lazygit                 lazygit"
+    ".config/lazydocker              lazydocker"
+    ".config/starship.toml           starship.toml"
+    ".config/alacritty/alacritty.toml alacritty/alacritty.toml"
+    ".config/dunst/dunstrc           dunstrc"
+    ".config/i3/config               i3/config"
+    ".config/feh/keys                feh/keys"
+    ".config/gtk-3.0/settings.ini    gtk-3.0/settings.ini"
+    ".config/gtk-4.0/settings.ini    gtk-4.0/settings.ini"
+    ".config/tridactyl/tridactylrc   .tridactylrc"
+)
+
+ok=0; fixed=0; conflict=0; missing=0
+
+for entry in "${links[@]}"; do
+    # shellcheck disable=SC2086
+    set -- $entry
+    dst="$HOME/$1"
+    src="$repo/$2"
+
+    if [ ! -e "$src" ]; then
+        printf 'NOSOURCE  %-34s %s\n' "$1" "missing in repo: $2"
+        continue
+    fi
+
+    if [ -L "$dst" ] && [ "$(readlink -f "$dst")" = "$(readlink -f "$src")" ]; then
+        ok=$((ok + 1))
+        continue
+    fi
+
+    if [ -e "$dst" ] && [ ! -L "$dst" ]; then
+        printf 'CONFLICT  %-34s real file, left alone\n' "$1"
+        conflict=$((conflict + 1))
+        continue
+    fi
+
+    if [ -L "$dst" ]; then
+        printf 'WRONG     %-34s -> %s\n' "$1" "$(readlink "$dst")"
+        fixed=$((fixed + 1))
+    else
+        printf 'MISSING   %-34s\n' "$1"
+        missing=$((missing + 1))
+    fi
+
+    if [ "$apply" -eq 1 ]; then
+        mkdir -p "$(dirname -- "$dst")"
+        ln -sfn "$src" "$dst"
+    fi
+done
+
+echo
+printf 'ok %d, missing %d, wrong %d, conflict %d\n' "$ok" "$missing" "$fixed" "$conflict"
+
+# GTK4 reads the theme stylesheet from a fixed path, so these links are needed
+# on top of settings.ini. They point outside the repo, at an installed theme,
+# and are only reported.
+theme=$(awk -F= '/^gtk-theme-name/ { gsub(/[[:space:]]/, "", $2); print $2 }' \
+        "$repo/gtk-4.0/settings.ini" 2>/dev/null)
+for f in gtk.css gtk-dark.css assets; do
+    want="$HOME/.themes/$theme/gtk-4.0/$f"
+    have=$(readlink "$HOME/.config/gtk-4.0/$f" 2>/dev/null || true)
+    if [ "$have" != "$want" ]; then
+        printf 'GTK4      %-34s expected -> %s\n' ".config/gtk-4.0/$f" "$want"
+    fi
+done
+
+if [ "$apply" -eq 0 ]; then
+    echo
+    echo 'report only; re-run with --apply to create the links'
+fi
+
+[ "$conflict" -eq 0 ]
